@@ -11,27 +11,37 @@ import SpriteKit
 import GameplayKit
 
 class ViewController: NSViewController {
+    var playNumber: Int = 0
+    var plays = [Play]()
 
-    @IBOutlet var skView: SKView!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let view = self.skView {
-            // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
-                // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFill
+        let skView = view as! SKView
+            
+        let scene = GameScene(size: skView.bounds.size)
+            
+        // Set the scale mode to scale to fit the window
+        scene.scaleMode = .aspectFill
+        scene.gameDelegate = self
                 
-                // Present the scene
-                view.presentScene(scene)
-            }
+        // Present the scene
+        skView.presentScene(scene)
             
-            view.ignoresSiblingOrder = true
+        skView.ignoresSiblingOrder = true
             
-            view.showsFPS = true
-            view.showsNodeCount = true
-        }
+        skView.showsFPS = true
+        skView.showsNodeCount = true
+    
+        
     }
 }
 
+extension ViewController: GameDelegate {
+    func play(stone: Stone, column: Int, row: Int) -> Void {
+        let play = Play(id: playNumber, row: row, column: column, stone: stone)
+        plays.append(play)
+        playNumber += 1
+        print("\(plays)")
+    }
+}
