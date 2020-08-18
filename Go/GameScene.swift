@@ -15,7 +15,7 @@ class GameScene: SKScene {
     private var spinnyNode : SKShapeNode?
     
     var count = 0
-    var scale: CGFloat = 2.0
+    var scale: CGFloat
     
     var goBoard: SKSpriteNode?
     var blackStone: SKShapeNode?
@@ -35,9 +35,21 @@ class GameScene: SKScene {
     let middleTexture = SKTexture(imageNamed: "Middle")
     let starPointTexture = SKTexture(imageNamed: "StarPoint")
     
-
-    override func didMove(to view: SKView) {
+    var gameDelegate: GameDelegate?
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder) is not used in this app")
+    }
+    
+    override init(size: CGSize) {
+        scale = size.height / 450.0 * 0.7
         
+        super.init(size: size)
+        
+        anchorPoint = CGPoint(x: 0.5, y: 0.5)
+    }
+    
+    override func didMove(to view: SKView) {
         // Get label node from scene and store it for use later
         //self.label = self.childNode(withName: "//helloLabel") as? SKLabelNode
         //if let label = self.label {
@@ -72,6 +84,8 @@ class GameScene: SKScene {
         for row in 0..<19 {
             for column in 0..<19 {
                 let intersection = SKShapeNode(rect: CGRect(x: 0, y: 0, width: CGFloat(Float(scale) * 420 / 19 + 1), height: CGFloat(Float(scale) * 450 / 19) + 1))
+                
+                print("\(intersection.frame.size)")
                 
                 let xPos = Float(column) * Float(scale) * 420 / 19 - Float(scale) * 210
                 let yPos = Float(row) * Float(scale) * 450 / 19 - Float(scale) * 225
@@ -187,6 +201,8 @@ class GameScene: SKScene {
             n.strokeColor = SKColor.red
             self.addChild(n)
         }
+        
+        gameDelegate?.play(stone: count % 2 == 0 ? .White : .Black, column: column, row: row)
        
         if count % 2 == 0 {
             if let node = self.whiteStone?.copy() as! SKShapeNode? {
