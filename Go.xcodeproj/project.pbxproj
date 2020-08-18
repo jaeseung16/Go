@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9044CABD24EC8D56007D90E8 /* Play.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044CABC24EC8D56007D90E8 /* Play.swift */; };
+		90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90574A8424EB3E2F005230AF /* GameDelegate.swift */; };
+		90989F2C24E89DE70088555C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90989F2B24E89DE70088555C /* Game.swift */; };
 		90C88A0A24DA241000B4E382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0924DA241000B4E382 /* AppDelegate.swift */; };
-		90C88A0C24DA241000B4E382 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 90C88A0B24DA241000B4E382 /* GameScene.sks */; };
-		90C88A0E24DA241000B4E382 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 90C88A0D24DA241000B4E382 /* Actions.sks */; };
 		90C88A1024DA241000B4E382 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0F24DA241000B4E382 /* GameScene.swift */; };
 		90C88A1224DA241000B4E382 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A1124DA241000B4E382 /* ViewController.swift */; };
 		90C88A1424DA241200B4E382 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90C88A1324DA241200B4E382 /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 		90C88A4124DA259900B4E382 /* Stone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4024DA259900B4E382 /* Stone.swift */; };
 		90C88A4324DA25F100B4E382 /* Intersection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4224DA25F100B4E382 /* Intersection.swift */; };
 		90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4424DA2F3700B4E382 /* GameClock.swift */; };
+		90F6EF8824EA07BA00BBCE17 /* GoBoard.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,10 +43,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9044CABC24EC8D56007D90E8 /* Play.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Play.swift; sourceTree = "<group>"; };
+		90574A8424EB3E2F005230AF /* GameDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDelegate.swift; sourceTree = "<group>"; };
+		90989F2B24E89DE70088555C /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		90C88A0624DA241000B4E382 /* Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90C88A0924DA241000B4E382 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		90C88A0B24DA241000B4E382 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
-		90C88A0D24DA241000B4E382 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
 		90C88A0F24DA241000B4E382 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		90C88A1124DA241000B4E382 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		90C88A1324DA241200B4E382 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -62,6 +65,7 @@
 		90C88A4024DA259900B4E382 /* Stone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stone.swift; sourceTree = "<group>"; };
 		90C88A4224DA25F100B4E382 /* Intersection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intersection.swift; sourceTree = "<group>"; };
 		90C88A4424DA2F3700B4E382 /* GameClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameClock.swift; sourceTree = "<group>"; };
+		90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GoBoard.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,14 +118,14 @@
 			children = (
 				90C88A3D24DA249200B4E382 /* Model */,
 				90C88A0924DA241000B4E382 /* AppDelegate.swift */,
-				90C88A0B24DA241000B4E382 /* GameScene.sks */,
-				90C88A0D24DA241000B4E382 /* Actions.sks */,
 				90C88A0F24DA241000B4E382 /* GameScene.swift */,
 				90C88A1124DA241000B4E382 /* ViewController.swift */,
 				90C88A1324DA241200B4E382 /* Assets.xcassets */,
 				90C88A1524DA241200B4E382 /* Main.storyboard */,
 				90C88A1824DA241200B4E382 /* Info.plist */,
 				90C88A1924DA241200B4E382 /* Go.entitlements */,
+				90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */,
+				90574A8424EB3E2F005230AF /* GameDelegate.swift */,
 			);
 			path = Go;
 			sourceTree = "<group>";
@@ -152,6 +156,8 @@
 				90C88A4024DA259900B4E382 /* Stone.swift */,
 				90C88A4224DA25F100B4E382 /* Intersection.swift */,
 				90C88A4424DA2F3700B4E382 /* GameClock.swift */,
+				90989F2B24E89DE70088555C /* Game.swift */,
+				9044CABC24EC8D56007D90E8 /* Play.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -260,9 +266,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				90C88A0C24DA241000B4E382 /* GameScene.sks in Resources */,
 				90C88A1424DA241200B4E382 /* Assets.xcassets in Resources */,
-				90C88A0E24DA241000B4E382 /* Actions.sks in Resources */,
+				90F6EF8824EA07BA00BBCE17 /* GoBoard.xcassets in Resources */,
 				90C88A1724DA241200B4E382 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,9 +294,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */,
+				90989F2C24E89DE70088555C /* Game.swift in Sources */,
 				90C88A1224DA241000B4E382 /* ViewController.swift in Sources */,
 				90C88A1024DA241000B4E382 /* GameScene.swift in Sources */,
+				9044CABD24EC8D56007D90E8 /* Play.swift in Sources */,
 				90C88A3C24DA248500B4E382 /* GoBoard.swift in Sources */,
+				90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */,
 				90C88A4124DA259900B4E382 /* Stone.swift in Sources */,
 				90C88A3F24DA252500B4E382 /* Player.swift in Sources */,
 				90C88A4324DA25F100B4E382 /* Intersection.swift in Sources */,
