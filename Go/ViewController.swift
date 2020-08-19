@@ -13,17 +13,18 @@ import GameplayKit
 class ViewController: NSViewController {
     var playNumber: Int = 0
     var plays = [Play]()
+    var scene: GameScene?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let skView = view as! SKView
             
-        let scene = GameScene(size: skView.bounds.size)
+        scene = GameScene(size: skView.bounds.size)
             
         // Set the scale mode to scale to fit the window
-        scene.scaleMode = .aspectFill
-        scene.gameDelegate = self
+        scene!.scaleMode = .aspectFill
+        scene!.gameDelegate = self
                 
         // Present the scene
         skView.presentScene(scene)
@@ -34,6 +35,20 @@ class ViewController: NSViewController {
         skView.showsNodeCount = true
     
         
+    }
+    
+    @IBAction func playBackward(_ sender: NSButton) {
+        if scene!.hide(number: playNumber-1) {
+            playNumber -= 1
+        }
+        print("\(playNumber)")
+    }
+    
+    @IBAction func playForward(_ sender: NSButton) {
+        if scene!.show(number: playNumber) {
+            playNumber += 1
+        }
+        print("\(playNumber)")
     }
 }
 
