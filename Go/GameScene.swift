@@ -206,6 +206,7 @@ class GameScene: SKScene {
        
         if count % 2 == 0 {
             if let node = self.whiteStone?.copy() as! SKShapeNode? {
+                node.name = "\(count)"
                 node.position = pointFor(column: column, row: row)
                 node.lineWidth = 0
                 node.fillColor = SKColor.black
@@ -214,6 +215,7 @@ class GameScene: SKScene {
             }
         } else {
             if let node = self.blackStone?.copy() as! SKShapeNode? {
+                node.name = "\(count)"
                 node.position = pointFor(column: column, row: row)
                 node.lineWidth = 0
                 node.fillColor = SKColor.white
@@ -248,6 +250,21 @@ class GameScene: SKScene {
         }
     }
     
+    func hide(number: Int) -> Bool {
+        if let node = childNode(withName: "\(number)") {
+            node.isHidden = true
+            return true
+        }
+        return false
+    }
+    
+    func show(number: Int) -> Bool {
+        if let node = childNode(withName: "\(number)") {
+            node.isHidden = false
+            return true
+        }
+        return false
+    }
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
