@@ -708,6 +708,30 @@
                     <customView key="view" autoresizesSubviews="NO" id="mEo-2F-kxQ" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="1200" height="1200"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="goc-lq-86Y">
+                                <rect key="frame" x="1063" y="19" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSTouchBarGoBackTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sBD-0p-fNh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="playBackward:" target="XfG-lQ-9wD" id="51a-C5-rlG"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qmr-G6-paI">
+                                <rect key="frame" x="1130" y="19" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSTouchBarGoForwardTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XnU-TW-VgK">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="playForward:" target="XfG-lQ-9wD" id="kY7-fM-rjM"/>
+                                </connections>
+                            </button>
+                        </subviews>
                     </customView>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -715,4 +739,8 @@
             <point key="canvasLocation" x="75" y="1241"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="NSTouchBarGoBackTemplate" width="10" height="30"/>
+        <image name="NSTouchBarGoForwardTemplate" width="10" height="30"/>
+    </resources>
 </document>
