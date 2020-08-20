@@ -203,6 +203,13 @@ class GameScene: SKScene {
         }
         
         gameDelegate?.play(stone: count % 2 == 0 ? .White : .Black, column: column, row: row)
+        
+        let sequence = SKLabelNode(fontNamed: "System")
+        sequence.name = "sequence"
+        sequence.text = "\(count)"
+        sequence.fontSize = count > 99 ? 18 : 24
+        sequence.verticalAlignmentMode = .center
+        
        
         if count % 2 == 0 {
             if let node = self.whiteStone?.copy() as! SKShapeNode? {
@@ -211,6 +218,11 @@ class GameScene: SKScene {
                 node.lineWidth = 0
                 node.fillColor = SKColor.black
                 node.fillTexture = blackStoneTexture
+                
+                sequence.fontColor = .white
+                sequence.position = CGPoint(x: 0.0, y: 0.0)
+                
+                node.addChild(sequence)
                 self.addChild(node)
             }
         } else {
@@ -220,6 +232,11 @@ class GameScene: SKScene {
                 node.lineWidth = 0
                 node.fillColor = SKColor.white
                 node.fillTexture = whiteStoneTexture
+                
+                sequence.fontColor = .black
+                sequence.position = CGPoint(x: 0.0, y: 0.0)
+                
+                node.addChild(sequence)
                 self.addChild(node)
             }
         }
@@ -264,6 +281,23 @@ class GameScene: SKScene {
             return true
         }
         return false
+    }
+    
+    func showSequence() -> Void {
+        guard let children = scene?.children else {
+            print("The scene has no children: scene = \(scene)")
+            return
+        }
+        
+        for child in children {
+            guard let sequence = child.childNode(withName: "sequence") else {
+                print("The node has no sequence: node = \(child)")
+                continue
+            }
+            
+            sequence.isHidden = !sequence.isHidden
+        }
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
