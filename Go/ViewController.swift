@@ -50,6 +50,10 @@ class ViewController: NSViewController {
         }
         print("\(playNumber)")
     }
+    
+    @IBAction func showSequence(_ sender: NSButton) {
+        scene?.showSequence()
+    }
 }
 
 extension ViewController: GameDelegate {
