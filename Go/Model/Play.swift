@@ -8,10 +8,18 @@
 
 import Foundation
 
-struct Play {
+struct Play: Hashable {
     var id: Int
     var row: Int
     var column: Int
     var stone: Stone
     
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(row)
+        hasher.combine(column)
+    }
+    
+    static func == (lhs: Play, rhs: Play) -> Bool {
+        return lhs.row == rhs.row && lhs.column == rhs.column
+    }
 }
