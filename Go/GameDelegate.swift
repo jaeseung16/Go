@@ -10,4 +10,6 @@ import Foundation
 
 protocol GameDelegate {
     func play(stone: Stone, column: Int, row: Int) -> Void
+    
+    func isPlayable(stone: Stone, column: Int, row: Int) -> Bool
 }
