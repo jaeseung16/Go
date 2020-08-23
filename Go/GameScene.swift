@@ -20,6 +20,7 @@ class GameScene: SKScene {
     var goBoard: SKSpriteNode?
     var blackStone: SKShapeNode?
     var whiteStone: SKShapeNode?
+    var positionNode: SKShapeNode?
     
     let goBoardTexture = SKTexture(imageNamed: "GoBoard")
     let blackStoneTexture = SKTexture(imageNamed: "BlackStone")
@@ -173,19 +174,46 @@ class GameScene: SKScene {
     }
     
     func touchDown(atPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.green
-            self.addChild(n)
+        
+        var success: Bool
+        var column: Int
+        var row: Int
+        (success, column, row) = convertPoint(pos)
+        
+        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
+            print("Illegal play!")
+            return
         }
+        
+        let node = SKShapeNode(rectOf: CGSize(width: 10, height: 10))
+        node.position = pointFor(column: column, row: row)
+        node.fillColor = count % 2 == 0 ? .black : .white
+        self.addChild(node)
+        
+        positionNode = node
+        
+        print("\(String(describing: positionNode))")
+        
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pos
-            n.strokeColor = SKColor.blue
-            self.addChild(n)
+        guard let node = positionNode else {
+            return
         }
+        
+        var success: Bool
+        var column: Int
+        var row: Int
+        (success, column, row) = convertPoint(pos)
+        
+        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
+            print("Illegal play!")
+            return
+        }
+        
+        node.position = pointFor(column: column, row: row)
+        
+        print("\(String(describing: positionNode))")
     }
     
     func touchUp(atPoint pos : CGPoint) {
@@ -196,18 +224,28 @@ class GameScene: SKScene {
         (success, column, row) = convertPoint(pos)
         print("success = \(success), column = \(column), row = \(row)")
         
-        if let n = self.spinnyNode?.copy() as! SKShapeNode? {
-            n.position = pointFor(column: column, row: row)
-            n.strokeColor = SKColor.red
-            self.addChild(n)
+        guard let node = positionNode else {
+            return
+        }
+        
+        self.removeChildren(in: [node])
+        positionNode = nil
+        
+        print("\(String(describing: positionNode))")
+        
+        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
+            print("Illegal play!")
+            return
         }
         
         gameDelegate?.play(stone: count % 2 == 0 ? .White : .Black, column: column, row: row)
+
+        let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
         
-        let sequence = SKLabelNode(fontNamed: "System")
+        let sequence = SKLabelNode(fontNamed: font.fontName)
         sequence.name = "sequence"
         sequence.text = "\(count)"
-        sequence.fontSize = count > 99 ? 18 : 24
+        sequence.fontSize = font.pointSize
         sequence.verticalAlignmentMode = .center
         
        
@@ -285,7 +323,7 @@ class GameScene: SKScene {
     
     func showSequence() -> Void {
         guard let children = scene?.children else {
-            print("The scene has no children: scene = \(scene)")
+            print("The scene has no children: scene = \(String(describing: scene))")
             return
         }
         
