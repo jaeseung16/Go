@@ -13,6 +13,7 @@ import GameplayKit
 class ViewController: NSViewController {
     var playNumber: Int = 0
     var plays = [Play]()
+    var prohibitedPlays = Set<Play>()
     var scene: GameScene?
 
     override func viewDidLoad() {
@@ -59,8 +60,16 @@ class ViewController: NSViewController {
 extension ViewController: GameDelegate {
     func play(stone: Stone, column: Int, row: Int) -> Void {
         let play = Play(id: playNumber, row: row, column: column, stone: stone)
+        
         plays.append(play)
+        prohibitedPlays.insert(play)
         playNumber += 1
-        print("\(plays)")
+
+        print("prohibitedPlays = \(prohibitedPlays)")
+    }
+    
+    func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
+        let play = Play(id: playNumber, row: row, column: column, stone: stone)
+        return !prohibitedPlays.contains(play)
     }
 }
