@@ -15,7 +15,26 @@ class ViewController: NSViewController {
     var plays = [Play]()
     var prohibitedPlays = Set<Play>()
     var scene: GameScene?
-
+    
+    var gameAnalyzer: GameAnalyzer?
+    
+    var start: TimeInterval?
+    var previousTime = TimeInterval()
+    var blackTimer: TimeInterval?
+    var whiteTimer: TimeInterval?
+    
+    var isBlackWillPlay = true
+    var isWhiteWillPlay = false
+    
+    @IBOutlet weak var clockLabel: NSTextField!
+    
+    @IBOutlet weak var blackTimerLabel: NSTextField!
+    @IBOutlet weak var whiteTimerLabel: NSTextField!
+    
+    @IBOutlet weak var showAnalysis: NSButton!
+    
+    let dateFormatter = DateFormatter()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -35,7 +54,17 @@ class ViewController: NSViewController {
         skView.showsFPS = true
         skView.showsNodeCount = true
     
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
         
+        /*
+        print("*****")
+        gtp_finish_response()
+        gtp_panic()
+        print("*****")
+        */
+        
+        gameAnalyzer = GameAnalyzer()
     }
     
     @IBAction func playBackward(_ sender: NSButton) {
@@ -55,6 +84,43 @@ class ViewController: NSViewController {
     @IBAction func showSequence(_ sender: NSButton) {
         scene?.showSequence()
     }
+    
+    func togglePlayer() {
+        isBlackWillPlay = !isBlackWillPlay
+        isWhiteWillPlay = !isWhiteWillPlay
+    }
+    
+    func updateTimers(_ currentTime: TimeInterval) {
+        let dt = currentTime - self.previousTime
+        self.previousTime = currentTime
+        
+        if isBlackWillPlay {
+            blackTimer = blackTimer! - dt
+        }
+        
+        if isWhiteWillPlay {
+            whiteTimer = whiteTimer! - dt
+        }
+        
+        updateTimerLabel()
+    }
+    
+    func updateTimerLabel() {
+        let timer = isBlackWillPlay ? blackTimer! : whiteTimer!
+        let timerLabel = isBlackWillPlay ? blackTimerLabel : whiteTimerLabel
+        
+        timerLabel?.stringValue = generateTimerString(timer)
+    }
+    
+    func generateTimerString(_ timer :TimeInterval) -> String {
+        let hours = String(format: "%02d", Int(timer / 3600.0))
+        let minutes = String(format: "%02d", Int(timer.truncatingRemainder(dividingBy: 3600.0) / 60.0))
+        let seconds = String(format: "%02d", Int(timer.truncatingRemainder(dividingBy: 60.0)))
+        let subseconds = String(format: "%1d", Int((timer - timer.rounded(.towardZero) ) * 10.0 ))
+        
+        return "\(hours):\(minutes):\(seconds).\(subseconds)"
+    }
+    
 }
 
 extension ViewController: GameDelegate {
@@ -66,10 +132,32 @@ extension ViewController: GameDelegate {
         playNumber += 1
 
         print("prohibitedPlays = \(prohibitedPlays)")
+        
+        togglePlayer()
+        gameAnalyzer?.analyze(plays: plays)
     }
     
     func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
         let play = Play(id: playNumber, row: row, column: column, stone: stone)
         return !prohibitedPlays.contains(play)
+    }
+    
+    func updateClock(_ currentTime: TimeInterval) -> Void {
+        guard let start = self.start else {
+            self.start = currentTime
+            self.previousTime = currentTime
+            self.whiteTimer = 180.0
+            self.blackTimer = 180.0
+            return
+        }
+        
+        let interval = currentTime - start
+        clockLabel.stringValue = generateTimerString(interval)
+        
+        updateTimers(currentTime)
+    }
+    
+    func needToShowAnalysis() -> Bool {
+        return showAnalysis.state == .on
     }
 }
