@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		9044CABD24EC8D56007D90E8 /* Play.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044CABC24EC8D56007D90E8 /* Play.swift */; };
+		904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904F6F30250052FB00B9345F /* GameAnalyzer.swift */; };
 		90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90574A8424EB3E2F005230AF /* GameDelegate.swift */; };
+		9083F59424F5BDEC00CB26F7 /* gtp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9083F59324F5BDEC00CB26F7 /* gtp.c */; };
 		90989F2C24E89DE70088555C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90989F2B24E89DE70088555C /* Game.swift */; };
+		909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909AD60D2501A67900C15E45 /* KataGoRequest.swift */; };
 		90C88A0A24DA241000B4E382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0924DA241000B4E382 /* AppDelegate.swift */; };
 		90C88A1024DA241000B4E382 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0F24DA241000B4E382 /* GameScene.swift */; };
 		90C88A1224DA241000B4E382 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A1124DA241000B4E382 /* ViewController.swift */; };
@@ -22,6 +25,7 @@
 		90C88A4124DA259900B4E382 /* Stone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4024DA259900B4E382 /* Stone.swift */; };
 		90C88A4324DA25F100B4E382 /* Intersection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4224DA25F100B4E382 /* Intersection.swift */; };
 		90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4424DA2F3700B4E382 /* GameClock.swift */; };
+		90CA915424F483AF0057468D /* GTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CA915324F483AF0057468D /* GTP.swift */; };
 		90F6EF8824EA07BA00BBCE17 /* GoBoard.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -44,8 +48,13 @@
 
 /* Begin PBXFileReference section */
 		9044CABC24EC8D56007D90E8 /* Play.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Play.swift; sourceTree = "<group>"; };
+		904F6F30250052FB00B9345F /* GameAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAnalyzer.swift; sourceTree = "<group>"; };
 		90574A8424EB3E2F005230AF /* GameDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDelegate.swift; sourceTree = "<group>"; };
+		9083F59124F5BDEC00CB26F7 /* Go-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Go-Bridging-Header.h"; sourceTree = "<group>"; };
+		9083F59224F5BDEC00CB26F7 /* gtp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtp.h; sourceTree = "<group>"; };
+		9083F59324F5BDEC00CB26F7 /* gtp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtp.c; sourceTree = "<group>"; };
 		90989F2B24E89DE70088555C /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		909AD60D2501A67900C15E45 /* KataGoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoRequest.swift; sourceTree = "<group>"; };
 		90C88A0624DA241000B4E382 /* Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90C88A0924DA241000B4E382 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		90C88A0F24DA241000B4E382 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -65,6 +74,7 @@
 		90C88A4024DA259900B4E382 /* Stone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stone.swift; sourceTree = "<group>"; };
 		90C88A4224DA25F100B4E382 /* Intersection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intersection.swift; sourceTree = "<group>"; };
 		90C88A4424DA2F3700B4E382 /* GameClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameClock.swift; sourceTree = "<group>"; };
+		90CA915324F483AF0057468D /* GTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTP.swift; sourceTree = "<group>"; };
 		90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GoBoard.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -93,6 +103,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9083F59024F5BDC700CB26F7 /* GTP */ = {
+			isa = PBXGroup;
+			children = (
+				9083F59224F5BDEC00CB26F7 /* gtp.h */,
+				9083F59324F5BDEC00CB26F7 /* gtp.c */,
+				9083F59124F5BDEC00CB26F7 /* Go-Bridging-Header.h */,
+			);
+			path = GTP;
+			sourceTree = "<group>";
+		};
 		90C889FD24DA241000B4E382 = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +136,7 @@
 		90C88A0824DA241000B4E382 /* Go */ = {
 			isa = PBXGroup;
 			children = (
+				9083F59024F5BDC700CB26F7 /* GTP */,
 				90C88A3D24DA249200B4E382 /* Model */,
 				90C88A0924DA241000B4E382 /* AppDelegate.swift */,
 				90C88A0F24DA241000B4E382 /* GameScene.swift */,
@@ -158,6 +179,9 @@
 				90C88A4424DA2F3700B4E382 /* GameClock.swift */,
 				90989F2B24E89DE70088555C /* Game.swift */,
 				9044CABC24EC8D56007D90E8 /* Play.swift */,
+				90CA915324F483AF0057468D /* GTP.swift */,
+				904F6F30250052FB00B9345F /* GameAnalyzer.swift */,
+				909AD60D2501A67900C15E45 /* KataGoRequest.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -230,6 +254,7 @@
 				TargetAttributes = {
 					90C88A0524DA241000B4E382 = {
 						CreatedOnToolsVersion = 11.6;
+						LastSwiftMigration = 1160;
 					};
 					90C88A1D24DA241200B4E382 = {
 						CreatedOnToolsVersion = 11.6;
@@ -295,15 +320,19 @@
 			files = (
 				90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */,
 				90989F2C24E89DE70088555C /* Game.swift in Sources */,
+				9083F59424F5BDEC00CB26F7 /* gtp.c in Sources */,
 				90C88A1224DA241000B4E382 /* ViewController.swift in Sources */,
 				90C88A1024DA241000B4E382 /* GameScene.swift in Sources */,
 				9044CABD24EC8D56007D90E8 /* Play.swift in Sources */,
+				909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */,
 				90C88A3C24DA248500B4E382 /* GoBoard.swift in Sources */,
+				904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */,
 				90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */,
 				90C88A4124DA259900B4E382 /* Stone.swift in Sources */,
 				90C88A3F24DA252500B4E382 /* Player.swift in Sources */,
 				90C88A4324DA25F100B4E382 /* Intersection.swift in Sources */,
 				90C88A0A24DA241000B4E382 /* AppDelegate.swift in Sources */,
+				90CA915424F483AF0057468D /* GTP.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,6 +496,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Go/Go.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -479,6 +509,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.Go;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Go/GTP/Go-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -487,6 +519,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Go/Go.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -499,6 +532,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.resonance.Go;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Go/GTP/Go-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
