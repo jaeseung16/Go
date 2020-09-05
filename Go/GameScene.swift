@@ -18,6 +18,8 @@ class GameScene: SKScene {
     var scale: CGFloat
     
     var goBoard: SKSpriteNode?
+    var gameBoard: SKSpriteNode?
+    var analyzerBoard: SKSpriteNode?
     var blackStone: SKShapeNode?
     var whiteStone: SKShapeNode?
     var positionNode: SKShapeNode?
@@ -81,6 +83,28 @@ class GameScene: SKScene {
             self.addChild(node)
         }
         */
+        
+        self.goBoard = SKSpriteNode(color: .clear, size: CGSize(width: scale * 420, height: scale * 450))
+        self.goBoard!.zPosition = -30
+        self.addChild(self.goBoard!)
+        
+        self.gameBoard = SKSpriteNode(color: .clear, size: CGSize(width: scale * 420, height: scale * 450))
+        self.gameBoard!.zPosition = -20
+        self.addChild(self.gameBoard!)
+        
+        self.analyzerBoard = SKSpriteNode(color: .clear, size: CGSize(width: scale * 420, height: scale * 450))
+        self.analyzerBoard!.zPosition = -10
+        self.addChild(self.analyzerBoard!)
+        
+        /*
+        if let node = self.goBoard?.copy() as! SKSpriteNode? {
+            //node.fillColor = SKColor.yellow
+            //node.fillTexture = goBoardTexture
+            node.zPosition = -10
+            self.addChild(node)
+            print("\(node)")
+        }
+        */
  
         for row in 0..<19 {
             for column in 0..<19 {
@@ -92,7 +116,7 @@ class GameScene: SKScene {
                 let yPos = Float(row) * Float(scale) * 450 / 19 - Float(scale) * 225
                 
                 intersection.position = CGPoint(x: CGFloat(xPos), y: CGFloat(yPos))
-                intersection.zPosition = -5
+                intersection.zPosition = -25
                 intersection.lineWidth = 0
                 intersection.strokeColor = .orange
                 
@@ -127,7 +151,7 @@ class GameScene: SKScene {
                 }
                 intersection.fillColor = .white
                 
-                self.addChild(intersection)
+                goBoard!.addChild(intersection)
                 
                 intersection.isHidden = false
                 
@@ -146,8 +170,8 @@ class GameScene: SKScene {
         let intersectionHeight: Float = Float(scale) * 450 / 19
         
         return CGPoint(
-            x: CGFloat(Float(row) * intersectionWitdh - Float(scale) * 210 + 0.5 * intersectionWitdh),
-            y: CGFloat(Float(column) * intersectionHeight - Float(scale) * 225 + 0.5 * intersectionHeight))
+            x: CGFloat(Float(column) * intersectionWitdh - Float(scale) * 210 + 0.5 * intersectionWitdh),
+            y: CGFloat(Float(19 - row) * intersectionHeight - Float(scale) * 225 + 0.5 * intersectionHeight))
     }
     
     private func convertPoint(_ point: CGPoint) -> (success: Bool, column: Int, row: Int) {
@@ -159,13 +183,13 @@ class GameScene: SKScene {
         let intersectionHeight: Float = Float(scale) * 450 / 19
         
         if point.x >= -1.0 * scale * 210 && point.x < scale * 210 {
-            row = Int((Float(point.x) + Float(scale) * 210.0) / intersectionWitdh)
+            column = Int((Float(point.x) + Float(scale) * 210.0) / intersectionWitdh)
         } else {
             success = false
         }
         
         if point.y >= -1.0 * scale * 225 && point.y < scale * 225 {
-            column = Int((Float(point.y) + Float(scale) * 225.0) / intersectionHeight)
+            row = 19 - Int((Float(point.y) + Float(scale) * 225.0) / intersectionHeight)
         } else {
             success = false
         }
@@ -188,7 +212,7 @@ class GameScene: SKScene {
         let node = SKShapeNode(rectOf: CGSize(width: 10, height: 10))
         node.position = pointFor(column: column, row: row)
         node.fillColor = count % 2 == 0 ? .black : .white
-        self.addChild(node)
+        self.gameBoard!.addChild(node)
         
         positionNode = node
         
@@ -261,7 +285,7 @@ class GameScene: SKScene {
                 sequence.position = CGPoint(x: 0.0, y: 0.0)
                 
                 node.addChild(sequence)
-                self.addChild(node)
+                self.gameBoard!.addChild(node)
             }
         } else {
             if let node = self.blackStone?.copy() as! SKShapeNode? {
@@ -275,7 +299,7 @@ class GameScene: SKScene {
                 sequence.position = CGPoint(x: 0.0, y: 0.0)
                 
                 node.addChild(sequence)
-                self.addChild(node)
+                self.gameBoard!.addChild(node)
             }
         }
         
@@ -306,7 +330,7 @@ class GameScene: SKScene {
     }
     
     func hide(number: Int) -> Bool {
-        if let node = childNode(withName: "\(number)") {
+        if let node = gameBoard?.childNode(withName: "\(number)") {
             node.isHidden = true
             return true
         }
@@ -314,7 +338,7 @@ class GameScene: SKScene {
     }
     
     func show(number: Int) -> Bool {
-        if let node = childNode(withName: "\(number)") {
+        if let node = gameBoard?.childNode(withName: "\(number)") {
             node.isHidden = false
             return true
         }
@@ -322,7 +346,7 @@ class GameScene: SKScene {
     }
     
     func showSequence() -> Void {
-        guard let children = scene?.children else {
+        guard let children = gameBoard?.children else {
             print("The scene has no children: scene = \(String(describing: scene))")
             return
         }
@@ -338,7 +362,49 @@ class GameScene: SKScene {
         
     }
     
+    func showAnalysis() -> Void {
+        analyzerBoard?.removeAllChildren()
+        
+        for row in 0..<19 {
+            for column in 0..<19 {
+                guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
+                    print("Illegal play!")
+                    continue
+                }
+            
+                let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
+                
+                let analysis = SKLabelNode(fontNamed: font.fontName)
+                analysis.position = pointFor(column: column, row: row)
+                analysis.name = "analysis"
+                analysis.text = "\(count)"
+                analysis.fontSize = font.pointSize
+                analysis.fontColor = count % 2 == 0 ? .black : .white
+                analysis.verticalAlignmentMode = .center
+                
+                
+                analyzerBoard?.addChild(analysis)
+                
+                analysis.isHidden = false
+                
+                print("row = \(row), column = \(column): \(analysis)")
+            }
+        }
+    }
+    
+    func hideAnalysis() -> Void {
+        analyzerBoard?.removeAllChildren()
+    }
+    
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
+        gameDelegate?.updateClock(currentTime)
+        
+        if let delegate = gameDelegate, delegate.needToShowAnalysis() {
+            showAnalysis()
+        } else {
+            hideAnalysis()
+        }
+
     }
 }
