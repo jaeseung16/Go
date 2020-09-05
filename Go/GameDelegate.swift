@@ -12,4 +12,8 @@ protocol GameDelegate {
     func play(stone: Stone, column: Int, row: Int) -> Void
     
     func isPlayable(stone: Stone, column: Int, row: Int) -> Bool
+    
+    func updateClock(_ currentTime: TimeInterval) -> Void
+    
+    func needToShowAnalysis() -> Bool
 }
