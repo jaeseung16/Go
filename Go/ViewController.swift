@@ -33,6 +33,28 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var showAnalysis: NSButton!
     
+    
+    @IBAction func activateAnalyzer(_ sender: NSButton) {
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = true
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+        openPanel.canCreateDirectories = false
+        openPanel.title = "Select an engine"
+
+        openPanel.beginSheetModal(for:view.window!) { (response) in
+            if response == NSApplication.ModalResponse.OK {
+                print("openPanel.url! = \(openPanel.url!)")
+                _ = openPanel.url!.path
+                // do whatever you what with the file path
+                self.gameAnalyzer = GameAnalyzer(with: openPanel.url!)
+                self.gameAnalyzer?.startEngine()
+            }
+            openPanel.close()
+        }
+        
+    }
+    
     let dateFormatter = DateFormatter()
     
     override func viewDidLoad() {
@@ -64,7 +86,6 @@ class ViewController: NSViewController {
         print("*****")
         */
         
-        gameAnalyzer = GameAnalyzer()
     }
     
     @IBAction func playBackward(_ sender: NSButton) {
@@ -132,7 +153,7 @@ extension ViewController: GameDelegate {
         playNumber += 1
 
         print("prohibitedPlays = \(prohibitedPlays)")
-        
+        print("plays = \(plays)")
         togglePlayer()
         gameAnalyzer?.analyze(plays: plays)
     }
