@@ -11,12 +11,28 @@ import Foundation
 class GameAnalyzer {
     var plays: [Play]?
     var request: KataGoRequest?
+    var kataGo: KataGo?
+    
+    init(with url: URL) {
+        kataGo = KataGo(with: url)
+        kataGo!.delegate = self
+    }
+    
+    func startEngine() {
+        kataGo?.startEngine()
+    }
     
     func analyze(plays: [Play]) -> Void {
+        guard let ready = kataGo?.ready, ready else {
+            return
+        }
+        
         let moves = plays.map {$0.toKataGoMove()!}
         
         let komi = Float(6.5)
         let rules = "korean"
+        
+        let setting: [String: String] = ["reportAnalysisWinratesAs": "BLACK"]
         
         let request = KataGoRequest(id: "Query\(moves.count)",
                                     moves: moves,
@@ -28,7 +44,7 @@ class GameAnalyzer {
                                     boardXSize: 19,
                                     boardYSize: 19,
                                     analyzeTurns: nil,
-                                    maxVisits: 1,
+                                    maxVisits: 100,
                                     rootPolicyTemperature: nil,
                                     rootFpuReductionMax: nil,
                                     includeOwnership: nil,
@@ -36,7 +52,7 @@ class GameAnalyzer {
                                     includePVVisits: nil,
                                     avoidMoves: nil,
                                     allowMoves: nil,
-                                    overrideSetting: nil,
+                                    overrideSettings: setting,
                                     priority: nil)
         
         print("\(request)")
@@ -44,7 +60,10 @@ class GameAnalyzer {
         let encoder = JSONEncoder()
         let data = try? encoder.encode(request)
         
-        print(String(data: data!, encoding: .utf8)!)
+        print("json: " + String(data: data!, encoding: .utf8)!)
+        
+        let query = String(data: data!, encoding: .utf8)! + "\n"
+        kataGo?.process(query: query)
     }
     
     func isAnalysisAvailable() -> Bool {
@@ -53,5 +72,11 @@ class GameAnalyzer {
     
     func getResult() -> Void {
         
+    }
+}
+
+extension GameAnalyzer: EngineDelegate {
+    func read(result: String) {
+        print("received: \(result)")
     }
 }
