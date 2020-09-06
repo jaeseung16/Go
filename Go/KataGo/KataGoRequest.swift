@@ -27,7 +27,7 @@ struct KataGoRequest: Codable {
     var includePVVisits: Bool?
     var avoidMoves: [AvoidMove]?
     var allowMoves: [AllowMove]?
-    var overrideSetting: [Setting]?
+    var overrideSettings: [String: String]?
     var priority: Int?
 }
 
@@ -62,5 +62,12 @@ struct AllowMove: Codable {
 }
 
 struct Setting: Codable {
-    var setting: [String: String]
+    var key: String
+    var value: String
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(key)
+        try container.encode(value)
+    }
 }
