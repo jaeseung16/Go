@@ -262,7 +262,7 @@ class GameScene: SKScene {
             return
         }
         
-        gameDelegate?.play(stone: count % 2 == 0 ? .White : .Black, column: column, row: row)
+        gameDelegate?.play(stone: count % 2 == 0 ? .Black : .White, column: column, row: row)
 
         let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
         
