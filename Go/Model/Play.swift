@@ -30,12 +30,12 @@ struct Play: Hashable {
             return nil
         }
         
-        let location = "\(column)\(row + 1)"
+        let location = "\(column)\(row)"
         return Move(player: player, location: location)
     }
 }
 
 enum Column: Int {
-    case A = 1, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S
+    case A = 1, B, C, D, E, F, G, H, J, K, L, M, N, O, P, Q, R, S
 }
 
