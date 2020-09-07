@@ -13,6 +13,7 @@ class GameAnalyzer {
     var request: KataGoRequest?
     var kataGo: KataGo?
     var responses = [KataGoResponse]()
+    var count = 0
     
     private let responseQueue = DispatchQueue(label: "com.resonance.Go.GameAnalyzer.responseQueue", attributes: .concurrent)
     
@@ -60,15 +61,20 @@ class GameAnalyzer {
                                     overrideSettings: setting,
                                     priority: nil)
         
-        print("\(request)")
+        //print("\(request)")
         
         let encoder = JSONEncoder()
         let data = try? encoder.encode(request)
         
-        //print("json: " + String(data: data!, encoding: .utf8)!)
+        print("json: " + String(data: data!, encoding: .utf8)!)
         
         let query = String(data: data!, encoding: .utf8)! + "\n"
-        kataGo?.process(query: query)
+        
+        responseQueue.async(flags: .barrier) {
+            self.kataGo?.process(query: query)
+            self.count += 1
+        }
+
     }
     
     func isAnalysisAvailable() -> Bool {
@@ -79,10 +85,9 @@ class GameAnalyzer {
         var gameAnalysis: GameAnalysis?
         var response: KataGoResponse?
         responseQueue.sync {
-            if (self.responses.count > 0) {
+            if (self.responses.count > 0 && self.responses.count == count) {
                 response = self.responses.last!
             }
-            
         }
         
         if (response != nil) {
@@ -102,9 +107,9 @@ class GameAnalyzer {
                     
                     gameAnalysis = GameAnalysis(playMade: playMade, bestNextPlay: nextPlay, winrate: response!.rootInfo.winrate, scoreLead: response!.rootInfo.scoreLead)
                     
-                    print("move = \(move)")
-                    print("column = \(column)")
-                    print("row = \(row)")
+                    //print("move = \(move)")
+                    //print("column = \(column)")
+                    //print("row = \(row)")
                 }
             }
         }
