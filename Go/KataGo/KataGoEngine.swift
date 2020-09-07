@@ -142,6 +142,7 @@ class KataGo {
     func stopEngine() {
         //print("\(receivedString)")
         print("Terminating KataGo")
+        delegate = nil
         outputPipe.fileHandleForReading.readabilityHandler = nil
         task.terminate()
     }
