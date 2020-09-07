@@ -16,4 +16,6 @@ protocol GameDelegate {
     func updateClock(_ currentTime: TimeInterval) -> Void
     
     func needToShowAnalysis() -> Bool
+    
+    func getAnalysis() -> GameAnalysis?
 }
