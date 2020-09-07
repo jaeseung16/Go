@@ -12,6 +12,9 @@ class GameAnalyzer {
     var plays: [Play]?
     var request: KataGoRequest?
     var kataGo: KataGo?
+    var responses = [KataGoResponse]()
+    
+    private let responseQueue = DispatchQueue(label: "com.resonance.Go.GameAnalyzer.responseQueue", attributes: .concurrent)
     
     init(with url: URL) {
         kataGo = KataGo(with: url)
@@ -77,6 +80,19 @@ class GameAnalyzer {
 
 extension GameAnalyzer: EngineDelegate {
     func read(result: String) {
-        print("received: \(result)")
+        //print("received: \(result)")
+        responseQueue.async(flags: .barrier) { [weak self] in
+            guard let self = self else {
+                return
+            }
+            
+            let decoder = JSONDecoder()
+            if let response = try? decoder.decode(KataGoResponse.self, from: result.data(using: .utf8)!) {
+                self.responses.append(response)
+                print("responses.count = \(self.responses.count)")
+            } else {
+                print("Result cannot be parsed: \(result)")
+            }
+        }
     }
 }
