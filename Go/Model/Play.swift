@@ -27,6 +27,7 @@ struct Play: Hashable {
         let player = stone == .Black ? "B" : "W"
         
         guard let column = Column(rawValue: column + 1) else {
+            print("column = \(self.column)")
             return nil
         }
         
@@ -36,6 +37,6 @@ struct Play: Hashable {
 }
 
 enum Column: Int {
-    case A = 1, B, C, D, E, F, G, H, J, K, L, M, N, O, P, Q, R, S
+    case A = 1, B, C, D, E, F, G, H, J, K, L, M, N, O, P, Q, R, S, T
 }
 
