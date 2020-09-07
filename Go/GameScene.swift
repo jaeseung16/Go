@@ -305,6 +305,8 @@ class GameScene: SKScene {
         }
         
         count += 1
+        
+        analyzerBoard?.removeAllChildren()
     }
     
     override func mouseDown(with event: NSEvent) {
@@ -371,6 +373,7 @@ class GameScene: SKScene {
         print("gameAnalysis = \(gameAnalysis)")
         
         let winrate = gameAnalysis.winrate
+        let scoreLead = gameAnalysis.scoreLead
         let columnAnalysis = gameAnalysis.bestNextPlay.column
         let rowAnalysis = gameAnalysis.bestNextPlay.row
         let nextStone = gameAnalysis.bestNextPlay.stone
@@ -400,20 +403,29 @@ class GameScene: SKScene {
                     node.name = "\(count)"
                     node.position = pointFor(column: column, row: row)
                     node.lineWidth = 0
-                    node.fillColor = .blue
-                    node.alpha = 0.7
+                    node.fillColor = .systemBlue
                     
-                    let font = NSFont.systemFont(ofSize: 14)
+                    let font = NSFont.systemFont(ofSize: 12)
                     
-                    let analysis = SKLabelNode(fontNamed: font.fontName)
-                    //analysis.position = pointFor(column: column, row: row)
-                    analysis.name = "analysis"
-                    analysis.text = String(format: "%0.3f", winrate)
-                    analysis.fontSize = font.pointSize
-                    analysis.fontColor = nextStone == .Black ? .black : .white
-                    analysis.verticalAlignmentMode = .center
+                    let winrateNode = SKLabelNode(fontNamed: font.fontName)
+                    winrateNode.position = CGPoint(x: 0.0, y: 8.0)
+                    winrateNode.name = "winrate"
+                    winrateNode.text = String(format: "%0.3f", winrate)
+                    winrateNode.fontSize = font.pointSize
+                    winrateNode.fontColor = .black
+                    winrateNode.verticalAlignmentMode = .center
                     
-                    node.addChild(analysis)
+                    node.addChild(winrateNode)
+                    
+                    let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
+                    scoreLeadNode.position = CGPoint(x: 0.0, y: -8.0)
+                    scoreLeadNode.name = "scoreLead"
+                    scoreLeadNode.text = String(format: "%0.1f", scoreLead)
+                    scoreLeadNode.fontSize = font.pointSize
+                    scoreLeadNode.fontColor = .black
+                    scoreLeadNode.verticalAlignmentMode = .center
+                    
+                    node.addChild(scoreLeadNode)
                     
                     analyzerBoard?.addChild(node)
                     
