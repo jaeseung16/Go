@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9014F2102506615500317AC4 /* GameAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014F20F2506615500317AC4 /* GameAnalysis.swift */; };
 		904074E72504514B006307AB /* KataGoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904074E62504514B006307AB /* KataGoEngine.swift */; };
 		9044CABD24EC8D56007D90E8 /* Play.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044CABC24EC8D56007D90E8 /* Play.swift */; };
 		904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904F6F30250052FB00B9345F /* GameAnalyzer.swift */; };
@@ -15,6 +16,7 @@
 		90989F2C24E89DE70088555C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90989F2B24E89DE70088555C /* Game.swift */; };
 		909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909AD60D2501A67900C15E45 /* KataGoRequest.swift */; };
 		90C7D5092505685E00E05F47 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C7D5082505685E00E05F47 /* Engine.swift */; };
+		90C7D50B250588D500E05F47 /* KataGoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C7D50A250588D500E05F47 /* KataGoResponse.swift */; };
 		90C88A0A24DA241000B4E382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0924DA241000B4E382 /* AppDelegate.swift */; };
 		90C88A1024DA241000B4E382 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0F24DA241000B4E382 /* GameScene.swift */; };
 		90C88A1224DA241000B4E382 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A1124DA241000B4E382 /* ViewController.swift */; };
@@ -49,6 +51,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9014F20F2506615500317AC4 /* GameAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAnalysis.swift; sourceTree = "<group>"; };
 		904074E62504514B006307AB /* KataGoEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoEngine.swift; sourceTree = "<group>"; };
 		9044CABC24EC8D56007D90E8 /* Play.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Play.swift; sourceTree = "<group>"; };
 		904F6F30250052FB00B9345F /* GameAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAnalyzer.swift; sourceTree = "<group>"; };
@@ -59,6 +62,7 @@
 		90989F2B24E89DE70088555C /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		909AD60D2501A67900C15E45 /* KataGoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoRequest.swift; sourceTree = "<group>"; };
 		90C7D5082505685E00E05F47 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
+		90C7D50A250588D500E05F47 /* KataGoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoResponse.swift; sourceTree = "<group>"; };
 		90C88A0624DA241000B4E382 /* Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		90C88A0924DA241000B4E382 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		90C88A0F24DA241000B4E382 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
@@ -112,6 +116,7 @@
 			children = (
 				904074E62504514B006307AB /* KataGoEngine.swift */,
 				909AD60D2501A67900C15E45 /* KataGoRequest.swift */,
+				90C7D50A250588D500E05F47 /* KataGoResponse.swift */,
 			);
 			path = KataGo;
 			sourceTree = "<group>";
@@ -196,6 +201,7 @@
 				90CA915324F483AF0057468D /* GTP.swift */,
 				904F6F30250052FB00B9345F /* GameAnalyzer.swift */,
 				90C7D5082505685E00E05F47 /* Engine.swift */,
+				9014F20F2506615500317AC4 /* GameAnalysis.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -332,9 +338,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9014F2102506615500317AC4 /* GameAnalysis.swift in Sources */,
 				90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */,
 				90989F2C24E89DE70088555C /* Game.swift in Sources */,
 				9083F59424F5BDEC00CB26F7 /* gtp.c in Sources */,
+				90C7D50B250588D500E05F47 /* KataGoResponse.swift in Sources */,
 				90C88A1224DA241000B4E382 /* ViewController.swift in Sources */,
 				90C88A1024DA241000B4E382 /* GameScene.swift in Sources */,
 				9044CABD24EC8D56007D90E8 /* Play.swift in Sources */,
