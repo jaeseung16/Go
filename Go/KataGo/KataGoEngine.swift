@@ -102,11 +102,11 @@ class KataGo {
                 let received = String(data: data, encoding: String.Encoding.utf8)!
                 self.receivedString += received
                 print("\(Date()) \(data.count)")
-                //print("\(received)")
+                print("\(received)")
                 
                 if (received.contains {$0.isNewline}) {
-                    print("Found a new line")
-                    self.delegate?.read(result: received)
+                    //print("Found a new line")
+                    self.delegate?.read(result: self.receivedString)
                     self.receivedString = ""
                 } else {
                     print("Not the end")
@@ -120,9 +120,11 @@ class KataGo {
     }
     
     func process(query: String) {
-        DispatchQueue.global(qos: .background).async {
-            self.inputPipe.fileHandleForWriting.write(query.data(using: .utf8)!)
-        }
+        //DispatchQueue.global(qos: .userInitiated).async {
+        //self.receivedString = ""
+        self.inputPipe.fileHandleForWriting.write(query.data(using: .utf8)!)
+        print("KataGo: query requested")
+        //}
         
         /*
         while (true) {
