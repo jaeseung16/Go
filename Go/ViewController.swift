@@ -181,4 +181,8 @@ extension ViewController: GameDelegate {
     func needToShowAnalysis() -> Bool {
         return showAnalysis.state == .on
     }
+    
+    func getAnalysis() -> GameAnalysis? {
+        return gameAnalyzer?.getResult()
+    }
 }
