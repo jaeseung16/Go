@@ -23,6 +23,7 @@ class GameScene: SKScene {
     var blackStone: SKShapeNode?
     var whiteStone: SKShapeNode?
     var positionNode: SKShapeNode?
+    var blueSpot: SKShapeNode?
     
     let goBoardTexture = SKTexture(imageNamed: "GoBoard")
     let blackStoneTexture = SKTexture(imageNamed: "BlackStone")
@@ -162,7 +163,7 @@ class GameScene: SKScene {
         
         self.whiteStone = SKShapeNode.init(circleOfRadius: scale * 0.5 * 21.810)
         self.blackStone = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
-        
+        self.blueSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
     }
     
     private func pointFor(column: Int, row: Int) -> CGPoint {
@@ -205,7 +206,7 @@ class GameScene: SKScene {
         (success, column, row) = convertPoint(pos)
         
         guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
-            print("Illegal play!")
+            print("touchDown: Illegal play!")
             return
         }
         
@@ -231,7 +232,7 @@ class GameScene: SKScene {
         (success, column, row) = convertPoint(pos)
         
         guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
-            print("Illegal play!")
+            print("touchMoved: Illegal play!")
             return
         }
         
@@ -258,7 +259,7 @@ class GameScene: SKScene {
         print("\(String(describing: positionNode))")
         
         guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
-            print("Illegal play!")
+            print("touchUp: Illegal play!")
             return
         }
         
@@ -363,31 +364,62 @@ class GameScene: SKScene {
     }
     
     func showAnalysis() -> Void {
+        guard let gameAnalysis = gameDelegate?.getAnalysis() else {
+            return
+        }
+        
+        print("gameAnalysis = \(gameAnalysis)")
+        
+        let winrate = gameAnalysis.winrate
+        let columnAnalysis = gameAnalysis.bestNextPlay.column
+        let rowAnalysis = gameAnalysis.bestNextPlay.row
+        let nextStone = gameAnalysis.bestNextPlay.stone
+        
         analyzerBoard?.removeAllChildren()
         
         for row in 0..<19 {
+            guard (row == rowAnalysis) else {
+                continue
+            }
             for column in 0..<19 {
-                guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
-                    print("Illegal play!")
+                guard (column == columnAnalysis) else {
                     continue
                 }
-            
-                let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
                 
-                let analysis = SKLabelNode(fontNamed: font.fontName)
-                analysis.position = pointFor(column: column, row: row)
-                analysis.name = "analysis"
-                analysis.text = "\(count)"
-                analysis.fontSize = font.pointSize
-                analysis.fontColor = count % 2 == 0 ? .black : .white
-                analysis.verticalAlignmentMode = .center
+                guard let isPlayable = gameDelegate?.isPlayable(stone: nextStone, column: column, row: row), isPlayable else {
+                    print("showAnalysis: Illegal play!")
+                    print("columnAnalysis = \(columnAnalysis)")
+                    print("column = \(column)")
+                    print("rowAnalysis = \(rowAnalysis)")
+                    print("row = \(row)")
+                    print("nextStone = \(nextStone)")
+                    continue
+                }
                 
+                if let node = self.blueSpot?.copy() as! SKShapeNode? {
+                    node.name = "\(count)"
+                    node.position = pointFor(column: column, row: row)
+                    node.lineWidth = 0
+                    node.fillColor = .blue
+                    node.alpha = 0.7
+                    
+                    let font = NSFont.systemFont(ofSize: 14)
+                    
+                    let analysis = SKLabelNode(fontNamed: font.fontName)
+                    //analysis.position = pointFor(column: column, row: row)
+                    analysis.name = "analysis"
+                    analysis.text = String(format: "%0.3f", winrate)
+                    analysis.fontSize = font.pointSize
+                    analysis.fontColor = nextStone == .Black ? .black : .white
+                    analysis.verticalAlignmentMode = .center
+                    
+                    node.addChild(analysis)
+                    
+                    analyzerBoard?.addChild(node)
+                    
+                }
                 
-                analyzerBoard?.addChild(analysis)
-                
-                analysis.isHidden = false
-                
-                print("row = \(row), column = \(column): \(analysis)")
+                //print("row = \(row), column = \(column): \(analysis)")
             }
         }
     }
