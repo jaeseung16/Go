@@ -5,6 +5,7 @@ Started this project to learn making a game with Swift.
 ### References
 
 1. Go
+  * [바둑판이야기① 바둑판에도 과학이 숨어 있다! (English translation: The story of the board ① Science is also hidden in the board!)](http://m.cyberoro.com/news/news_view.oro?num=522021&sort=B)
   * [KataGo](https://github.com/lightvector/KataGo)
   * [KaTrain](https://github.com/sanderland/katrain)
   * [Lizzie - Leela Zero](https://github.com/featurecat/lizzie)
@@ -19,6 +20,7 @@ Started this project to learn making a game with Swift.
   * [How to Make a Game Like Candy Crush with SpriteKit and Swift: Part 2](https://www.raywenderlich.com/54-how-to-make-a-game-like-candy-crush-with-spritekit-and-swift-part-2)
   * [How to Make a Game Like Candy Crush with SpriteKit and Swift: Part 3](https://www.raywenderlich.com/58-how-to-make-a-game-like-candy-crush-with-spritekit-and-swift-part-3)
   * [GameplayKit Programming Guide](https://developer.apple.com/library/archive/documentation/General/Conceptual/GameplayKit_Guide/index.html#//apple_ref/doc/uid/TP40015172)
+  * [How to call C code from Swift](https://theswiftdev.com/how-to-call-c-code-from-swift/)
   
 ### To Do
 
