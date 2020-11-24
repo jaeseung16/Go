@@ -15,6 +15,8 @@
 		9083F59424F5BDEC00CB26F7 /* gtp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9083F59324F5BDEC00CB26F7 /* gtp.c */; };
 		90989F2C24E89DE70088555C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90989F2B24E89DE70088555C /* Game.swift */; };
 		909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909AD60D2501A67900C15E45 /* KataGoRequest.swift */; };
+		90A6846C256C7667006E2BC3 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A6846B256C7667006E2BC3 /* Group.swift */; };
+		90A68477256C8376006E2BC3 /* Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A68476256C8376006E2BC3 /* Neighbor.swift */; };
 		90C7D5092505685E00E05F47 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C7D5082505685E00E05F47 /* Engine.swift */; };
 		90C7D50B250588D500E05F47 /* KataGoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C7D50A250588D500E05F47 /* KataGoResponse.swift */; };
 		90C88A0A24DA241000B4E382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0924DA241000B4E382 /* AppDelegate.swift */; };
@@ -61,6 +63,8 @@
 		9083F59324F5BDEC00CB26F7 /* gtp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtp.c; sourceTree = "<group>"; };
 		90989F2B24E89DE70088555C /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		909AD60D2501A67900C15E45 /* KataGoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoRequest.swift; sourceTree = "<group>"; };
+		90A6846B256C7667006E2BC3 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		90A68476256C8376006E2BC3 /* Neighbor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Neighbor.swift; sourceTree = "<group>"; };
 		90C7D5082505685E00E05F47 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
 		90C7D50A250588D500E05F47 /* KataGoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoResponse.swift; sourceTree = "<group>"; };
 		90C88A0624DA241000B4E382 /* Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -202,6 +206,8 @@
 				904F6F30250052FB00B9345F /* GameAnalyzer.swift */,
 				90C7D5082505685E00E05F47 /* Engine.swift */,
 				9014F20F2506615500317AC4 /* GameAnalysis.swift */,
+				90A6846B256C7667006E2BC3 /* Group.swift */,
+				90A68476256C8376006E2BC3 /* Neighbor.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -343,7 +349,9 @@
 				90989F2C24E89DE70088555C /* Game.swift in Sources */,
 				9083F59424F5BDEC00CB26F7 /* gtp.c in Sources */,
 				90C7D50B250588D500E05F47 /* KataGoResponse.swift in Sources */,
+				90A6846C256C7667006E2BC3 /* Group.swift in Sources */,
 				90C88A1224DA241000B4E382 /* ViewController.swift in Sources */,
+				90A68477256C8376006E2BC3 /* Neighbor.swift in Sources */,
 				90C88A1024DA241000B4E382 /* GameScene.swift in Sources */,
 				9044CABD24EC8D56007D90E8 /* Play.swift in Sources */,
 				909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */,

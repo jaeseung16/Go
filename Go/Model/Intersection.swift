@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Intersection {
+struct Intersection: Equatable {
     // Poistion in board
     let row: Int
     let column: Int
