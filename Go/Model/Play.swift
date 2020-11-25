@@ -13,6 +13,7 @@ struct Play: Hashable {
     var row: Int
     var column: Int
     var stone: Stone
+    var groupId: Int?
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(row)

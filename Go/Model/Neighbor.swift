@@ -8,6 +8,6 @@
 
 import Foundation
 
-enum Neighbor {
+enum Neighbor: CaseIterable {
     case up, down, left, right
 }

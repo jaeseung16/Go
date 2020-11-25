@@ -15,7 +15,7 @@ class ViewController: NSViewController {
     var plays = [Play]()
     var prohibitedPlays = Set<Play>()
     var scene: GameScene?
-    var groups = [Group]()
+    var groups = Set<Group>()
     
     let goBoard = GoBoard()
     
@@ -28,6 +28,8 @@ class ViewController: NSViewController {
     
     var isBlackWillPlay = true
     var isWhiteWillPlay = false
+    
+    var ko: Intersection?
     
     @IBOutlet weak var clockLabel: NSTextField!
     
@@ -152,13 +154,74 @@ class ViewController: NSViewController {
         return "\(hours):\(minutes):\(seconds).\(subseconds)"
     }
     
+    func neighbors(of play: Play, with status: Stone?) -> [Intersection] {
+        var neighbors = [Intersection]()
+        
+        for neighbor in Neighbor.allCases {
+            switch neighbor {
+            case .up:
+                if play.row > 0 && status == goBoard.status(row: play.row - 1, column: play.column) {
+                    neighbors.append(Intersection(row: play.row - 1, column: play.column, stone: status, forbidden: false, isEye: false))
+                }
+            case .down:
+                if play.row < goBoard.size - 1 && status == goBoard.status(row: play.row + 1, column: play.column) {
+                    neighbors.append(Intersection(row: play.row + 1, column: play.column, stone: status, forbidden: false, isEye: false))
+                }
+            case .left:
+                if play.column > 0 && status == goBoard.status(row: play.row, column: play.column - 1) {
+                    neighbors.append(Intersection(row: play.row, column: play.column - 1, stone: status, forbidden: false, isEye: false))
+                }
+            case .right:
+                if play.column < goBoard.size - 1  && status == goBoard.status(row: play.row, column: play.column + 1) {
+                    neighbors.append(Intersection(row: play.row, column: play.column + 1, stone: status, forbidden: false, isEye: false))
+                }
+            }
+        }
+        
+        return neighbors
+    }
+    
+    
     func updateGroups() -> Void {
         guard let lastPlay = plays.last else {
             return
         }
         
+        print("lastPlay = \(lastPlay)")
+        
         goBoard.update(row: lastPlay.row, column: lastPlay.column, stone: lastPlay.stone)
         
+        let newLocation = Intersection(row: lastPlay.row, column: lastPlay.column, stone: lastPlay.stone, forbidden: false, isEye: false)
+        let neighborsSameStone = neighbors(of: lastPlay, with: lastPlay.stone)
+        let neighborsOppositeStone = neighbors(of: lastPlay, with: lastPlay.stone == .Black ? .White : .Black)
+        let liberties = neighbors(of: lastPlay, with: nil)
+        
+        print("liberties = \(liberties)")
+        
+        if neighborsSameStone.count == 0 {
+            let location = Intersection(row: lastPlay.row, column: lastPlay.column, stone: lastPlay.stone, forbidden: false, isEye: false)
+            let newGroup = Group(id: lastPlay.id, head: lastPlay, locations: Set<Intersection>(arrayLiteral: location), liberties: Set<Intersection>())
+            groups.insert(newGroup)
+        } else if neighborsSameStone.count > 0 {
+            var newLocations = Set<Intersection>()
+            newLocations.insert(newLocation)
+            
+            var groupsToRemove = Set<Group>()
+            for group in groups {
+                for location in group.locations {
+                    if neighborsSameStone.contains(location) {
+                        newLocations.formUnion(group.locations)
+                        groupsToRemove.insert(group)
+                    }
+                }
+            }
+            
+            let newGroup = Group(id: lastPlay.id, head: lastPlay, locations: newLocations, liberties: Set<Intersection>())
+            groups.insert(newGroup)
+            groupsToRemove.forEach { groups.remove($0) }
+        }
+        
+        /*
         var neighborStatus: [Neighbor: Stone?] = [:]
         
         neighborStatus[.up] = lastPlay.row > 0 ? goBoard.status(row: lastPlay.row - 1, column: lastPlay.column) : nil
@@ -166,7 +229,7 @@ class ViewController: NSViewController {
         neighborStatus[.left] = lastPlay.column > 0 ? goBoard.status(row: lastPlay.row, column: lastPlay.column - 1) : nil
         neighborStatus[.right] = lastPlay.column < goBoard.size - 1 ? goBoard.status(row: lastPlay.row, column: lastPlay.column + 1) : nil
         
-        print("lastPlay = \(lastPlay)")
+        
         
         if neighborStatus.values.contains(lastPlay.stone) {
             print("neighborStatus = \(neighborStatus)")
@@ -198,19 +261,13 @@ class ViewController: NSViewController {
                         newLocations.append(newLocation)
                         
                         group.locations = newLocations
-                        
                         // TODO: Merging groups
                     }
                 }
             }
-            
-        } else {
-            let location = Intersection(row: lastPlay.row, column: lastPlay.column, stone: lastPlay.stone, forbidden: false, isEye: false)
-            let newGroup = Group(id: lastPlay.id, head: lastPlay, locations: [location], liberties: [Intersection]())
-            groups.append(newGroup)
         }
-        
-        print("groups = \(groups)")
+        */
+        //print("groups = \(groups)")
     }
     
 }
@@ -232,8 +289,10 @@ extension ViewController: GameDelegate {
     }
     
     func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
-        let play = Play(id: playNumber, row: row, column: column, stone: stone)
-        return !prohibitedPlays.contains(play)
+        // Need to check ko
+        // let status = goBoard.status(row: row, column: column)
+        // let play = Play(id: playNumber, row: row, column: column, stone: stone)
+        return goBoard.status(row: row, column: column) == nil
     }
     
     func updateClock(_ currentTime: TimeInterval) -> Void {

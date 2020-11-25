@@ -41,6 +41,9 @@ class GameScene: SKScene {
     
     var gameDelegate: GameDelegate?
     
+    var sequenceShown = true
+    var groupsShown = false
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder) is not used in this app")
     }
@@ -213,6 +216,7 @@ class GameScene: SKScene {
         let node = SKShapeNode(rectOf: CGSize(width: 10, height: 10))
         node.position = pointFor(column: column, row: row)
         node.fillColor = count % 2 == 0 ? .black : .white
+        node.name = "positionNode"
         self.gameBoard!.addChild(node)
         
         positionNode = node
@@ -272,6 +276,7 @@ class GameScene: SKScene {
         sequence.text = "\(count)"
         sequence.fontSize = font.pointSize
         sequence.verticalAlignmentMode = .center
+        sequence.isHidden = !sequenceShown
         
        
         if count % 2 == 0 {
@@ -362,9 +367,10 @@ class GameScene: SKScene {
             sequence.isHidden = !sequence.isHidden
         }
         
+        sequenceShown = !sequenceShown
     }
     
-    func showGroups(_ groups: [Group]) -> Void {
+    func showGroups(_ groups: Set<Group>) -> Void {
         print("showGroups")
         analyzerBoard?.removeAllChildren()
         
@@ -386,6 +392,8 @@ class GameScene: SKScene {
                 analyzerBoard?.addChild(node)
             }
         }
+        
+        groupsShown = !groupsShown
     }
     
     func showAnalysis() -> Void {
