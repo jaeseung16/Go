@@ -44,6 +44,8 @@ class GameScene: SKScene {
     var sequenceShown = true
     var groupsShown = false
     
+    let boardSize = 19
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder) is not used in this app")
     }
@@ -110,8 +112,8 @@ class GameScene: SKScene {
         }
         */
  
-        for row in 0..<19 {
-            for column in 0..<19 {
+        for row in 0..<boardSize {
+            for column in 0..<boardSize {
                 let intersection = SKShapeNode(rect: CGRect(x: 0, y: 0, width: CGFloat(Float(scale) * 420 / 19 + 1), height: CGFloat(Float(scale) * 450 / 19) + 1))
                 
                 print("\(intersection.frame.size)")
@@ -175,7 +177,7 @@ class GameScene: SKScene {
         
         return CGPoint(
             x: CGFloat(Float(column) * intersectionWitdh - Float(scale) * 210 + 0.5 * intersectionWitdh),
-            y: CGFloat(Float(19 - row) * intersectionHeight - Float(scale) * 225 + 0.5 * intersectionHeight))
+            y: CGFloat(Float(boardSize - 1 - row) * intersectionHeight - Float(scale) * 225 + 0.5 * intersectionHeight))
     }
     
     private func convertPoint(_ point: CGPoint) -> (success: Bool, column: Int, row: Int) {
@@ -193,7 +195,7 @@ class GameScene: SKScene {
         }
         
         if point.y >= -1.0 * scale * 225 && point.y < scale * 225 {
-            row = 19 - Int((Float(point.y) + Float(scale) * 225.0) / intersectionHeight)
+            row = boardSize - 1 - Int((Float(point.y) + Float(scale) * 225.0) / intersectionHeight)
         } else {
             success = false
         }
@@ -201,8 +203,49 @@ class GameScene: SKScene {
         return (success, column, row)
     }
     
-    func touchDown(atPoint pos : CGPoint) {
+    func createPositionNode(column: Int, row: Int) {
+        let node = SKShapeNode(rectOf: CGSize(width: 10, height: 10))
+        node.position = pointFor(column: column, row: row)
+        node.fillColor = count % 2 == 0 ? .black : .white
+        node.name = "positionNode"
         
+        self.gameBoard!.addChild(node)
+        positionNode = node
+    }
+    
+    func addStone(_ stone: Stone, count: Int, column: Int, row: Int) -> Void {
+        var node: SKShapeNode
+        switch stone {
+        case .Black:
+            node = self.blackStone!.copy() as! SKShapeNode
+            node.fillTexture = blackStoneTexture
+            node.fillColor = SKColor.black
+        case .White:
+            node = self.whiteStone!.copy() as! SKShapeNode
+            node.fillTexture = whiteStoneTexture
+            node.fillColor = SKColor.white
+        }
+        
+        node.name = "\(count)"
+        node.position = pointFor(column: column, row: row)
+        node.lineWidth = 0
+        
+        let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
+        let sequence = SKLabelNode(fontNamed: font.fontName)
+        sequence.name = "sequence"
+        sequence.text = "\(count)"
+        sequence.fontSize = font.pointSize
+        sequence.verticalAlignmentMode = .center
+        sequence.position = CGPoint(x: 0.0, y: 0.0)
+        sequence.isHidden = !sequenceShown
+        sequence.fontColor = stone == .Black ? .white : .black
+        
+        node.addChild(sequence)
+        
+        self.gameBoard!.addChild(node)
+    }
+    
+    func touchDown(atPoint pos : CGPoint) {
         var success: Bool
         var column: Int
         var row: Int
@@ -213,40 +256,39 @@ class GameScene: SKScene {
             return
         }
         
-        let node = SKShapeNode(rectOf: CGSize(width: 10, height: 10))
-        node.position = pointFor(column: column, row: row)
-        node.fillColor = count % 2 == 0 ? .black : .white
-        node.name = "positionNode"
-        self.gameBoard!.addChild(node)
+        if success {
+            createPositionNode(column: column, row: row)
+        }
         
-        positionNode = node
-        
-        print("\(String(describing: positionNode))")
-        
+        print("touchDown: \(String(describing: positionNode))")
     }
     
     func touchMoved(toPoint pos : CGPoint) {
-        guard let node = positionNode else {
-            return
-        }
-        
         var success: Bool
         var column: Int
         var row: Int
         (success, column, row) = convertPoint(pos)
-        
-        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
-            print("touchMoved: Illegal play!")
-            return
+
+        if success {
+            if positionNode == nil {
+                createPositionNode(column: column, row: row)
+            } else {
+                guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
+                    print("touchMoved: Illegal play!")
+                    return
+                }
+                positionNode?.position = pointFor(column: column, row: row)
+            }
+        } else if let node = positionNode {
+            node.removeFromParent()
+            positionNode = nil
         }
         
-        node.position = pointFor(column: column, row: row)
-        
-        print("\(String(describing: positionNode))")
+        print("touchMoved: \(String(describing: positionNode))")
     }
     
     func touchUp(atPoint pos : CGPoint) {
-        print("pos = \(pos)")
+        print("touchUp: pos = \(pos)")
         var success: Bool
         var column: Int
         var row: Int
@@ -258,10 +300,13 @@ class GameScene: SKScene {
         }
         
         node.removeFromParent()
-        //self.removeChildren(in: [node])
         positionNode = nil
         
         print("\(String(describing: positionNode))")
+        
+        guard success else {
+            return
+        }
         
         guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
             print("touchUp: Illegal play!")
@@ -269,45 +314,11 @@ class GameScene: SKScene {
         }
         
         gameDelegate?.play(stone: count % 2 == 0 ? .Black : .White, column: column, row: row)
-
-        let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
-        
-        let sequence = SKLabelNode(fontNamed: font.fontName)
-        sequence.name = "sequence"
-        sequence.text = "\(count)"
-        sequence.fontSize = font.pointSize
-        sequence.verticalAlignmentMode = .center
-        sequence.isHidden = !sequenceShown
-        
        
         if count % 2 == 0 {
-            if let node = self.whiteStone?.copy() as! SKShapeNode? {
-                node.name = "\(count)"
-                node.position = pointFor(column: column, row: row)
-                node.lineWidth = 0
-                node.fillColor = SKColor.black
-                node.fillTexture = blackStoneTexture
-                
-                sequence.fontColor = .white
-                sequence.position = CGPoint(x: 0.0, y: 0.0)
-                
-                node.addChild(sequence)
-                self.gameBoard!.addChild(node)
-            }
+            addStone(.Black, count: count, column: column, row: row)
         } else {
-            if let node = self.blackStone?.copy() as! SKShapeNode? {
-                node.name = "\(count)"
-                node.position = pointFor(column: column, row: row)
-                node.lineWidth = 0
-                node.fillColor = SKColor.white
-                node.fillTexture = whiteStoneTexture
-                
-                sequence.fontColor = .black
-                sequence.position = CGPoint(x: 0.0, y: 0.0)
-                
-                node.addChild(sequence)
-                self.gameBoard!.addChild(node)
-            }
+            addStone(.White, count: count, column: column, row: row)
         }
         
         count += 1

@@ -22,20 +22,20 @@ class GoBoard {
     }
     
     func status(row: Int, column: Int) -> Stone? {
-        let intersection = intersections[row * (size-1) + column]
+        let intersection = intersections[row * size + column]
         return intersection.stone
     }
     
     func update(row: Int, column: Int, stone: Stone?) -> Void {
-        intersections[row * (size-1) + column].stone = stone
+        intersections[row * size + column].stone = stone
     }
     
     func isEye(row: Int, column: Int) -> Bool {
-        let intersection = intersections[row * (size-1) + column]
+        let intersection = intersections[row * size + column]
         return intersection.isEye
     }
     
     func update(row: Int, column: Int, isEye: Bool) -> Void {
-        intersections[row * (size-1) + column].isEye = isEye
+        intersections[row * size + column].isEye = isEye
     }
 }
