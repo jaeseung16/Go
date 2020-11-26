@@ -354,6 +354,18 @@ class GameScene: SKScene {
         return false
     }
     
+    func removeStones(at counts: String) -> Void {
+        for child in gameBoard!.children {
+            guard let name = child.name else {
+                continue
+            }
+            if counts.contains(name) {
+                child.removeAllChildren()
+                child.removeFromParent()
+            }
+        }
+    }
+    
     func showSequence() -> Void {
         guard let children = gameBoard?.children else {
             print("The scene has no children: scene = \(String(describing: scene))")
@@ -378,13 +390,28 @@ class GameScene: SKScene {
         let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
         
         for group in groups {
-            for location in group.locations {
-                let column = location.column
-                let row = location.row
+            for play in group.plays {
+                let column = play.location.column
+                let row = play.location.row
                 
                 let node = SKLabelNode(fontNamed: font.fontName)
                 node.name = "group"
                 node.text = "\(group.id)"
+                node.fontSize = font.pointSize
+                node.fontColor = group.head.stone == .Black ? .white : .black
+                node.verticalAlignmentMode = .center
+                node.position = pointFor(column: column, row: row)
+                
+                analyzerBoard?.addChild(node)
+            }
+            
+            for liberty in group.liberties {
+                let column = liberty.column
+                let row = liberty.row
+                
+                let node = SKLabelNode(fontNamed: font.fontName)
+                node.name = "group"
+                node.text = group.head.stone == .Black ? "▫️" : "▪️"
                 node.fontSize = font.pointSize
                 node.fontColor = group.head.stone == .Black ? .white : .black
                 node.verticalAlignmentMode = .center
@@ -406,8 +433,8 @@ class GameScene: SKScene {
         
         let winrate = gameAnalysis.winrate
         let scoreLead = gameAnalysis.scoreLead
-        let columnAnalysis = gameAnalysis.bestNextPlay.column
-        let rowAnalysis = gameAnalysis.bestNextPlay.row
+        let columnAnalysis = gameAnalysis.bestNextPlay.location.column
+        let rowAnalysis = gameAnalysis.bestNextPlay.location.row
         let nextStone = gameAnalysis.bestNextPlay.stone
         
         analyzerBoard?.removeAllChildren()

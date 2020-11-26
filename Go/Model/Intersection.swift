@@ -9,6 +9,10 @@
 import Foundation
 
 struct Intersection: Hashable {
+    static func == (lhs: Intersection, rhs: Intersection) -> Bool {
+        return (lhs.row == rhs.row) && (lhs.column == rhs.column)
+    }
+ 
     // Poistion in board
     let row: Int
     let column: Int
@@ -22,4 +26,9 @@ struct Intersection: Hashable {
     
     var isEye = true
     
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(row)
+        hasher.combine(column)
+    }
 }

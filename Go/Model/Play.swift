@@ -10,29 +10,35 @@ import Foundation
 
 struct Play: Hashable {
     var id: Int
-    var row: Int
-    var column: Int
+    var location: Intersection
     var stone: Stone
     var groupId: Int?
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(row)
-        hasher.combine(column)
+        hasher.combine(id)
+        hasher.combine(location)
+        hasher.combine(stone)
     }
     
     static func == (lhs: Play, rhs: Play) -> Bool {
-        return lhs.row == rhs.row && lhs.column == rhs.column
+        return lhs.id == rhs.id && lhs.location == rhs.location && lhs.stone == rhs.stone
+    }
+    
+    init(id: Int, row: Int, column: Int, stone: Stone) {
+        self.id = id
+        self.location = Intersection(row: row, column: column)
+        self.stone = stone
     }
     
     func toKataGoMove() -> Move? {
         let player = stone == .Black ? "B" : "W"
         
-        guard let column = Column(rawValue: column + 1) else {
-            print("column = \(self.column)")
+        guard let column = Column(rawValue: location.column + 1) else {
+            print("column = \(self.location.column)")
             return nil
         }
         
-        let location = "\(column)\(row)"
+        let location = "\(column)\(self.location.row)"
         return Move(player: player, location: location)
     }
 }
