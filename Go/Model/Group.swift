@@ -8,33 +8,36 @@
 
 import Foundation
 
-class Group: Hashable, CustomStringConvertible {
+struct Group: Hashable, CustomStringConvertible {
     static func == (lhs: Group, rhs: Group) -> Bool {
-        return (lhs.id == rhs.id) && (lhs.head == rhs.head) && (lhs.plays == rhs.plays) && (lhs.liberties == rhs.liberties)
+        return (lhs.id == rhs.id) && (lhs.stone == rhs.stone) && (lhs.locations == rhs.locations) && (lhs.liberties == rhs.liberties) && (lhs.opponentLocations == rhs.opponentLocations)
     }
     
     var id: Int
-    var head: Play
-    var plays: Set<Play>
+    var stone: Stone
+    var locations: Set<Intersection>
     var liberties: Set<Intersection>
+    var opponentLocations: Set<Intersection>
     
-    init(id: Int, head: Play, plays: Set<Play>, liberties: Set<Intersection>) {
+    init(id: Int, stone: Stone, locations: Set<Intersection>, liberties: Set<Intersection>, oppenentLocations: Set<Intersection>) {
         self.id = id
-        self.head = head
-        self.plays = plays
+        self.stone = stone
+        self.locations = locations
         self.liberties = liberties
+        self.opponentLocations = oppenentLocations
     }
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
-        hasher.combine(head)
-        hasher.combine(plays)
+        hasher.combine(stone)
+        hasher.combine(locations)
         hasher.combine(liberties)
+        hasher.combine(opponentLocations)
     }
     
     var description: String {
         //return "\(self.hashValue) \(self.id.hashValue) \(self.head.hashValue) \(self.locations.hashValue) \(self.liberties.hashValue)"
-        return "Group(id: \(id), head: \(head), locations: \(plays), liberties: \(liberties))"
+        return "Group(id: \(id), stone: \(stone), locations: \(locations), liberties: \(liberties)), opponentLocations: \(opponentLocations)"
     }
     
 }

@@ -401,15 +401,15 @@ class GameScene: SKScene {
         let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
         
         for group in groups {
-            for play in group.plays {
-                let column = play.location.column
-                let row = play.location.row
+            for location in group.locations {
+                let column = location.column
+                let row = location.row
                 
                 let node = SKLabelNode(fontNamed: font.fontName)
                 node.name = "group"
                 node.text = "\(group.id)"
                 node.fontSize = font.pointSize
-                node.fontColor = group.head.stone == .Black ? .white : .black
+                node.fontColor = group.stone == .Black ? .white : .black
                 node.verticalAlignmentMode = .center
                 node.position = pointFor(column: column, row: row)
                 
@@ -422,9 +422,9 @@ class GameScene: SKScene {
                 
                 let node = SKLabelNode(fontNamed: font.fontName)
                 node.name = "group"
-                node.text = group.head.stone == .Black ? "▫️" : "▪️"
+                node.text = group.stone == .Black ? "▫️" : "▪️"
                 node.fontSize = font.pointSize
-                node.fontColor = group.head.stone == .Black ? .white : .black
+                node.fontColor = group.stone == .Black ? .white : .black
                 node.verticalAlignmentMode = .center
                 node.position = pointFor(column: column, row: row)
                 
