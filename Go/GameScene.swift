@@ -257,7 +257,8 @@ class GameScene: SKScene {
             return
         }
         
-        self.removeChildren(in: [node])
+        node.removeFromParent()
+        //self.removeChildren(in: [node])
         positionNode = nil
         
         print("\(String(describing: positionNode))")
