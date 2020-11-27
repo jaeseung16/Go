@@ -210,7 +210,7 @@ class ViewController: NSViewController {
 
             var groupsToUpdate = Set<Group>()
             var opponentGroupsToUpdate = Set<Group>()
-            var groupsToRemove = Set<Int>()
+            var groupsToRemoveFromGoBoard = Set<Group>()
             var newGroups = Set<Group>()
             
             for group in groups {
@@ -234,7 +234,13 @@ class ViewController: NSViewController {
             }
             
             let newGroup = Group(id: lastPlay.id, stone: lastPlay.stone, locations: newLocations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
-            newGroups.insert(newGroup)
+            
+            if newLiberties.isEmpty {
+                print("Illegal move? newLiberties.count = \(newLiberties.count)")
+                groupsToRemoveFromGoBoard.insert(newGroup) // Illegal move?
+            } else {
+                newGroups.insert(newGroup)
+            }
             
             opponentGroupsToUpdate.forEach { group in
                 newLiberties.removeAll()
@@ -250,7 +256,12 @@ class ViewController: NSViewController {
                 newOppoenentLocations.formUnion(group.opponentLocations)
                 
                 let newGroup = Group(id: group.id, stone: group.stone, locations: group.locations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
-                newGroups.insert(newGroup)
+                
+                if newLiberties.isEmpty {
+                    groupsToRemoveFromGoBoard.insert(newGroup)
+                } else {
+                    newGroups.insert(newGroup)
+                }
             }
             
             groupsToUpdate.forEach { groupToRemove in
@@ -265,6 +276,28 @@ class ViewController: NSViewController {
                     return groupToRemove.id == group.id
                 }
                 groups.remove(at: index!)
+            }
+            
+            groupsToRemoveFromGoBoard.forEach { group in
+                if group.stone != lastPlay.stone && group.liberties.count == 0 {
+                    for location in group.locations {
+                        print("Remove location: \(location)")
+                        goBoard.update(row: location.row, column: location.column, stone: nil)
+                    }
+                    
+                    for play in plays {
+                        let isInGroup = group.locations.contains { (location) -> Bool in
+                            return location == play.location
+                        }
+              
+                        //print("isInGroup = \(isInGroup) vs locations.contains = \(group.locations.contains(play.location))")
+                        
+                        if isInGroup && play.stone != lastPlay.stone {
+                            print("Removing \(play))")
+                            scene?.removeStones(at: "\(play.id)")
+                        }
+                    }
+                }
             }
             
             groups.formUnion(newGroups)
