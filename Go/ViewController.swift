@@ -196,7 +196,10 @@ class ViewController: NSViewController {
         let neighborsOppositeStone = neighbors(of: lastPlay, with: lastPlay.stone == .Black ? .White : .Black)
         let liberties = neighbors(of: lastPlay, with: nil)
         
-        //print("liberties = \(liberties)")
+        print("newLocation = \(newLocation)")
+        print("neighborsSameStone = \(neighborsSameStone)")
+        print("neighborsOppositeStone = \(neighborsOppositeStone)")
+        print("liberties = \(liberties)")
         
         var newLocations = Set<Intersection>()
         newLocations.insert(newLocation)
@@ -206,7 +209,7 @@ class ViewController: NSViewController {
             groups.insert(newGroup)
         } else {
             var newLiberties = Set<Intersection>(liberties)
-            var newOppoenentLocations = Set<Intersection>()
+            var newOppoenentLocations = Set<Intersection>(neighborsOppositeStone)
 
             var groupsToUpdate = Set<Group>()
             var opponentGroupsToUpdate = Set<Group>()
@@ -217,8 +220,10 @@ class ViewController: NSViewController {
                 if group.liberties.contains(newLocation) {
                     if group.stone == lastPlay.stone {
                         groupsToUpdate.insert(group)
+                        print("Add to groupsToUpdate: group id = \(group.id)")
                     } else {
                         opponentGroupsToUpdate.insert(group)
+                        print("Add to opponentGroupsToUpdate: group id = \(group.id)")
                     }
                 }
             }
@@ -235,6 +240,8 @@ class ViewController: NSViewController {
             
             let newGroup = Group(id: lastPlay.id, stone: lastPlay.stone, locations: newLocations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
             
+            print("newGroup = \(newGroup)")
+            
             if newLiberties.isEmpty {
                 print("Illegal move? newLiberties.count = \(newLiberties.count)")
                 groupsToRemoveFromGoBoard.insert(newGroup) // Illegal move?
@@ -242,7 +249,9 @@ class ViewController: NSViewController {
                 newGroups.insert(newGroup)
             }
             
+            print("opponentGroupsToUpdate.count = \(opponentGroupsToUpdate.count)")
             opponentGroupsToUpdate.forEach { group in
+                print("group id = \(group.id)")
                 newLiberties.removeAll()
                 newOppoenentLocations.removeAll()
                 
@@ -256,12 +265,19 @@ class ViewController: NSViewController {
                 newOppoenentLocations.formUnion(group.opponentLocations)
                 
                 let newGroup = Group(id: group.id, stone: group.stone, locations: group.locations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
-                
+                print("newGroup = \(newGroup)")
                 if newLiberties.isEmpty {
                     groupsToRemoveFromGoBoard.insert(newGroup)
                 } else {
                     newGroups.insert(newGroup)
                 }
+            }
+            
+            opponentGroupsToUpdate.forEach { groupToRemove in
+                let index = groups.firstIndex { group -> Bool in
+                    return groupToRemove.id == group.id
+                }
+                groups.remove(at: index!)
             }
             
             groupsToUpdate.forEach { groupToRemove in
@@ -271,18 +287,46 @@ class ViewController: NSViewController {
                 groups.remove(at: index!)
             }
             
-            opponentGroupsToUpdate.forEach { groupToRemove in
-                let index = groups.firstIndex { (group) -> Bool in
-                    return groupToRemove.id == group.id
-                }
-                groups.remove(at: index!)
-            }
+            groups.formUnion(newGroups)
             
+            print("groups = \(groups)")
+            
+            print("groupsToRemoveFromGoBoard.count = \(groupsToRemoveFromGoBoard.count)")
+            
+            newGroups.removeAll()
+            groupsToUpdate.removeAll()
             groupsToRemoveFromGoBoard.forEach { group in
                 if group.stone != lastPlay.stone && group.liberties.count == 0 {
                     for location in group.locations {
                         print("Remove location: \(location)")
                         goBoard.update(row: location.row, column: location.column, stone: nil)
+                        
+                        groups.forEach { aGroup in
+                            if aGroup.opponentLocations.contains(location) {
+                                var newOppoenentLocations = Set<Intersection>()
+                                var newLiberties = Set<Intersection>()
+                                
+                                aGroup.opponentLocations.forEach { opponentLocation in
+                                    if opponentLocation == location {
+                                        newLiberties.insert(opponentLocation)
+                                    } else {
+                                        newOppoenentLocations.insert(opponentLocation)
+                                    }
+                                    
+                                }
+                                    
+                                newLiberties.formUnion(aGroup.liberties)
+                                
+                                let newGroup = Group(id: aGroup.id, stone: aGroup.stone, locations: aGroup.locations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
+                                
+                                //print("aGroup.location = \(location))")
+                                //print("newGroup = \(newGroup))")
+                                
+                                groupsToUpdate.insert(aGroup)
+                                newGroups.insert(newGroup)
+                                
+                            }
+                        }
                     }
                     
                     for play in plays {
@@ -297,13 +341,26 @@ class ViewController: NSViewController {
                             scene?.removeStones(at: "\(play.id)")
                         }
                     }
+                    
                 }
             }
             
+            print("groupsToUpdate.count = \(groupsToUpdate.count)")
+            groupsToUpdate.forEach { groupToRemove in
+                print("groupToRemove.id = \(groupToRemove.id)")
+                let index = groups.firstIndex { group -> Bool in
+                    return groupToRemove.id == group.id
+                }
+                print("index = \(index)")
+                groups.remove(at: index!)
+                print("groups.count = \(groups.count)")
+            }
+            
             groups.formUnion(newGroups)
+            
         }
         
-        print("groups.count = \(groups.count)")
+        print("groups = \(groups)")
     }
     
 }

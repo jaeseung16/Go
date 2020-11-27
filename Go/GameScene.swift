@@ -365,12 +365,16 @@ class GameScene: SKScene {
         return false
     }
     
-    func removeStones(at counts: String) -> Void {
+    func removeStones(at count: String) -> Void {
         for child in gameBoard!.children {
             guard let name = child.name else {
                 continue
             }
-            if counts.contains(name) {
+            
+            if count == name {
+                print("count = \(count)")
+                print("name = \(name)")
+                
                 child.removeAllChildren()
                 child.removeFromParent()
             }
