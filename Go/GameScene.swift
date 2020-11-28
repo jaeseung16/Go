@@ -251,8 +251,8 @@ class GameScene: SKScene {
         var row: Int
         (success, column, row) = convertPoint(pos)
         
-        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
-            print("touchDown: Illegal play!")
+        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .Black : .White, column: column, row: row), isPlayable else {
+            print("touchDown: Illegal play! count = \(count)")
             return
         }
         
@@ -273,7 +273,7 @@ class GameScene: SKScene {
             if positionNode == nil {
                 createPositionNode(column: column, row: row)
             } else {
-                guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
+                guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .Black : .White, column: column, row: row), isPlayable else {
                     print("touchMoved: Illegal play!")
                     return
                 }
@@ -308,8 +308,8 @@ class GameScene: SKScene {
             return
         }
         
-        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .White : .Black, column: column, row: row), isPlayable else {
-            print("touchUp: Illegal play!")
+        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .Black : .White, column: column, row: row), isPlayable else {
+            print("touchUp: Illegal play! count = \(count)")
             return
         }
         

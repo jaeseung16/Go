@@ -13,7 +13,6 @@ import GameplayKit
 class ViewController: NSViewController {
     var playNumber: Int = 0
     var plays = [Play]()
-    var prohibitedPlays = Set<Play>()
     var scene: GameScene?
     var groups = Set<Group>()
     
@@ -241,13 +240,7 @@ class ViewController: NSViewController {
             let newGroup = Group(id: lastPlay.id, stone: lastPlay.stone, locations: newLocations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
             
             print("newGroup = \(newGroup)")
-            
-            if newLiberties.isEmpty {
-                print("Illegal move? newLiberties.count = \(newLiberties.count)")
-                groupsToRemoveFromGoBoard.insert(newGroup) // Illegal move?
-            } else {
-                newGroups.insert(newGroup)
-            }
+            newGroups.insert(newGroup)
             
             print("opponentGroupsToUpdate.count = \(opponentGroupsToUpdate.count)")
             opponentGroupsToUpdate.forEach { group in
@@ -297,6 +290,9 @@ class ViewController: NSViewController {
             groupsToUpdate.removeAll()
             groupsToRemoveFromGoBoard.forEach { group in
                 if group.stone != lastPlay.stone && group.liberties.count == 0 {
+                    if group.locations.count == 1 {
+                        ko = group.locations.first
+                    }
                     for location in group.locations {
                         print("Remove location: \(location)")
                         goBoard.update(row: location.row, column: location.column, stone: nil)
@@ -319,18 +315,14 @@ class ViewController: NSViewController {
                                 
                                 let newGroup = Group(id: aGroup.id, stone: aGroup.stone, locations: aGroup.locations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
                                 
-                                //print("aGroup.location = \(location))")
-                                //print("newGroup = \(newGroup))")
-                                
                                 groupsToUpdate.insert(aGroup)
                                 newGroups.insert(newGroup)
-                                
                             }
                         }
                     }
                     
                     for play in plays {
-                        let isInGroup = group.locations.contains { (location) -> Bool in
+                        let isInGroup = group.locations.contains { location -> Bool in
                             return location == play.location
                         }
               
@@ -370,22 +362,39 @@ extension ViewController: GameDelegate {
         let play = Play(id: playNumber, row: row, column: column, stone: stone)
         
         plays.append(play)
-        prohibitedPlays.insert(play)
         playNumber += 1
 
+        ko = nil
         updateGroups()
         
-        //print("prohibitedPlays = \(prohibitedPlays)")
-        //print("plays = \(plays)")
         togglePlayer()
         gameAnalyzer?.analyze(plays: plays)
     }
     
     func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
+        print("isPlayable: \(stone) @ row = \(row), column = \(column)")
+        let newLocation = Intersection(row: row, column: column, stone: stone, forbidden: false, isEye: false)
+        
+        
+        var canPlay = goBoard.status(row: row, column: column) == nil
+        
+        if canPlay && (ko != nil) && (ko == newLocation) {
+            print("ko = \(ko)")
+            canPlay = false
+        }
+        
+        for group in groups {
+            if group.stone == stone && group.liberties.count == 1 && group.liberties.contains(newLocation) {
+                print("group = \(group)")
+                canPlay = false
+                break
+            }
+        }
+        
         // Need to check ko
         // let status = goBoard.status(row: row, column: column)
         // let play = Play(id: playNumber, row: row, column: column, stone: stone)
-        return goBoard.status(row: row, column: column) == nil
+        return canPlay
     }
     
     func updateClock(_ currentTime: TimeInterval) -> Void {
