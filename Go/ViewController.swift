@@ -190,166 +190,45 @@ class ViewController: NSViewController {
         
         goBoard.update(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone)
         
+        let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard, groups: groups)
+        
         let newLocation = Intersection(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone, forbidden: false, isEye: false)
-        let neighborsSameStone = neighbors(of: lastPlay, with: lastPlay.stone)
-        let neighborsOppositeStone = neighbors(of: lastPlay, with: lastPlay.stone == .Black ? .White : .Black)
-        let liberties = neighbors(of: lastPlay, with: nil)
+        let neighborsSameStone = groupAnalyzer.neighborsSameStone
+        let neighborsOppositeStone = groupAnalyzer.neighborsOppositeStone
+        let liberties = groupAnalyzer.liberties
         
         print("newLocation = \(newLocation)")
         print("neighborsSameStone = \(neighborsSameStone)")
         print("neighborsOppositeStone = \(neighborsOppositeStone)")
         print("liberties = \(liberties)")
         
-        var newLocations = Set<Intersection>()
-        newLocations.insert(newLocation)
-        
-        if neighborsSameStone.count == 0 && neighborsOppositeStone.count == 0 {
-            let newGroup = Group(id: lastPlay.id, stone: lastPlay.stone, locations: newLocations, liberties: liberties, oppenentLocations: neighborsOppositeStone)
+        if groupAnalyzer.allNeighborsAreLiberties {
+            let newLocations = Set<Intersection>(arrayLiteral: newLocation)
+            let newGroup = Group(id: lastPlay.id,
+                                 stone: lastPlay.stone,
+                                 locations: newLocations,
+                                 liberties: groupAnalyzer.liberties,
+                                 oppenentLocations: groupAnalyzer.neighborsOppositeStone)
             groups.insert(newGroup)
         } else {
-            var newLiberties = Set<Intersection>(liberties)
-            var newOppoenentLocations = Set<Intersection>(neighborsOppositeStone)
-
-            var groupsToUpdate = Set<Group>()
-            var opponentGroupsToUpdate = Set<Group>()
-            var groupsToRemoveFromGoBoard = Set<Group>()
-            var newGroups = Set<Group>()
+            groupAnalyzer.generateIntermidiateGroupsGroups()
             
-            for group in groups {
-                if group.liberties.contains(newLocation) {
-                    if group.stone == lastPlay.stone {
-                        groupsToUpdate.insert(group)
-                        print("Add to groupsToUpdate: group id = \(group.id)")
-                    } else {
-                        opponentGroupsToUpdate.insert(group)
-                        print("Add to opponentGroupsToUpdate: group id = \(group.id)")
-                    }
-                }
-            }
+            print("groupsToRemoveFromGoBoard.count = \(groupAnalyzer.groupsToRemove.count)")
+            groupAnalyzer.processGroupsToRemove()
             
-            groupsToUpdate.forEach { (group) in
-                newLocations.formUnion(group.locations)
-                newOppoenentLocations.formUnion(group.opponentLocations)
-                group.liberties.forEach { liberty in
-                    if (liberty != newLocation) {
-                        newLiberties.insert(liberty)
-                    }
-                }
-            }
-            
-            let newGroup = Group(id: lastPlay.id, stone: lastPlay.stone, locations: newLocations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
-            
-            print("newGroup = \(newGroup)")
-            newGroups.insert(newGroup)
-            
-            print("opponentGroupsToUpdate.count = \(opponentGroupsToUpdate.count)")
-            opponentGroupsToUpdate.forEach { group in
-                print("group id = \(group.id)")
-                newLiberties.removeAll()
-                newOppoenentLocations.removeAll()
+            groupAnalyzer.locationsToRemove!.forEach { location in
+                print("Remove location: \(location)")
+                goBoard.update(row: location.row, column: location.column, stone: nil)
                 
-                group.liberties.forEach { liberty in
-                    if (liberty != newLocation) {
-                        newLiberties.insert(liberty)
+                for play in plays {
+                    if location == play.location && play.stone != lastPlay.stone {
+                        print("Removing \(play))")
+                        scene?.removeStones(at: "\(play.id)")
                     }
                 }
-                
-                newOppoenentLocations.insert(newLocation)
-                newOppoenentLocations.formUnion(group.opponentLocations)
-                
-                let newGroup = Group(id: group.id, stone: group.stone, locations: group.locations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
-                print("newGroup = \(newGroup)")
-                if newLiberties.isEmpty {
-                    groupsToRemoveFromGoBoard.insert(newGroup)
-                } else {
-                    newGroups.insert(newGroup)
-                }
             }
             
-            opponentGroupsToUpdate.forEach { groupToRemove in
-                let index = groups.firstIndex { group -> Bool in
-                    return groupToRemove.id == group.id
-                }
-                groups.remove(at: index!)
-            }
-            
-            groupsToUpdate.forEach { groupToRemove in
-                let index = groups.firstIndex { (group) -> Bool in
-                    return groupToRemove.id == group.id
-                }
-                groups.remove(at: index!)
-            }
-            
-            groups.formUnion(newGroups)
-            
-            print("groups = \(groups)")
-            
-            print("groupsToRemoveFromGoBoard.count = \(groupsToRemoveFromGoBoard.count)")
-            
-            newGroups.removeAll()
-            groupsToUpdate.removeAll()
-            groupsToRemoveFromGoBoard.forEach { group in
-                if group.stone != lastPlay.stone && group.liberties.count == 0 {
-                    if group.locations.count == 1 {
-                        ko = group.locations.first
-                    }
-                    for location in group.locations {
-                        print("Remove location: \(location)")
-                        goBoard.update(row: location.row, column: location.column, stone: nil)
-                        
-                        groups.forEach { aGroup in
-                            if aGroup.opponentLocations.contains(location) {
-                                var newOppoenentLocations = Set<Intersection>()
-                                var newLiberties = Set<Intersection>()
-                                
-                                aGroup.opponentLocations.forEach { opponentLocation in
-                                    if opponentLocation == location {
-                                        newLiberties.insert(opponentLocation)
-                                    } else {
-                                        newOppoenentLocations.insert(opponentLocation)
-                                    }
-                                    
-                                }
-                                    
-                                newLiberties.formUnion(aGroup.liberties)
-                                
-                                let newGroup = Group(id: aGroup.id, stone: aGroup.stone, locations: aGroup.locations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
-                                
-                                groupsToUpdate.insert(aGroup)
-                                newGroups.insert(newGroup)
-                            }
-                        }
-                    }
-                    
-                    for play in plays {
-                        let isInGroup = group.locations.contains { location -> Bool in
-                            return location == play.location
-                        }
-              
-                        //print("isInGroup = \(isInGroup) vs locations.contains = \(group.locations.contains(play.location))")
-                        
-                        if isInGroup && play.stone != lastPlay.stone {
-                            print("Removing \(play))")
-                            scene?.removeStones(at: "\(play.id)")
-                        }
-                    }
-                    
-                }
-            }
-            
-            print("groupsToUpdate.count = \(groupsToUpdate.count)")
-            groupsToUpdate.forEach { groupToRemove in
-                print("groupToRemove.id = \(groupToRemove.id)")
-                let index = groups.firstIndex { group -> Bool in
-                    return groupToRemove.id == group.id
-                }
-                print("index = \(index)")
-                groups.remove(at: index!)
-                print("groups.count = \(groups.count)")
-            }
-            
-            groups.formUnion(newGroups)
-            
+            groups = groupAnalyzer.nextGroups
         }
         
         print("groups = \(groups)")
@@ -372,7 +251,7 @@ extension ViewController: GameDelegate {
     }
     
     func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
-        print("isPlayable: \(stone) @ row = \(row), column = \(column)")
+        //print("isPlayable: \(stone) @ row = \(row), column = \(column)")
         let newLocation = Intersection(row: row, column: column, stone: stone, forbidden: false, isEye: false)
         
         

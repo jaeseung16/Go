@@ -17,6 +17,7 @@
 		909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909AD60D2501A67900C15E45 /* KataGoRequest.swift */; };
 		90A6846C256C7667006E2BC3 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A6846B256C7667006E2BC3 /* Group.swift */; };
 		90A68477256C8376006E2BC3 /* Neighbor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A68476256C8376006E2BC3 /* Neighbor.swift */; };
+		90AE908E2573125E009366F1 /* GroupAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AE908D2573125E009366F1 /* GroupAnalyzer.swift */; };
 		90C7D5092505685E00E05F47 /* Engine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C7D5082505685E00E05F47 /* Engine.swift */; };
 		90C7D50B250588D500E05F47 /* KataGoResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C7D50A250588D500E05F47 /* KataGoResponse.swift */; };
 		90C88A0A24DA241000B4E382 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A0924DA241000B4E382 /* AppDelegate.swift */; };
@@ -65,6 +66,7 @@
 		909AD60D2501A67900C15E45 /* KataGoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoRequest.swift; sourceTree = "<group>"; };
 		90A6846B256C7667006E2BC3 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		90A68476256C8376006E2BC3 /* Neighbor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Neighbor.swift; sourceTree = "<group>"; };
+		90AE908D2573125E009366F1 /* GroupAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAnalyzer.swift; sourceTree = "<group>"; };
 		90C7D5082505685E00E05F47 /* Engine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Engine.swift; sourceTree = "<group>"; };
 		90C7D50A250588D500E05F47 /* KataGoResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoResponse.swift; sourceTree = "<group>"; };
 		90C88A0624DA241000B4E382 /* Go.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Go.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -208,6 +210,7 @@
 				9014F20F2506615500317AC4 /* GameAnalysis.swift */,
 				90A6846B256C7667006E2BC3 /* Group.swift */,
 				90A68476256C8376006E2BC3 /* Neighbor.swift */,
+				90AE908D2573125E009366F1 /* GroupAnalyzer.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				90C88A3C24DA248500B4E382 /* GoBoard.swift in Sources */,
 				904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */,
 				90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */,
+				90AE908E2573125E009366F1 /* GroupAnalyzer.swift in Sources */,
 				904074E72504514B006307AB /* KataGoEngine.swift in Sources */,
 				90C88A4124DA259900B4E382 /* Stone.swift in Sources */,
 				90C88A3F24DA252500B4E382 /* Player.swift in Sources */,
