@@ -38,7 +38,7 @@ struct Play: Hashable {
             return nil
         }
         
-        let location = "\(column)\(self.location.row)"
+        let location = "\(column)\(self.location.row+1)"
         return Move(player: player, location: location)
     }
 }

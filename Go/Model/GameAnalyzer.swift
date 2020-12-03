@@ -103,9 +103,9 @@ class GameAnalyzer {
                     
                     let (column, row) = toLocation(move: response!.moveInfos[0].move)
                     let nextPlayer = playMade.stone == .White ? Stone.Black : Stone.White
-                    let nextPlay = Play(id: id, row: row, column: column - 1, stone: nextPlayer)
+                    let nextPlay = Play(id: id, row: row - 1, column: column - 1, stone: nextPlayer)
                     
-                    gameAnalysis = GameAnalysis(playMade: playMade, bestNextPlay: nextPlay, winrate: response!.rootInfo.winrate, scoreLead: response!.rootInfo.scoreLead)
+                    gameAnalysis = GameAnalysis(playMade: playMade, bestNextPlay: nextPlay, winrate: response!.moveInfos[0].winrate, scoreLead: response!.moveInfos[0].scoreLead)
                     
                     //print("move = \(move)")
                     //print("column = \(column)")
