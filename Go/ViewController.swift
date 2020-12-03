@@ -16,7 +16,7 @@ class ViewController: NSViewController {
     var scene: GameScene?
     var groups = Set<Group>()
     
-    let goBoard = GoBoard()
+    var goBoard = GoBoard()
     
     var gameAnalyzer: GameAnalyzer?
     
@@ -29,6 +29,7 @@ class ViewController: NSViewController {
     var isWhiteWillPlay = false
     
     var ko: Intersection?
+    var removedStones = Set<Intersection>()
     
     @IBOutlet weak var clockLabel: NSTextField!
     
@@ -186,11 +187,12 @@ class ViewController: NSViewController {
             return
         }
         
+        removedStones.removeAll()
+        
         print("lastPlay = \(lastPlay)")
-        
-        goBoard.update(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone)
-        
+        //print("goBoard.status = \(goBoard.status(row: 15, column: 16))")
         let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard, groups: groups)
+        goBoard.update(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone)
         
         let newLocation = Intersection(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone, forbidden: false, isEye: false)
         let neighborsSameStone = groupAnalyzer.neighborsSameStone
@@ -219,6 +221,7 @@ class ViewController: NSViewController {
             groupAnalyzer.locationsToRemove!.forEach { location in
                 print("Remove location: \(location)")
                 goBoard.update(row: location.row, column: location.column, stone: nil)
+                removedStones.insert(location)
                 
                 for play in plays {
                     if location == play.location && play.stone != lastPlay.stone {
@@ -251,28 +254,31 @@ extension ViewController: GameDelegate {
     }
     
     func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
-        //print("isPlayable: \(stone) @ row = \(row), column = \(column)")
-        let newLocation = Intersection(row: row, column: column, stone: stone, forbidden: false, isEye: false)
+        print("isPlayable: \(stone) @ row = \(row), column = \(column)")
+        let nextPlay = Play(id: playNumber, row: row, column: column, stone: stone)
         
-        
+        let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard, groups: groups)
         var canPlay = goBoard.status(row: row, column: column) == nil
         
-        if canPlay && (ko != nil) && (ko == newLocation) {
-            print("ko = \(ko)")
-            canPlay = false
-        }
-        
-        for group in groups {
-            if group.stone == stone && group.liberties.count == 1 && group.liberties.contains(newLocation) {
-                print("group = \(group)")
-                canPlay = false
-                break
+        if !groupAnalyzer.allNeighborsAreLiberties {
+            groupAnalyzer.generateIntermidiateGroupsGroups()
+            groupAnalyzer.processGroupsToRemove()
+            
+            // check suicide, seems working
+            groupAnalyzer.nextGroups.forEach { group in
+                if group.liberties.count == 0 {
+                    canPlay = false
+                    print("possible suicide")  // not perfect?
+                } else if group.liberties.count == 1 {
+                    print("removedStones = \(removedStones), plays.last.location = \(plays.last!.location)")
+                    if group.liberties.first == plays.last!.location && removedStones.contains(nextPlay.location) {
+                        canPlay = false
+                        print("possible ko")
+                    }
+                }
             }
         }
         
-        // Need to check ko
-        // let status = goBoard.status(row: row, column: column)
-        // let play = Play(id: playNumber, row: row, column: column, stone: stone)
         return canPlay
     }
     
