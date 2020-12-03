@@ -8,7 +8,7 @@
 
 import Foundation
 
-class GoBoard {
+struct GoBoard {
     let size = 19
     var intersections = [Intersection]()
     
@@ -26,7 +26,7 @@ class GoBoard {
         return intersection.stone
     }
     
-    func update(row: Int, column: Int, stone: Stone?) -> Void {
+    mutating func update(row: Int, column: Int, stone: Stone?) -> Void {
         intersections[row * size + column].stone = stone
     }
     
@@ -35,7 +35,7 @@ class GoBoard {
         return intersection.isEye
     }
     
-    func update(row: Int, column: Int, isEye: Bool) -> Void {
+    mutating func update(row: Int, column: Int, isEye: Bool) -> Void {
         intersections[row * size + column].isEye = isEye
     }
 }
