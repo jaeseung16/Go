@@ -257,28 +257,20 @@ extension ViewController: GameDelegate {
         print("isPlayable: \(stone) @ row = \(row), column = \(column)")
         let nextPlay = Play(id: playNumber, row: row, column: column, stone: stone)
         
-        let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard, groups: groups)
         var canPlay = goBoard.status(row: row, column: column) == nil
         
-        if !groupAnalyzer.allNeighborsAreLiberties {
-            groupAnalyzer.generateIntermidiateGroupsGroups()
-            groupAnalyzer.processGroupsToRemove()
-            
-            // check suicide, seems working
-            groupAnalyzer.nextGroups.forEach { group in
-                if group.liberties.count == 0 {
-                    canPlay = false
-                    print("possible suicide")  // not perfect?
-                } else if group.liberties.count == 1 {
-                    print("removedStones = \(removedStones), plays.last.location = \(plays.last!.location)")
-                    if group.liberties.first == plays.last!.location && removedStones.contains(nextPlay.location) {
-                        canPlay = false
-                        print("possible ko")
-                    }
-                }
+        if canPlay {
+            let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard, groups: groups)
+            if !groupAnalyzer.allNeighborsAreLiberties {
+                groupAnalyzer.generateIntermidiateGroupsGroups()
+                groupAnalyzer.processGroupsToRemove()
+                
+                groupAnalyzer.removedStones = removedStones
+                groupAnalyzer.lastPlay = plays.last
+                
+                canPlay = groupAnalyzer.isPlayable
             }
         }
-        
         return canPlay
     }
     

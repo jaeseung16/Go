@@ -11,6 +11,7 @@ import Foundation
 class GroupAnalyzer {
     // MARK:- Properties
     let play: Play
+    var lastPlay: Play?
     let location: Intersection
     let groups: Set<Group>
     var goBoard: GoBoard
@@ -24,7 +25,10 @@ class GroupAnalyzer {
     
     var intermidiateGroups = Set<Group>()
     var nextGroups = Set<Group>()
-    var isPlayable: Bool?
+    var removedStones = Set<Intersection>()
+    var isPlayable: Bool {
+        return isEmpty() && !isKo() && !isSuicide()
+    }
     
     var neighborsSameStone: Set<Intersection> {
         return neighbors(of: play, with: play.stone)
@@ -181,6 +185,8 @@ class GroupAnalyzer {
             locationsToRemove?.formUnion(group.locations)
         }
         
+        print("locationsToRemove: \(locationsToRemove)")
+        
         locationsToRemove!.forEach { location in
             print("Remove location: \(location)")
             goBoard.update(row: location.row, column: location.column, stone: nil)
@@ -204,33 +210,19 @@ class GroupAnalyzer {
         }
     }
     
-    func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
-        print("isPlayable: \(stone) @ row = \(row), column = \(column)")
-        let newLocation = Intersection(row: row, column: column, stone: stone, forbidden: false, isEye: false)
-        
-        
-        var canPlay = goBoard.status(row: row, column: column) == nil
-        
-        // TODO: Chekc ko
-        // Is possibleKo really ko?
-        if canPlay && (possibleKo != nil) && (possibleKo == newLocation) {
-            print("ko = \(String(describing: possibleKo))")
-            canPlay = false
-        }
-        
-        // TODO: Check suicides
-        // Need to exclude if there are captures
-        for group in groups {
-            if group.stone == stone && group.liberties.count == 1 && group.liberties.contains(newLocation) {
-                print("group = \(group)")
-                canPlay = false
-                break
-            }
-        }
-        
-        // Need to check ko
-        // let status = goBoard.status(row: row, column: column)
-        // let play = Play(id: playNumber, row: row, column: column, stone: stone)
-        return canPlay
+    func isEmpty() -> Bool{
+        return goBoard.status(row: play.location.row, column: play.location.column) == nil
+    }
+    
+    func isSuicide() -> Bool {
+        print("isSuicide = \(nextGroups.contains { $0.liberties.count == 0 })")
+        return nextGroups.contains { $0.liberties.count == 0 }
+    }
+    
+    func isKo() -> Bool {
+        print("removedStones.contains(play.location) = \(removedStones.contains(play.location))")
+        print("nextGroups.contains { $0.liberties.first == lastPlay!.location } = \(nextGroups.contains { $0.liberties.first == lastPlay!.location })")
+        return removedStones.contains(play.location)
+            && nextGroups.contains { $0.liberties.count == 1 && $0.liberties.first == lastPlay!.location }
     }
 }
