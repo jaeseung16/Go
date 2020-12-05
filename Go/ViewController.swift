@@ -191,10 +191,12 @@ class ViewController: NSViewController {
         
         print("lastPlay = \(lastPlay)")
         //print("goBoard.status = \(goBoard.status(row: 15, column: 16))")
-        let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard, groups: groups)
+        let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard, groups: groups, lastPlay: plays.last, removedStones: removedStones)
         goBoard.update(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone)
         
+        
         let newLocation = Intersection(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone, forbidden: false, isEye: false)
+        /*
         let neighborsSameStone = groupAnalyzer.neighborsSameStone
         let neighborsOppositeStone = groupAnalyzer.neighborsOppositeStone
         let liberties = groupAnalyzer.liberties
@@ -203,7 +205,7 @@ class ViewController: NSViewController {
         print("neighborsSameStone = \(neighborsSameStone)")
         print("neighborsOppositeStone = \(neighborsOppositeStone)")
         print("liberties = \(liberties)")
-        
+        */
         if groupAnalyzer.allNeighborsAreLiberties {
             let newLocations = Set<Intersection>(arrayLiteral: newLocation)
             let newGroup = Group(id: lastPlay.id,
@@ -213,10 +215,7 @@ class ViewController: NSViewController {
                                  oppenentLocations: groupAnalyzer.neighborsOppositeStone)
             groups.insert(newGroup)
         } else {
-            groupAnalyzer.generateIntermidiateGroupsGroups()
-            
             print("groupsToRemoveFromGoBoard.count = \(groupAnalyzer.groupsToRemove.count)")
-            groupAnalyzer.processGroupsToRemove()
             
             groupAnalyzer.locationsToRemove!.forEach { location in
                 print("Remove location: \(location)")
@@ -260,14 +259,8 @@ extension ViewController: GameDelegate {
         var canPlay = goBoard.status(row: row, column: column) == nil
         
         if canPlay {
-            let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard, groups: groups)
+            let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard, groups: groups, lastPlay: plays.last, removedStones: removedStones)
             if !groupAnalyzer.allNeighborsAreLiberties {
-                groupAnalyzer.generateIntermidiateGroupsGroups()
-                groupAnalyzer.processGroupsToRemove()
-                
-                groupAnalyzer.removedStones = removedStones
-                groupAnalyzer.lastPlay = plays.last
-                
                 canPlay = groupAnalyzer.isPlayable
             }
         }

@@ -11,7 +11,7 @@ import Foundation
 class GroupAnalyzer {
     // MARK:- Properties
     let play: Play
-    var lastPlay: Play?
+    let lastPlay: Play?
     let location: Intersection
     let groups: Set<Group>
     var goBoard: GoBoard
@@ -23,23 +23,23 @@ class GroupAnalyzer {
     var opponentsGroupsToUpdate = Set<Group>()
     var groupsToRemove = Set<Group>()
     
-    var intermidiateGroups = Set<Group>()
+    var intermediateGroups = Set<Group>()
     var nextGroups = Set<Group>()
-    var removedStones = Set<Intersection>()
+    let removedStones: Set<Intersection>
     var isPlayable: Bool {
         return isEmpty() && !isKo() && !isSuicide()
     }
     
     var neighborsSameStone: Set<Intersection> {
-        return neighbors(of: play, with: play.stone)
+        return GroupAnalyzer.neighbors(of: play, with: play.stone, goBoard: goBoard)
     }
     
     var neighborsOppositeStone: Set<Intersection>{
-        return neighbors(of: play, with: play.stone == .Black ? .White : .Black)
+        return GroupAnalyzer.neighbors(of: play, with: play.stone == .Black ? .White : .Black, goBoard: goBoard)
     }
     
     var liberties: Set<Intersection> {
-        return neighbors(of: play, with: nil)
+        return GroupAnalyzer.neighbors(of: play, with: nil, goBoard: goBoard)
     }
     
     var allNeighborsAreLiberties: Bool {
@@ -47,18 +47,24 @@ class GroupAnalyzer {
     }
     
     // MARK:- Initializer
-    init(play: Play, goBoard: GoBoard, groups: Set<Group>) {
+    init(play: Play, goBoard: GoBoard, groups: Set<Group>, lastPlay: Play?, removedStones: Set<Intersection>) {
         self.play = play
         self.goBoard = goBoard
         self.groups = groups
+        self.lastPlay = lastPlay
+        self.removedStones = removedStones
         
         self.location = Intersection(row: play.location.row, column: play.location.column, stone: play.stone, forbidden: false, isEye: false)
         
         (self.unchangedGroups, self.playersGroupsToUpdate, self.opponentsGroupsToUpdate, self.groupsToRemove) = GroupAnalyzer.split(groups, basedOn: play)
+        
+        self.intermediateGroups = GroupAnalyzer.generateIntermidiateGroupsGroups(unchangedGroups: self.unchangedGroups, playersGroupsToUpdate: self.playersGroupsToUpdate, opponentsGroupsToUpdate: self.opponentsGroupsToUpdate, play: play, goBoard: goBoard)
+        
+        (self.nextGroups, self.possibleKo, self.locationsToRemove) = GroupAnalyzer.process(self.groupsToRemove, intermediateGroups: self.intermediateGroups)
     }
     
     // MARK:- Methods
-    func neighbors(of play: Play, with status: Stone?) -> Set<Intersection> {
+    static func neighbors(of play: Play, with status: Stone?, goBoard: GoBoard) -> Set<Intersection> {
         var neighbors = Set<Intersection>()
         
         for neighbor in Neighbor.allCases {
@@ -97,16 +103,16 @@ class GroupAnalyzer {
         return self.groups.filter { $0.opponentLocations.contains(opponentLocation) }
     }
     
-    func mergeGroups(_ groups: Set<Group>) -> Group {
-        var newLocations: Set = [location]
-        var newLiberties: Set = liberties
-        var newOppoenentLocations: Set = neighborsOppositeStone
+    static private func merge(groups: Set<Group>, around play: Play, on goBoard: GoBoard) -> Group {
+        var newLocations: Set = [play.location]
+        var newLiberties = GroupAnalyzer.neighbors(of: play, with: nil, goBoard: goBoard)
+        var newOppoenentLocations: Set = GroupAnalyzer.neighbors(of: play, with: play.stone == .Black ? .White : .Black, goBoard: goBoard)
 
         groups.forEach { (group) in
             newLocations.formUnion(group.locations)
             newOppoenentLocations.formUnion(group.opponentLocations)
             
-            newLiberties.formUnion(group.liberties.filter { $0 != location })
+            newLiberties.formUnion(group.liberties.filter { $0 != play.location })
         }
 
         return Group(id: play.id, stone: play.stone, locations: newLocations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
@@ -126,7 +132,7 @@ class GroupAnalyzer {
         }
     }
     
-    func newOpponentGroups(from currentOpponentGroups: Set<Group>) -> Set<Group> {
+    static private func newOpponentGroups(from currentOpponentGroups: Set<Group>, with location: Intersection) -> Set<Group> {
         var nextGroups = Set<Group>()
         currentOpponentGroups.forEach { currentGroup in
             var newOppoenentLocations = currentGroup.opponentLocations
@@ -166,14 +172,19 @@ class GroupAnalyzer {
         return (otherGroups, playerGroups, oppoentGroups, opponentGroupsToRemove)
     }
     
-    func generateIntermidiateGroupsGroups() -> Void {
-        intermidiateGroups.formUnion(unchangedGroups)
-        intermidiateGroups.insert(mergeGroups(playersGroupsToUpdate))
-        intermidiateGroups.formUnion(newOpponentGroups(from: opponentsGroupsToUpdate))
+    private static func generateIntermidiateGroupsGroups(unchangedGroups: Set<Group>, playersGroupsToUpdate: Set<Group>, opponentsGroupsToUpdate: Set<Group>, play: Play, goBoard: GoBoard) -> Set<Group> {
+
+        var tempGroup = unchangedGroups
+        tempGroup.insert(GroupAnalyzer.merge(groups: playersGroupsToUpdate, around: play, on: goBoard))
+        tempGroup.formUnion(GroupAnalyzer.newOpponentGroups(from: opponentsGroupsToUpdate, with: play.location))
+        
+        return tempGroup
     }
     
-    func processGroupsToRemove() -> Void {
-        locationsToRemove = Set<Intersection>()
+    static private func process(_ groupsToRemove: Set<Group>, intermediateGroups: Set<Group>) -> (Set<Group>, Intersection?, Set<Intersection>) {
+        var locationsToRemove = Set<Intersection>()
+        var possibleKo: Intersection?
+        
         groupsToRemove.forEach { group in
             // May remove this check
             // They are from the opponent's groups with empty liberties
@@ -182,18 +193,28 @@ class GroupAnalyzer {
                 possibleKo = group.locations.first
             }
             
-            locationsToRemove?.formUnion(group.locations)
+            locationsToRemove.formUnion(group.locations)
         }
         
-        print("locationsToRemove: \(locationsToRemove)")
+        //print("locationsToRemove: \(locationsToRemove)")
+        let nextGroups = generateNextGroups(from: intermediateGroups, byRemoving: locationsToRemove)
         
-        locationsToRemove!.forEach { location in
-            print("Remove location: \(location)")
-            goBoard.update(row: location.row, column: location.column, stone: nil)
+        return (nextGroups, possibleKo, locationsToRemove)
+    }
+    
+    static private func findLocationsToRemove(from groups: Set<Group>) -> Set<Intersection> {
+        var locationsToRemove = Set<Intersection>()
+        groups.forEach { group in
+            locationsToRemove.formUnion(group.locations)
         }
+        return locationsToRemove
+    }
+    
+    static private func generateNextGroups(from intermediateGroups: Set<Group>, byRemoving locationsToRemove: Set<Intersection>) -> Set<Group> {
+        var nextGroups = Set<Group>()
         
-        intermidiateGroups.forEach { group in
-            let locationsInGroup = group.opponentLocations.intersection(locationsToRemove!)
+        intermediateGroups.forEach { group in
+            let locationsInGroup = group.opponentLocations.intersection(locationsToRemove)
             
             if locationsInGroup.count > 0 {
                 let newOppoenentLocations = group.opponentLocations.subtracting(locationsInGroup)
@@ -206,8 +227,9 @@ class GroupAnalyzer {
             } else {
                 nextGroups.insert(group)
             }
-           
         }
+        
+        return  nextGroups
     }
     
     func isEmpty() -> Bool{
