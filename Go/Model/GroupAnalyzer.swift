@@ -10,24 +10,22 @@ import Foundation
 
 class GroupAnalyzer {
     // MARK:- Properties
+    // Properties to initialize
     let play: Play
     let lastPlay: Play?
-    let location: Intersection
     let groups: Set<Group>
-    var goBoard: GoBoard
-    var possibleKo: Intersection?
-    var locationsToRemove: Set<Intersection>?
+    let goBoard: GoBoard
+    let removedStones: Set<Intersection>
     
-    var unchangedGroups = Set<Group>()
-    var playersGroupsToUpdate = Set<Group>()
-    var opponentsGroupsToUpdate = Set<Group>()
+    // TODO: Remove groupsToRemove
     var groupsToRemove = Set<Group>()
     
-    var intermediateGroups = Set<Group>()
+    var possibleKo: Intersection?
+    var locationsToRemove: Set<Intersection>?
     var nextGroups = Set<Group>()
-    let removedStones: Set<Intersection>
+    
     var isPlayable: Bool {
-        return isEmpty() && !isKo() && !isSuicide()
+        return isLocationEmpty() && !isKo() && !isSuicide()
     }
     
     var neighborsSameStone: Set<Intersection> {
@@ -54,13 +52,13 @@ class GroupAnalyzer {
         self.lastPlay = lastPlay
         self.removedStones = removedStones
         
-        self.location = Intersection(row: play.location.row, column: play.location.column, stone: play.stone, forbidden: false, isEye: false)
+        let (unchangedGroups, playersGroupsToUpdate, opponentsGroupsToUpdate, groupsToRemove) = GroupAnalyzer.split(groups, basedOn: play)
         
-        (self.unchangedGroups, self.playersGroupsToUpdate, self.opponentsGroupsToUpdate, self.groupsToRemove) = GroupAnalyzer.split(groups, basedOn: play)
+        self.groupsToRemove = groupsToRemove
         
-        self.intermediateGroups = GroupAnalyzer.generateIntermidiateGroupsGroups(unchangedGroups: self.unchangedGroups, playersGroupsToUpdate: self.playersGroupsToUpdate, opponentsGroupsToUpdate: self.opponentsGroupsToUpdate, play: play, goBoard: goBoard)
+        let intermediateGroups = GroupAnalyzer.generateIntermidiateGroupsGroups(unchangedGroups: unchangedGroups, playersGroupsToUpdate: playersGroupsToUpdate, opponentsGroupsToUpdate: opponentsGroupsToUpdate, play: play, goBoard: goBoard)
         
-        (self.nextGroups, self.possibleKo, self.locationsToRemove) = GroupAnalyzer.process(self.groupsToRemove, intermediateGroups: self.intermediateGroups)
+        (self.nextGroups, self.possibleKo, self.locationsToRemove) = GroupAnalyzer.process(groupsToRemove, intermediateGroups: intermediateGroups)
     }
     
     // MARK:- Methods
@@ -68,39 +66,43 @@ class GroupAnalyzer {
         var neighbors = Set<Intersection>()
         
         for neighbor in Neighbor.allCases {
+            var row: Int?
+            var column: Int?
+            
             switch neighbor {
             case .up:
-                if play.location.row > 0 && status == goBoard.status(row: play.location.row - 1, column: play.location.column) {
-                    neighbors.insert(Intersection(row: play.location.row - 1, column: play.location.column, stone: status, forbidden: false, isEye: false))
+                if play.location.row > 0
+                    && status == goBoard.status(row: play.location.row - 1, column: play.location.column) {
+                    row = play.location.row - 1
+                    column = play.location.column
                 }
             case .down:
-                if play.location.row < goBoard.size - 1 && status == goBoard.status(row: play.location.row + 1, column: play.location.column) {
-                    neighbors.insert(Intersection(row: play.location.row + 1, column: play.location.column, stone: status, forbidden: false, isEye: false))
+                if play.location.row < goBoard.size - 1
+                    && status == goBoard.status(row: play.location.row + 1, column: play.location.column) {
+                    row = play.location.row + 1
+                    column = play.location.column
                 }
             case .left:
-                if play.location.column > 0 && status == goBoard.status(row: play.location.row, column: play.location.column - 1) {
-                    neighbors.insert(Intersection(row: play.location.row, column: play.location.column - 1, stone: status, forbidden: false, isEye: false))
+                if play.location.column > 0
+                    && status == goBoard.status(row: play.location.row, column: play.location.column - 1) {
+                    row = play.location.row
+                    column = play.location.column - 1
                 }
             case .right:
-                if play.location.column < goBoard.size - 1  && status == goBoard.status(row: play.location.row, column: play.location.column + 1) {
-                    neighbors.insert(Intersection(row: play.location.row, column: play.location.column + 1, stone: status, forbidden: false, isEye: false))
+                if play.location.column < goBoard.size - 1
+                    && status == goBoard.status(row: play.location.row, column: play.location.column + 1) {
+                    row = play.location.row
+                    column = play.location.column + 1
                 }
             }
+            
+            if let row = row, let column = column {
+                neighbors.insert(Intersection(row: row, column: column, stone: status, forbidden: false, isEye: false))
+            }
+            
         }
         
         return neighbors
-    }
-    
-    func groupsContaining(liberty: Intersection) -> Set<Group> {
-        return self.groups.filter { $0.liberties.contains(liberty) }
-    }
-    
-    func groupsContaining(location: Intersection) -> Set<Group> {
-        return self.groups.filter { $0.locations.contains(location) }
-    }
-    
-    func groupsContaining(opponentLocation: Intersection) -> Set<Group> {
-        return self.groups.filter { $0.opponentLocations.contains(opponentLocation) }
     }
     
     static private func merge(groups: Set<Group>, around play: Play, on goBoard: GoBoard) -> Group {
@@ -116,20 +118,6 @@ class GroupAnalyzer {
         }
 
         return Group(id: play.id, stone: play.stone, locations: newLocations, liberties: newLiberties, oppenentLocations: newOppoenentLocations)
-    }
-    
-    func removeGroups(_ groupsToRemove: Set<Group>) -> Void {
-        groupsToRemove.forEach { groupToRemove in
-            let index = groups.firstIndex { group -> Bool in
-                return groupToRemove.id == group.id
-            }
-            
-            if index != nil {
-                nextGroups.remove(at: index!)
-            } else {
-                print("removeGroups: groups \(groups) does not contain \(groupToRemove)")
-            }
-        }
     }
     
     static private func newOpponentGroups(from currentOpponentGroups: Set<Group>, with location: Intersection) -> Set<Group> {
@@ -232,7 +220,7 @@ class GroupAnalyzer {
         return  nextGroups
     }
     
-    func isEmpty() -> Bool{
+    func isLocationEmpty() -> Bool{
         return goBoard.status(row: play.location.row, column: play.location.column) == nil
     }
     
