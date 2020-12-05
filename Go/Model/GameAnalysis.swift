@@ -13,4 +13,7 @@ struct GameAnalysis {
     var bestNextPlay: Play
     var winrate: Double
     var scoreLead: Double
+    var otherPlays: [Play]
+    var otherWinrates: [Double]
+    var otherScoreLeads: [Double]
 }

@@ -24,6 +24,7 @@ class GameScene: SKScene {
     var whiteStone: SKShapeNode?
     var positionNode: SKShapeNode?
     var blueSpot: SKShapeNode?
+    var yellowSpot: SKShapeNode?
     
     let goBoardTexture = SKTexture(imageNamed: "GoBoard")
     let blackStoneTexture = SKTexture(imageNamed: "BlackStone")
@@ -169,6 +170,7 @@ class GameScene: SKScene {
         self.whiteStone = SKShapeNode.init(circleOfRadius: scale * 0.5 * 21.810)
         self.blackStone = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
         self.blueSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
+        self.yellowSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
     }
     
     private func pointFor(column: Int, row: Int) -> CGPoint {
@@ -446,67 +448,76 @@ class GameScene: SKScene {
         
         print("gameAnalysis = \(gameAnalysis)")
         
+        analyzerBoard?.removeAllChildren()
+        
+        for k in 0..<gameAnalysis.otherPlays.count {
+            if let node = self.yellowSpot?.copy() as! SKShapeNode? {
+                node.name = "\(count)"
+                node.position = pointFor(column: gameAnalysis.otherPlays[k].location.column, row: gameAnalysis.otherPlays[k].location.row)
+                node.lineWidth = 0
+                node.fillColor = .systemYellow
+                
+                let font = NSFont.systemFont(ofSize: 12)
+                
+                let winrateNode = SKLabelNode(fontNamed: font.fontName)
+                winrateNode.position = CGPoint(x: 0.0, y: 8.0)
+                winrateNode.name = "winrate"
+                winrateNode.text = String(format: "%0.3f", gameAnalysis.otherWinrates[k])
+                winrateNode.fontSize = font.pointSize
+                winrateNode.fontColor = .black
+                winrateNode.verticalAlignmentMode = .center
+                
+                node.addChild(winrateNode)
+                
+                let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
+                scoreLeadNode.position = CGPoint(x: 0.0, y: -8.0)
+                scoreLeadNode.name = "scoreLead"
+                scoreLeadNode.text = String(format: "%0.1f", gameAnalysis.otherScoreLeads[k])
+                scoreLeadNode.fontSize = font.pointSize
+                scoreLeadNode.fontColor = .black
+                scoreLeadNode.verticalAlignmentMode = .center
+                
+                node.addChild(scoreLeadNode)
+                
+                analyzerBoard?.addChild(node)
+            }
+        }
+        
         let winrate = gameAnalysis.winrate
         let scoreLead = gameAnalysis.scoreLead
         let columnAnalysis = gameAnalysis.bestNextPlay.location.column
         let rowAnalysis = gameAnalysis.bestNextPlay.location.row
-        let nextStone = gameAnalysis.bestNextPlay.stone
         
-        analyzerBoard?.removeAllChildren()
-        
-        for row in 0..<19 {
-            guard (row == rowAnalysis) else {
-                continue
-            }
-            for column in 0..<19 {
-                guard (column == columnAnalysis) else {
-                    continue
-                }
-                
-                guard let isPlayable = gameDelegate?.isPlayable(stone: nextStone, column: column, row: row), isPlayable else {
-                    print("showAnalysis: Illegal play!")
-                    print("columnAnalysis = \(columnAnalysis)")
-                    print("column = \(column)")
-                    print("rowAnalysis = \(rowAnalysis)")
-                    print("row = \(row)")
-                    print("nextStone = \(nextStone)")
-                    continue
-                }
-                
-                if let node = self.blueSpot?.copy() as! SKShapeNode? {
-                    node.name = "\(count)"
-                    node.position = pointFor(column: column, row: row)
-                    node.lineWidth = 0
-                    node.fillColor = .systemBlue
-                    
-                    let font = NSFont.systemFont(ofSize: 12)
-                    
-                    let winrateNode = SKLabelNode(fontNamed: font.fontName)
-                    winrateNode.position = CGPoint(x: 0.0, y: 8.0)
-                    winrateNode.name = "winrate"
-                    winrateNode.text = String(format: "%0.3f", winrate)
-                    winrateNode.fontSize = font.pointSize
-                    winrateNode.fontColor = .black
-                    winrateNode.verticalAlignmentMode = .center
-                    
-                    node.addChild(winrateNode)
-                    
-                    let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
-                    scoreLeadNode.position = CGPoint(x: 0.0, y: -8.0)
-                    scoreLeadNode.name = "scoreLead"
-                    scoreLeadNode.text = String(format: "%0.1f", scoreLead)
-                    scoreLeadNode.fontSize = font.pointSize
-                    scoreLeadNode.fontColor = .black
-                    scoreLeadNode.verticalAlignmentMode = .center
-                    
-                    node.addChild(scoreLeadNode)
-                    
-                    analyzerBoard?.addChild(node)
-                    
-                }
-                
-                //print("row = \(row), column = \(column): \(analysis)")
-            }
+        if let node = self.blueSpot?.copy() as! SKShapeNode? {
+            node.name = "\(count)"
+            node.position = pointFor(column: columnAnalysis, row: rowAnalysis)
+            node.lineWidth = 0
+            node.fillColor = .systemBlue
+            
+            let font = NSFont.systemFont(ofSize: 12)
+            
+            let winrateNode = SKLabelNode(fontNamed: font.fontName)
+            winrateNode.position = CGPoint(x: 0.0, y: 8.0)
+            winrateNode.name = "winrate"
+            winrateNode.text = String(format: "%0.3f", winrate)
+            winrateNode.fontSize = font.pointSize
+            winrateNode.fontColor = .black
+            winrateNode.verticalAlignmentMode = .center
+            
+            node.addChild(winrateNode)
+            
+            let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
+            scoreLeadNode.position = CGPoint(x: 0.0, y: -8.0)
+            scoreLeadNode.name = "scoreLead"
+            scoreLeadNode.text = String(format: "%0.1f", scoreLead)
+            scoreLeadNode.fontSize = font.pointSize
+            scoreLeadNode.fontColor = .black
+            scoreLeadNode.verticalAlignmentMode = .center
+            
+            node.addChild(scoreLeadNode)
+            
+            analyzerBoard?.addChild(node)
+            
         }
     }
     

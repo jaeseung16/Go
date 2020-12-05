@@ -91,27 +91,38 @@ class GameAnalyzer {
         }
         
         if (response != nil) {
+            let id = response!.turnNumber
+            let playMade = plays![id-1]
             
-            for move in response!.moveInfos {
-                if (move.order == 0) {
-                    let id = response!.turnNumber
-                    
-                    //print("plays.count = \(plays!.count)")
-                    //print("id = \(id)")
-                    
-                    let playMade = plays![id-1]
-                    
-                    let (column, row) = toLocation(move: response!.moveInfos[0].move)
-                    let nextPlayer = playMade.stone == .White ? Stone.Black : Stone.White
-                    let nextPlay = Play(id: id, row: row - 1, column: column - 1, stone: nextPlayer)
-                    
-                    gameAnalysis = GameAnalysis(playMade: playMade, bestNextPlay: nextPlay, winrate: response!.moveInfos[0].winrate, scoreLead: response!.moveInfos[0].scoreLead)
-                    
-                    //print("move = \(move)")
-                    //print("column = \(column)")
-                    //print("row = \(row)")
+            //print("plays.count = \(plays!.count)")
+            //print("id = \(id)")
+            
+            let nextPlayer = playMade.stone == .White ? Stone.Black : Stone.White
+            
+            let (bestPlayColumn, bestPlayRow) = toLocation(move: response!.moveInfos[0].move)
+            let nextBestPlay = Play(id: id, row: bestPlayRow, column: bestPlayColumn, stone: nextPlayer)
+            
+            var otherPlays = [Play]()
+            var otherWinrates = [Double]()
+            var otherScoreLeads = [Double]()
+            for moveInfo in response!.moveInfos {
+                let (column, row) = toLocation(move: moveInfo.move)
+                if (moveInfo.order == 0) {
+                    continue
+                } else {
+                    otherPlays.append(Play(id: id, row: row, column: column, stone: nextPlayer))
+                    otherWinrates.append(moveInfo.winrate)
+                    otherScoreLeads.append(moveInfo.scoreLead)
                 }
             }
+            
+            gameAnalysis = GameAnalysis(playMade: playMade,
+                                        bestNextPlay: nextBestPlay,
+                                        winrate: response!.moveInfos[0].winrate,
+                                        scoreLead: response!.moveInfos[0].scoreLead,
+                                        otherPlays: otherPlays,
+                                        otherWinrates: otherWinrates,
+                                        otherScoreLeads: otherScoreLeads)
         }
        
         return gameAnalysis
@@ -127,7 +138,7 @@ class GameAnalyzer {
         var moveString = move
         let column = letterToNumber[moveString.removeFirst()]!
         let row = Int(moveString)!
-        return (column, row)
+        return (column - 1, row - 1)
     }
 }
 
