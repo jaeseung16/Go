@@ -153,35 +153,7 @@ class ViewController: NSViewController {
         
         return "\(hours):\(minutes):\(seconds).\(subseconds)"
     }
-    
-    func neighbors(of play: Play, with status: Stone?) -> Set<Intersection> {
-        var neighbors = Set<Intersection>()
-        
-        for neighbor in Neighbor.allCases {
-            switch neighbor {
-            case .up:
-                if play.location.row > 0 && status == goBoard.status(row: play.location.row - 1, column: play.location.column) {
-                    neighbors.insert(Intersection(row: play.location.row - 1, column: play.location.column, stone: status, forbidden: false, isEye: false))
-                }
-            case .down:
-                if play.location.row < goBoard.size - 1 && status == goBoard.status(row: play.location.row + 1, column: play.location.column) {
-                    neighbors.insert(Intersection(row: play.location.row + 1, column: play.location.column, stone: status, forbidden: false, isEye: false))
-                }
-            case .left:
-                if play.location.column > 0 && status == goBoard.status(row: play.location.row, column: play.location.column - 1) {
-                    neighbors.insert(Intersection(row: play.location.row, column: play.location.column - 1, stone: status, forbidden: false, isEye: false))
-                }
-            case .right:
-                if play.location.column < goBoard.size - 1  && status == goBoard.status(row: play.location.row, column: play.location.column + 1) {
-                    neighbors.insert(Intersection(row: play.location.row, column: play.location.column + 1, stone: status, forbidden: false, isEye: false))
-                }
-            }
-        }
-        
-        return neighbors
-    }
-    
-    
+
     func updateGroups() -> Void {
         guard let lastPlay = plays.last else {
             return
@@ -197,15 +169,12 @@ class ViewController: NSViewController {
         
         let newLocation = Intersection(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone, forbidden: false, isEye: false)
         /*
-        let neighborsSameStone = groupAnalyzer.neighborsSameStone
-        let neighborsOppositeStone = groupAnalyzer.neighborsOppositeStone
-        let liberties = groupAnalyzer.liberties
-        
         print("newLocation = \(newLocation)")
-        print("neighborsSameStone = \(neighborsSameStone)")
-        print("neighborsOppositeStone = \(neighborsOppositeStone)")
-        print("liberties = \(liberties)")
+        print("neighborsSameStone = \(groupAnalyzer.neighborsSameStone)")
+        print("neighborsOppositeStone = \(groupAnalyzer.neighborsOppositeStone)")
+        print("liberties = \(groupAnalyzer.liberties)")
         */
+        
         if groupAnalyzer.allNeighborsAreLiberties {
             let newLocations = Set<Intersection>(arrayLiteral: newLocation)
             let newGroup = Group(id: lastPlay.id,
