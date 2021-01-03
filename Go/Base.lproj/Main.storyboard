@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -829,10 +829,17 @@
                                     <action selector="showLiberties:" target="XfG-lQ-9wD" id="UfK-Pl-aZt"/>
                                 </connections>
                             </button>
+                            <levelIndicator verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gr0-JZ-cxN">
+                                <rect key="frame" x="1080" y="590" width="96" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <levelIndicatorCell key="cell" alignment="left" doubleValue="50" maxValue="100" warningValue="100" criticalValue="100" numberOfMajorTickMarks="11" levelIndicatorStyle="continuousCapacity" id="O11-eD-S2P"/>
+                                <color key="fillColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </levelIndicator>
                         </subviews>
                     </customView>
                     <connections>
                         <outlet property="blackTimerLabel" destination="O1e-gF-qhx" id="CrC-TY-v7k"/>
+                        <outlet property="blackWinningProbabilityIndicator" destination="Gr0-JZ-cxN" id="5Vg-Nx-Iuj"/>
                         <outlet property="clockLabel" destination="PtX-ry-Z43" id="OxV-iB-6nF"/>
                         <outlet property="showAnalysis" destination="M0L-av-7up" id="piS-rZ-4EX"/>
                         <outlet property="whiteTimerLabel" destination="05T-z1-Fpe" id="GV1-h2-AUS"/>

@@ -66,7 +66,7 @@ class GameAnalyzer {
         let encoder = JSONEncoder()
         let data = try? encoder.encode(request)
         
-        print("json: " + String(data: data!, encoding: .utf8)!)
+        //print("json: " + String(data: data!, encoding: .utf8)!)
         
         let query = String(data: data!, encoding: .utf8)! + "\n"
         
@@ -84,6 +84,7 @@ class GameAnalyzer {
     func getResult() -> GameAnalysis? {
         var gameAnalysis: GameAnalysis?
         var response: KataGoResponse?
+        
         responseQueue.sync {
             if (self.responses.count > 0 && self.responses.count == count) {
                 response = self.responses.last!

@@ -38,6 +38,7 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var showAnalysis: NSButton!
     
+    @IBOutlet weak var blackWinningProbabilityIndicator: NSLevelIndicator!
     
     @IBAction func activateAnalyzer(_ sender: NSButton) {
         let openPanel = NSOpenPanel()
@@ -256,6 +257,10 @@ extension ViewController: GameDelegate {
     }
     
     func getAnalysis() -> GameAnalysis? {
+        if let gameAnalysis = gameAnalyzer?.getResult() {
+            blackWinningProbabilityIndicator.doubleValue = 100.0 * gameAnalysis.winrate
+        }
+        
         return gameAnalyzer?.getResult()
     }
 }

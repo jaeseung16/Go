@@ -446,7 +446,7 @@ class GameScene: SKScene {
             return
         }
         
-        print("gameAnalysis = \(gameAnalysis)")
+        //print("gameAnalysis = \(gameAnalysis)")
         
         analyzerBoard?.removeAllChildren()
         
