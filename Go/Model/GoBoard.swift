@@ -38,4 +38,26 @@ struct GoBoard {
     mutating func update(row: Int, column: Int, isEye: Bool) -> Void {
         intersections[row * size + column].isEye = isEye
     }
+    
+    func containsEye() -> Bool {
+        var result = false
+        for intersection in intersections {
+            if intersection.stone == nil {
+                result = true
+                break
+            }
+        }
+        return result
+    }
+    
+    func getAnEye() -> Intersection? {
+        for intersection in intersections {
+            if intersection.stone == nil {
+                return intersection
+            }
+        }
+        return nil
+    }
+    
+    
 }

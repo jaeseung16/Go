@@ -12,6 +12,7 @@
 		9044CABD24EC8D56007D90E8 /* Play.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9044CABC24EC8D56007D90E8 /* Play.swift */; };
 		904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904F6F30250052FB00B9345F /* GameAnalyzer.swift */; };
 		90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90574A8424EB3E2F005230AF /* GameDelegate.swift */; };
+		9064DEEF25A3D33C001E4865 /* Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9064DEEE25A3D33C001E4865 /* Score.swift */; };
 		9083F59424F5BDEC00CB26F7 /* gtp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9083F59324F5BDEC00CB26F7 /* gtp.c */; };
 		90989F2C24E89DE70088555C /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90989F2B24E89DE70088555C /* Game.swift */; };
 		909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909AD60D2501A67900C15E45 /* KataGoRequest.swift */; };
@@ -59,6 +60,7 @@
 		9044CABC24EC8D56007D90E8 /* Play.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Play.swift; sourceTree = "<group>"; };
 		904F6F30250052FB00B9345F /* GameAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAnalyzer.swift; sourceTree = "<group>"; };
 		90574A8424EB3E2F005230AF /* GameDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameDelegate.swift; sourceTree = "<group>"; };
+		9064DEEE25A3D33C001E4865 /* Score.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Score.swift; sourceTree = "<group>"; };
 		9083F59124F5BDEC00CB26F7 /* Go-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Go-Bridging-Header.h"; sourceTree = "<group>"; };
 		9083F59224F5BDEC00CB26F7 /* gtp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gtp.h; sourceTree = "<group>"; };
 		9083F59324F5BDEC00CB26F7 /* gtp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gtp.c; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				90A6846B256C7667006E2BC3 /* Group.swift */,
 				90A68476256C8376006E2BC3 /* Neighbor.swift */,
 				90AE908D2573125E009366F1 /* GroupAnalyzer.swift */,
+				9064DEEE25A3D33C001E4865 /* Score.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 				90C88A1024DA241000B4E382 /* GameScene.swift in Sources */,
 				9044CABD24EC8D56007D90E8 /* Play.swift in Sources */,
 				909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */,
+				9064DEEF25A3D33C001E4865 /* Score.swift in Sources */,
 				90C7D5092505685E00E05F47 /* Engine.swift in Sources */,
 				90C88A3C24DA248500B4E382 /* GoBoard.swift in Sources */,
 				904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */,
