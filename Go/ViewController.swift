@@ -66,9 +66,13 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let boardSize = 13
+        
+        goBoard.size = boardSize
+        
         let skView = view as! SKView
             
-        scene = GameScene(size: skView.bounds.size)
+        scene = GameScene(size: skView.bounds.size, boardSize: boardSize)
             
         // Set the scale mode to scale to fit the window
         scene!.scaleMode = .aspectFill

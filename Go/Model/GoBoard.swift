@@ -9,10 +9,12 @@
 import Foundation
 
 struct GoBoard {
-    let size = 19
+    var size = 19
     var intersections = [Intersection]()
     
-    init() {
+    init(size: Int = 19) {
+        self.size = size
+        
         for row in 0..<size {
             for column in 0..<size {
                 let intersection = Intersection(row: row, column: column)

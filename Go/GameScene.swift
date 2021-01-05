@@ -45,7 +45,7 @@ class GameScene: SKScene {
     var sequenceShown = true
     var groupsShown = false
     
-    let boardSize = 19
+    var boardSize = 19
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder) is not used in this app")
@@ -57,6 +57,11 @@ class GameScene: SKScene {
         super.init(size: size)
         
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
+    }
+    
+    convenience init(size: CGSize, boardSize: Int = 19) {
+        self.init(size: size)
+        self.boardSize = boardSize
     }
     
     override func didMove(to view: SKView) {
