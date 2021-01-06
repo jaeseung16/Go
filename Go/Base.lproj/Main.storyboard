@@ -810,7 +810,7 @@
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oMI-o4-eNV">
                                 <rect key="frame" x="1070" y="520" width="116" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="Button" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qAj-gT-2ZN">
+                                <buttonCell key="cell" type="push" title="Start KatoGo" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qAj-gT-2ZN">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
@@ -829,8 +829,19 @@
                                     <action selector="showLiberties:" target="XfG-lQ-9wD" id="UfK-Pl-aZt"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RmF-PO-gsF">
+                                <rect key="frame" x="1070" y="596" width="117" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Territories" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NhR-TY-wYG">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showTeriitories:" target="XfG-lQ-9wD" id="6cu-7U-vRc"/>
+                                </connections>
+                            </button>
                             <levelIndicator verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gr0-JZ-cxN">
-                                <rect key="frame" x="1080" y="590" width="96" height="18"/>
+                                <rect key="frame" x="1080" y="565" width="96" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <levelIndicatorCell key="cell" alignment="left" doubleValue="50" maxValue="100" warningValue="100" criticalValue="100" numberOfMajorTickMarks="11" levelIndicatorStyle="continuousCapacity" id="O11-eD-S2P"/>
                                 <color key="fillColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

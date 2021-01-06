@@ -20,38 +20,39 @@ class Score {
         
         while !frontier.isEmpty {
             let current = frontier.popFirst()!
-            chain.insert(current)
+            print("current = \(current)")
             
+            chain.insert(current)
             for neighbor in Neighbor.allCases {
                 var row: Int?
                 var column: Int?
                 
                 switch neighbor {
                 case .up:
-                    if anEye.row > 0 {
-                        row = anEye.row - 1
-                        column = anEye.column
+                    if current.row > 0 {
+                        row = current.row - 1
+                        column = current.column
                     }
                 case .down:
-                    if anEye.row < goBboard.size - 1 {
-                        row = anEye.row + 1
-                        column = anEye.column
+                    if current.row < goBboard.size - 1 {
+                        row = current.row + 1
+                        column = current.column
                     }
                 case .left:
-                    if anEye.column > 0 {
-                        row = anEye.row
-                        column = anEye.column - 1
+                    if current.column > 0 {
+                        row = current.row
+                        column = current.column - 1
                     }
                 case .right:
-                    if anEye.column < goBboard.size - 1{
-                        row = anEye.row
-                        column = anEye.column + 1
+                    if current.column < goBboard.size - 1 {
+                        row = current.row
+                        column = current.column + 1
                     }
                 }
                 
                 if let row = row, let column = column {
-                    let neighbor = Intersection(row: row, column: column)
                     let statusNeighbor = goBboard.status(row: row, column: column)
+                    let neighbor = Intersection(row: row, column: column, stone: statusNeighbor)
                     if status == statusNeighbor && !chain.contains(neighbor) {
                         frontier.insert(neighbor)
                     } else if status != statusNeighbor {
@@ -68,12 +69,15 @@ class Score {
         var workingBoard = goBoard
         for place in places {
             workingBoard.update(row: place.row, column: place.column, stone: stone)
+            print("Updating \(place)")
         }
         return workingBoard
     }
     
     func evaluate() -> Int {
         var workingBoard = self.board!
+        
+        print("EVALUATE")
         
         while workingBoard.containsEye() {
             let eye = workingBoard.getAnEye()!
@@ -97,6 +101,8 @@ class Score {
             workingBoard = place(territory, stone: territoryColor, goBoard: workingBoard)
         }
         
+        board = workingBoard
+        
         var blackScore = 0
         var whiteScore = 0
         for intersecion in workingBoard.intersections {
@@ -106,6 +112,8 @@ class Score {
                 whiteScore += 1
             }
         }
+        
+        print("SCORE - \(blackScore) : \(whiteScore)")
         
         value = blackScore - whiteScore
         

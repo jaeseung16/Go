@@ -16,7 +16,7 @@ class ViewController: NSViewController {
     var scene: GameScene?
     var groups = Set<Group>()
     
-    var goBoard = GoBoard()
+    var goBoard: GoBoard?
     
     var gameAnalyzer: GameAnalyzer?
     
@@ -68,7 +68,7 @@ class ViewController: NSViewController {
 
         let boardSize = 13
         
-        goBoard.size = boardSize
+        goBoard = GoBoard(size: boardSize)
         
         let skView = view as! SKView
             
@@ -128,6 +128,17 @@ class ViewController: NSViewController {
         isWhiteWillPlay = !isWhiteWillPlay
     }
     
+    
+    @IBAction func showTeriitories(_ sender: NSButton) {
+        let score = Score()
+        score.board = goBoard!
+        
+        let result = score.evaluate()
+        print("\(score.board!)")
+        
+        scene?.showTerritories(board: score.board!)
+    }
+    
     func updateTimers(_ currentTime: TimeInterval) {
         let dt = currentTime - self.previousTime
         self.previousTime = currentTime
@@ -168,8 +179,8 @@ class ViewController: NSViewController {
         
         print("lastPlay = \(lastPlay)")
         //print("goBoard.status = \(goBoard.status(row: 15, column: 16))")
-        let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard, groups: groups, lastPlay: plays.last, removedStones: removedStones)
-        goBoard.update(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone)
+        let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard!, groups: groups, lastPlay: plays.last, removedStones: removedStones)
+        goBoard!.update(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone)
         
         
         let newLocation = Intersection(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone, forbidden: false, isEye: false)
@@ -193,7 +204,7 @@ class ViewController: NSViewController {
             
             groupAnalyzer.locationsToRemove!.forEach { location in
                 print("Remove location: \(location)")
-                goBoard.update(row: location.row, column: location.column, stone: nil)
+                goBoard!.update(row: location.row, column: location.column, stone: nil)
                 removedStones.insert(location)
                 
                 for play in plays {
@@ -230,10 +241,10 @@ extension ViewController: GameDelegate {
         print("isPlayable: \(stone) @ row = \(row), column = \(column)")
         let nextPlay = Play(id: playNumber, row: row, column: column, stone: stone)
         
-        var canPlay = goBoard.status(row: row, column: column) == nil
+        var canPlay = goBoard!.status(row: row, column: column) == nil
         
         if canPlay {
-            let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard, groups: groups, lastPlay: plays.last, removedStones: removedStones)
+            let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard!, groups: groups, lastPlay: plays.last, removedStones: removedStones)
             if !groupAnalyzer.allNeighborsAreLiberties {
                 canPlay = groupAnalyzer.isPlayable
             }

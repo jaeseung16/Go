@@ -25,6 +25,7 @@ class GameScene: SKScene {
     var positionNode: SKShapeNode?
     var blueSpot: SKShapeNode?
     var yellowSpot: SKShapeNode?
+    var territorySpot: SKShapeNode?
     
     let goBoardTexture = SKTexture(imageNamed: "GoBoard")
     let blackStoneTexture = SKTexture(imageNamed: "BlackStone")
@@ -176,6 +177,7 @@ class GameScene: SKScene {
         self.blackStone = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
         self.blueSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
         self.yellowSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
+        self.territorySpot = SKShapeNode.init(circleOfRadius: scale * 0.25 * 22.119)
     }
     
     private func pointFor(column: Int, row: Int) -> CGPoint {
@@ -528,6 +530,44 @@ class GameScene: SKScene {
     
     func hideAnalysis() -> Void {
         analyzerBoard?.removeAllChildren()
+    }
+    
+    
+    func showTerritories(board: GoBoard) -> Void {
+        print("Show Territories")
+        analyzerBoard?.removeAllChildren()
+        
+        for row in 0..<boardSize {
+            for column in 0..<boardSize {
+                let stone = board.status(row: row, column: column)
+                
+                var node: SKShapeNode
+                switch stone {
+                case .Black:
+                    node = self.territorySpot!.copy() as! SKShapeNode
+                    node.fillTexture = blackStoneTexture
+                    node.fillColor = SKColor.black
+                    node.strokeColor = SKColor.white
+                case .White:
+                    node = self.territorySpot!.copy() as! SKShapeNode
+                    node.fillTexture = whiteStoneTexture
+                    node.fillColor = SKColor.white
+                    node.strokeColor = SKColor.black
+                case .none:
+                    node = self.territorySpot!.copy() as! SKShapeNode
+                    //node.fillTexture = whiteStoneTexture
+                    node.fillColor = SKColor.clear
+                    node.strokeColor = SKColor.gray
+                }
+    
+                node.name = "territory"
+                node.position = pointFor(column: column, row: row)
+                node.lineWidth = 2
+                node.alpha = 0.5
+                
+                analyzerBoard?.addChild(node)
+            }
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
