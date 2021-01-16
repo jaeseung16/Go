@@ -31,6 +31,8 @@ class ViewController: NSViewController {
     var ko: Intersection?
     var removedStones = Set<Intersection>()
     
+    var sgfGameTree: SGFGameTree?
+    
     @IBOutlet weak var clockLabel: NSTextField!
     
     @IBOutlet weak var blackTimerLabel: NSTextField!
@@ -66,7 +68,7 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let boardSize = 13
+        let boardSize = 19
         
         goBoard = GoBoard(size: boardSize)
         
@@ -139,6 +141,75 @@ class ViewController: NSViewController {
         scene?.showTerritories(board: score.board!)
     }
     
+    @IBAction func saveGame(_ sender: NSButton) {
+        var count = 0
+        for node in self.sgfGameTree!.nodelist! {
+            //sleep(1)
+            //print("\(count): \(node)")
+            
+            if node.data.contains(where: { (key, _) -> Bool in
+                return key == "W"
+            }) {
+                print("\(count): \(node.data["W"])")
+                let sgfCoordinate = node.data["W"]!.values![0]
+                
+                let sgfRow = SGFCoordinate(rawValue: String(sgfCoordinate.last!))!
+                let sgfcolumn = SGFCoordinate(rawValue: String(sgfCoordinate.first!))!
+                print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
+                
+                self.play(stone: .White, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
+                scene?.addStone(.White, count: count, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
+            } else if node.data.contains(where: { (key, _) -> Bool in
+                return key == "B"
+            }) {
+                print("\(count): \(node.data["B"])")
+                let sgfCoordinate = node.data["B"]!.values![0]
+                let sgfRow = SGFCoordinate(rawValue: String(sgfCoordinate.last!))!
+                let sgfcolumn = SGFCoordinate(rawValue: String(sgfCoordinate.first!))!
+                print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
+                
+                self.play(stone: .Black, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
+                scene?.addStone(.Black, count: count, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
+            } else {
+                continue
+            }
+            
+            count += 1
+        }
+    }
+    
+    @IBAction func loadGame(_ sender: NSButton) {
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = true
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+        openPanel.canCreateDirectories = false
+        openPanel.title = "Select a SGF file"
+
+        openPanel.beginSheetModal(for:view.window!) { (response) in
+            if response == NSApplication.ModalResponse.OK {
+                _ = openPanel.url!.path
+                // do whatever you what with the file path
+                var inputString = try! String(contentsOf: openPanel.url!)
+                inputString.removeAll(where: { $0 == "\n" })
+                
+                let parser = SGFParser(inputString)
+            
+                do {
+                    try parser.parse()
+                } catch {
+                    // TODO: Show something to the user
+                    print("Failed parsing inputString: \(error)")
+                }
+                
+                //print("parser.gameTrees = \(parser.gameTrees)")
+                
+                self.sgfGameTree = parser.gameTrees[0]
+            }
+            openPanel.close()
+        }
+    }
+    
     func updateTimers(_ currentTime: TimeInterval) {
         let dt = currentTime - self.previousTime
         self.previousTime = currentTime
@@ -200,7 +271,7 @@ class ViewController: NSViewController {
                                  oppenentLocations: groupAnalyzer.neighborsOppositeStone)
             groups.insert(newGroup)
         } else {
-            print("groupsToRemoveFromGoBoard.count = \(groupAnalyzer.groupsToRemove.count)")
+            //print("groupsToRemoveFromGoBoard.count = \(groupAnalyzer.groupsToRemove.count)")
             
             groupAnalyzer.locationsToRemove!.forEach { location in
                 print("Remove location: \(location)")
@@ -218,7 +289,7 @@ class ViewController: NSViewController {
             groups = groupAnalyzer.nextGroups
         }
         
-        print("groups = \(groups)")
+        //print("groups = \(groups)")
     }
     
 }
