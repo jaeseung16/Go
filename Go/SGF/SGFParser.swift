@@ -8,29 +8,29 @@
 
 import Foundation
 
-class SGFParser {
-    static let gameTreeStart = "\\s*\\("
-    static let gameTreeEnd = "\\s*\\)"
-    static let gameTreeNext = "\\s*(;|\\(|\\))"
-    static let nodeContents = "\\s*([A-Za-z]+(?=\\s*\\[))"
-    static let propertyStart = "\\s*\\["
-    static let propertyEnd = "\\]"
-    static let escape = "\\\\"
-    static let lineBreak = "\\r\\n?|\\n\\r"
+public class SGFParser {
+    private static let gameTreeStart = "\\s*\\("
+    private static let gameTreeEnd = "\\s*\\)"
+    private static let gameTreeNext = "\\s*(;|\\(|\\))"
+    private static let nodeContents = "\\s*([A-Za-z]+(?=\\s*\\[))"
+    private static let propertyStart = "\\s*\\["
+    private static let propertyEnd = "\\]"
+    private static let escape = "\\\\"
+    private static let lineBreak = "\\r\\n?|\\n\\r"
     
     var data: String
     var dataLen: Int
     var index: Int
     var gameTrees: [SGFGameTree]
     
-    init(_ data: String) {
+    public init(_ data: String) {
         self.data = data
         self.dataLen = data.count
         self.index = 0
         self.gameTrees = [SGFGameTree]()
     }
     
-    func parse() throws -> Void {
+    public func parse() throws -> Void {
         while self.index < self.dataLen {
             let gameTree = try self.parseOneGame()
             if gameTree != nil {
@@ -41,9 +41,7 @@ class SGFParser {
         }
     }
     
-    func parseOneGame() throws -> SGFGameTree? {
-        //print("** parseOneGame **")
-        //print("self.index = \(self.index), self.dataLen = \(self.dataLen)")
+    private func parseOneGame() throws -> SGFGameTree? {
         if self.index < self.dataLen {
             let reGameTreeStart = try NSRegularExpression(pattern: SGFParser.gameTreeStart)
             
@@ -51,94 +49,80 @@ class SGFParser {
     
             if match != nil {
                 self.index = match!.range.upperBound
-                let gameTree = try self.parseGameTree()
+                let rootNode = try self.parseGameTree()
+                let gameTree = SGFGameTree()
+                gameTree.rootNode = rootNode
                 return gameTree
             }
         }
-        
         return nil
     }
     
-    func parseGameTree() throws -> SGFGameTree {
-        //print("** parseGameTree **")
-        let gameTree = SGFGameTree()
-        gameTree.nodelist = [SGFNode]()
-        
+    private func parseGameTree() throws -> SGFNode {
+        var rootNode: SGFNode?
+        var currentNode: SGFNode?
         while self.index < self.dataLen {
             let reGameTreeNext = try NSRegularExpression(pattern: SGFParser.gameTreeNext)
             let match = reGameTreeNext.firstMatch(in: data, options: .anchored, range: NSMakeRange(self.index, self.dataLen - self.index))
-            //print("match = \(match)")
-            //print("self.index = \(self.index)")
+            
             if match != nil {
                 self.index = match!.range.upperBound
-                let matchedString = data[Range(match!.range(at: 0), in: data)!]
-                //print("matchedString = '\(matchedString)'")
+                let matchedString = data[Range(match!.range(at: 1), in: data)!]
+                
                 switch matchedString {
                 case ";":
-                    if !gameTree.variations.isEmpty {
-                        throw SGFParserError.GameTreeParseError("A node was encountered after a variation at \(self.index)")
-                    }
                     let node = try self.parseNode()
-                    gameTree.nodelist?.append(node)
+                    if rootNode == nil {
+                        rootNode = node
+                        currentNode = node
+                    } else {
+                        currentNode!.add(child: node)
+                        currentNode = node
+                    }
                 case "(":
-                    gameTree.variations = try self.parseVariations()
-                    //print("gameTree.variations = \(gameTree.variations)")
+                    let variations = try self.parseVariations()
+                    variations.forEach { currentNode!.add(child: $0)}
                 case ")":
-                    //print("matchedString = \(matchedString)")
-                    return gameTree
+                    return rootNode!
                 default:
                     throw SGFParserError.GameTreeParseError("at \(self.index)")
                 }
             } else {
                 throw SGFParserError.GameTreeParseError("at \(self.index)")
             }
-            
         }
         
-        return gameTree
+        return rootNode!
     }
     
-    // TODO: Find an example
-    func parseVariations() throws -> [SGFGameTree] {
+    private func parseVariations() throws -> [SGFNode] {
         let reGameTreeStart = try NSRegularExpression(pattern: SGFParser.gameTreeStart)
         let reGameTreeEnd = try NSRegularExpression(pattern: SGFParser.gameTreeEnd)
         
-        //print("** parseVariations **")
-        var variations = [SGFGameTree]()
-        //print("self.index = \(self.index)")
+        var variations = [SGFNode]()
         while self.index < self.dataLen {
-            //print("\(data[Range(NSMakeRange(self.index, 1), in: data)!])")
             let matchEnd = reGameTreeEnd.firstMatch(in: data, options: .anchored, range: NSMakeRange(self.index, self.dataLen - self.index))
-            
-            //print("matchEnd = \(String(describing: matchEnd))")
-            //print("self.index = \(self.index)")
-            
+     
             if matchEnd != nil {
                 return variations
             }
             
-            let gameTree = try self.parseGameTree()
-            //print("gameTree.nodelist.count = \(gameTree.nodelist!.count)")
-            
-            if gameTree.nodelist != nil && !gameTree.nodelist!.isEmpty {
-                variations.append(gameTree)
+            let node = try self.parseGameTree()
+            if !node.properties.isEmpty {
+                variations.append(node)
             }
             
             let matchStart = reGameTreeStart.firstMatch(in: data, options: .anchored, range: NSMakeRange(self.index, self.dataLen - self.index))
-            
-            //print("matchStart = \(String(describing: matchStart))")
-            //print("self.index = \(self.index)")
+
             if matchStart != nil {
                 self.index = matchStart!.range.upperBound
             }
-            
         }
         
         throw SGFParserError.EndOfDataParseError
     }
     
-    func parseNode() throws -> SGFNode {
-        //print("** parseNode **")
+    private func parseNode() throws -> SGFNode {
         let node = SGFNode(properties: [SGFProperty]())
         
         while self.index < self.dataLen {
@@ -150,9 +134,9 @@ class SGFParser {
                 let propertyValueList = try self.parsePropertyValue()
 
                 if !propertyValueList.isEmpty {
-                    let id = data[Range(match!.range(at: 0), in: data)!]
+                    let id = data[Range(match!.range(at: 1), in: data)!]
                     let property = node.makeProperty(id: String(id), values: propertyValueList)
-                    node.addProperty(property: property)
+                    node.add(property: property)
                 } else {
                     throw SGFParserError.NodePropertyParseError
                 }
@@ -164,7 +148,7 @@ class SGFParser {
         throw SGFParserError.EndOfDataParseError
     }
     
-    func parsePropertyValue() throws -> [String] {
+    private func parsePropertyValue() throws -> [String] {
         var propertyValueList = [String]()
         
         while self.index < self.dataLen {
@@ -217,7 +201,7 @@ class SGFParser {
         }
     }
     
-    func convertControlChars(_ text: String) -> String {
+    private func convertControlChars(_ text: String) -> String {
         return text.map { character -> String in
             let singleCharacter = String(character)
             if SGFParser.escapingCharacters.contains(singleCharacter) {
@@ -228,7 +212,7 @@ class SGFParser {
         }.joined()
     }
     
-    static let escapingCharacters = ["\u{000}", "\u{001}", "\u{002}", "\u{003}", "\u{004}", "\u{005}", "\u{006}", "\u{007}",
+    private static let escapingCharacters = ["\u{000}", "\u{001}", "\u{002}", "\u{003}", "\u{004}", "\u{005}", "\u{006}", "\u{007}",
                                     "\u{008}", "\u{009}", "\u{00B}", "\u{00C}", "\u{00E}", "\u{00F}",
                                     "\u{010}", "\u{011}", "\u{012}", "\u{013}", "\u{014}", "\u{015}", "\u{016}", "\u{017}",
                                     "\u{018}", "\u{019}", "\u{01A}", "\u{01B}", "\u{01C}", "\u{01D}", "\u{01E}", "\u{01F}"]

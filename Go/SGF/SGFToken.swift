@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum SGFToken: String {
+public enum SGFToken: String {
     // SGF Properties (FF[4]) https://www.red-bean.com/sgf/properties.html
     case NONE
     case UNKNOWN

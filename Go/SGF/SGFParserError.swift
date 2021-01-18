@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum SGFParserError: Error {
+public enum SGFParserError: Error {
     case EndOfDataParseError
     case GameTreeParseError(String)
     case NodePropertyParseError
