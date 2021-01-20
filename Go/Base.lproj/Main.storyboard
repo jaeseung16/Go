@@ -846,6 +846,28 @@
                                 <levelIndicatorCell key="cell" alignment="left" doubleValue="50" maxValue="100" warningValue="100" criticalValue="100" numberOfMajorTickMarks="11" levelIndicatorStyle="continuousCapacity" id="O11-eD-S2P"/>
                                 <color key="fillColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </levelIndicator>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mxo-eA-swE">
+                                <rect key="frame" x="1070" y="628" width="117" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Save Game" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oRH-Mj-fWZ">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="saveGame:" target="XfG-lQ-9wD" id="Caz-ns-6WS"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Cx6-7T-7po">
+                                <rect key="frame" x="1070" y="660" width="116" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Load Game" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9oA-X9-fxS">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="loadGame:" target="XfG-lQ-9wD" id="TQr-Xm-rHI"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </customView>
                     <connections>

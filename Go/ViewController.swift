@@ -143,30 +143,32 @@ class ViewController: NSViewController {
     
     @IBAction func saveGame(_ sender: NSButton) {
         var count = 0
-        for node in self.sgfGameTree!.nodelist! {
-            //sleep(1)
-            //print("\(count): \(node)")
-            
-            if node.data.contains(where: { (key, _) -> Bool in
+        guard let rootNode = self.sgfGameTree?.rootNode, rootNode.children.count > 0 else {
+            return
+        }
+        
+        var currentNode = rootNode.eldest
+        while currentNode.children.count > 0 {
+            if currentNode.properties.contains(where: { (key, _) -> Bool in
                 return key == "W"
             }) {
-                print("\(count): \(node.data["W"])")
-                let sgfCoordinate = node.data["W"]!.values![0]
+                //print("\(count): \(currentNode.properties["W"])")
+                let sgfCoordinate = currentNode.properties["W"]!.values![0]
                 
                 let sgfRow = SGFCoordinate(rawValue: String(sgfCoordinate.last!))!
                 let sgfcolumn = SGFCoordinate(rawValue: String(sgfCoordinate.first!))!
-                print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
+                //print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
                 
                 self.play(stone: .White, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
                 scene?.addStone(.White, count: count, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
-            } else if node.data.contains(where: { (key, _) -> Bool in
+            } else if currentNode.properties.contains(where: { (key, _) -> Bool in
                 return key == "B"
             }) {
-                print("\(count): \(node.data["B"])")
-                let sgfCoordinate = node.data["B"]!.values![0]
+               // print("\(count): \(currentNode.properties["B"])")
+                let sgfCoordinate = currentNode.properties["B"]!.values![0]
                 let sgfRow = SGFCoordinate(rawValue: String(sgfCoordinate.last!))!
                 let sgfcolumn = SGFCoordinate(rawValue: String(sgfCoordinate.first!))!
-                print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
+                //print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
                 
                 self.play(stone: .Black, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
                 scene?.addStone(.Black, count: count, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
@@ -174,6 +176,7 @@ class ViewController: NSViewController {
                 continue
             }
             
+            currentNode = currentNode.eldest
             count += 1
         }
     }

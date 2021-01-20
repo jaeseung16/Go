@@ -74,7 +74,7 @@ class GoTests: XCTestCase {
         let testBundle = Bundle(for: type(of: self))
         if let fileURL = testBundle.url(forResource: "ff4_ex", withExtension: "sgf") {
             let sgfString = try? String(contentsOf: fileURL)
-            
+            print("\(sgfString)")
             let parser = SGFParser(sgfString!)
             do {
                 try parser.parse()
