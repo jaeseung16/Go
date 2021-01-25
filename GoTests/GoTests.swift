@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import Go
+@testable import SmartGameFormat_Swift
 
 class GoTests: XCTestCase {
 
@@ -49,44 +50,6 @@ class GoTests: XCTestCase {
         print("node = \(gameTree.rootNode)")
         print("SGF Result: \(gameTree.sgfString)")
         print("Game Info: \(String(describing: gameTree.gameInfo))")
-    }
-    
-    func testSGFParseFromFile1() throws {
-        let testBundle = Bundle(for: type(of: self))
-        if let fileURL = testBundle.url(forResource: "20210107-174101", withExtension: "sgf") {
-            let sgfString = try? String(contentsOf: fileURL)
-            
-            let parser = SGFParser(sgfString!)
-            do {
-                try parser.parse()
-            } catch {
-                print("Failed parsing sgfString: \(error)")
-            }
-            
-            let gameTree = parser.gameTrees[0]
-            print("node = \(gameTree.rootNode)")
-            print("SGF Result: \(gameTree.sgfString)")
-            print("Game Info: \(String(describing: gameTree.gameInfo))")
-        }
-    }
-    
-    func testSGFParseFromFile2() throws {
-        let testBundle = Bundle(for: type(of: self))
-        if let fileURL = testBundle.url(forResource: "ff4_ex", withExtension: "sgf") {
-            let sgfString = try? String(contentsOf: fileURL)
-            print("\(sgfString)")
-            let parser = SGFParser(sgfString!)
-            do {
-                try parser.parse()
-            } catch {
-                print("Failed parsing sgfString: \(error)")
-            }
-            
-            let gameTree = parser.gameTrees[0]
-            print("node = \(gameTree.rootNode)")
-            print("SGF Result: \(gameTree.sgfString)")
-            print("Game Info: \(String(describing: gameTree.gameInfo))")
-        }
     }
     
     func testPerformanceExample() throws {
