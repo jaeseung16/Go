@@ -9,6 +9,7 @@
 import Cocoa
 import SpriteKit
 import GameplayKit
+import SmartGameFormat_Swift
 
 class ViewController: NSViewController {
     var playNumber: Int = 0
@@ -142,42 +143,21 @@ class ViewController: NSViewController {
     }
     
     @IBAction func saveGame(_ sender: NSButton) {
-        var count = 0
-        guard let rootNode = self.sgfGameTree?.rootNode, rootNode.children.count > 0 else {
-            return
-        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy_MM_dd_HH_mm"
         
-        var currentNode = rootNode.eldest
-        while currentNode.children.count > 0 {
-            if currentNode.properties.contains(where: { (key, _) -> Bool in
-                return key == "W"
-            }) {
-                //print("\(count): \(currentNode.properties["W"])")
-                let sgfCoordinate = currentNode.properties["W"]!.values![0]
-                
-                let sgfRow = SGFCoordinate(rawValue: String(sgfCoordinate.last!))!
-                let sgfcolumn = SGFCoordinate(rawValue: String(sgfCoordinate.first!))!
-                //print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
-                
-                self.play(stone: .White, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
-                scene?.addStone(.White, count: count, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
-            } else if currentNode.properties.contains(where: { (key, _) -> Bool in
-                return key == "B"
-            }) {
-               // print("\(count): \(currentNode.properties["B"])")
-                let sgfCoordinate = currentNode.properties["B"]!.values![0]
-                let sgfRow = SGFCoordinate(rawValue: String(sgfCoordinate.last!))!
-                let sgfcolumn = SGFCoordinate(rawValue: String(sgfCoordinate.first!))!
-                //print("\(sgfRow.toNumber()), \(sgfcolumn.toNumber())")
-                
-                self.play(stone: .Black, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
-                scene?.addStone(.Black, count: count, column: sgfcolumn.toNumber(), row: sgfRow.toNumber())
-            } else {
-                continue
+        let savePanel = NSSavePanel()
+        savePanel.nameFieldStringValue = "Untitled_\(dateFormatter.string(from: Date())).sgf"
+        savePanel.canCreateDirectories = false
+        savePanel.title = "Save a SGF file"
+        
+        savePanel.beginSheetModal(for: view.window!) { response in
+            if response == NSApplication.ModalResponse.OK {
+                let sgfHelper = SGFHelper()
+                sgfHelper.load(from: self.plays)
+                print("\(sgfHelper.gameTrees)")
+                sgfHelper.save(to: savePanel.url!)
             }
-            
-            currentNode = currentNode.eldest
-            count += 1
         }
     }
     
@@ -189,25 +169,22 @@ class ViewController: NSViewController {
         openPanel.canCreateDirectories = false
         openPanel.title = "Select a SGF file"
 
-        openPanel.beginSheetModal(for:view.window!) { (response) in
+        openPanel.beginSheetModal(for: view.window!) { response in
             if response == NSApplication.ModalResponse.OK {
-                _ = openPanel.url!.path
-                // do whatever you what with the file path
-                var inputString = try! String(contentsOf: openPanel.url!)
-                inputString.removeAll(where: { $0 == "\n" })
+                let sgfHelper = SGFHelper()
+                sgfHelper.load(from: openPanel.url!)
                 
-                let parser = SGFParser(inputString)
-            
-                do {
-                    try parser.parse()
-                } catch {
-                    // TODO: Show something to the user
-                    print("Failed parsing inputString: \(error)")
+                if sgfHelper.succeeded {
+                    let plays = sgfHelper.getPlays()
+                    
+                    self.sgfGameTree = sgfHelper.gameTrees[0]
+                    
+                    DispatchQueue.main.async {
+                        plays?.forEach({ play in
+                            self.scene?.addStone(play.stone, count: play.id, column: play.location.column, row: play.location.row)
+                        })
+                    }
                 }
-                
-                //print("parser.gameTrees = \(parser.gameTrees)")
-                
-                self.sgfGameTree = parser.gameTrees[0]
             }
             openPanel.close()
         }
