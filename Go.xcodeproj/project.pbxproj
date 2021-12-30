@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9001352E277D24A1006A5385 /* Feature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9001352D277D24A1006A5385 /* Feature.swift */; };
 		9014F2102506615500317AC4 /* GameAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014F20F2506615500317AC4 /* GameAnalysis.swift */; };
 		902976B425BA37AB000AFF26 /* SGFHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902976B325BA37AB000AFF26 /* SGFHelper.swift */; };
 		904074E72504514B006307AB /* KataGoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 904074E62504514B006307AB /* KataGoEngine.swift */; };
@@ -57,6 +58,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9001352D277D24A1006A5385 /* Feature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		9014F20F2506615500317AC4 /* GameAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAnalysis.swift; sourceTree = "<group>"; };
 		902976B325BA37AB000AFF26 /* SGFHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SGFHelper.swift; sourceTree = "<group>"; };
 		904074E62504514B006307AB /* KataGoEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KataGoEngine.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				90AE908D2573125E009366F1 /* GroupAnalyzer.swift */,
 				9064DEEE25A3D33C001E4865 /* Score.swift */,
 				902976B325BA37AB000AFF26 /* SGFHelper.swift */,
+				9001352D277D24A1006A5385 /* Feature.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 				90C88A3C24DA248500B4E382 /* GoBoard.swift in Sources */,
 				904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */,
 				90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */,
+				9001352E277D24A1006A5385 /* Feature.swift in Sources */,
 				90AE908E2573125E009366F1 /* GroupAnalyzer.swift in Sources */,
 				904074E72504514B006307AB /* KataGoEngine.swift in Sources */,
 				90C88A4124DA259900B4E382 /* Stone.swift in Sources */,

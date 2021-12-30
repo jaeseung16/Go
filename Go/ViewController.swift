@@ -43,6 +43,8 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var blackWinningProbabilityIndicator: NSLevelIndicator!
     
+    @IBOutlet weak var featurePopUpButton: NSPopUpButton!
+    
     @IBAction func activateAnalyzer(_ sender: NSButton) {
         let openPanel = NSOpenPanel()
         openPanel.canChooseFiles = true
@@ -92,6 +94,9 @@ class ViewController: NSViewController {
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
         
+        featurePopUpButton.removeAllItems()
+        featurePopUpButton.addItems(withTitles: Feature.titles)
+        
         /*
         print("*****")
         gtp_finish_response()
@@ -115,15 +120,25 @@ class ViewController: NSViewController {
         print("\(playNumber)")
     }
     
-    @IBAction func showSequence(_ sender: NSButton) {
-        scene?.showSequence()
-    }
-    
-    @IBAction func showGroups(_ sender: NSButton) {
-        scene?.showGroups(groups)
-    }
-    
     @IBAction func showLiberties(_ sender: Any) {
+        if let titleOfSelectedItem = featurePopUpButton.titleOfSelectedItem, let feature = Feature(rawValue: titleOfSelectedItem) {
+            switch feature {
+            case .none:
+                break
+            case .black:
+                break
+            case .white:
+                break
+            case .sequence:
+                scene?.showSequence()
+            case .allowed:
+                break
+            case .chain:
+                scene?.showGroups(groups)
+            case .liberty:
+                break
+            }
+        }
     }
     
     func togglePlayer() {
