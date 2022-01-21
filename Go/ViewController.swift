@@ -120,22 +120,30 @@ class ViewController: NSViewController {
         print("\(playNumber)")
     }
     
-    @IBAction func showLiberties(_ sender: Any) {
+    @IBAction func showFeauture(_ sender: Any) {
         if let titleOfSelectedItem = featurePopUpButton.titleOfSelectedItem, let feature = Feature(rawValue: titleOfSelectedItem) {
             switch feature {
             case .none:
+                print("none")
                 break
             case .black:
+                print("black")
                 break
             case .white:
+                print("white")
                 break
             case .sequence:
+                print("sequence")
                 scene?.showSequence()
             case .allowed:
+                print("allowed")
                 break
             case .chain:
+                print("chain")
                 scene?.showGroups(groups)
             case .liberty:
+                print("liberty")
+                scene?.showLiberties(groups)
                 break
             }
         }

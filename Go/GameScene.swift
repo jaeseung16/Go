@@ -413,7 +413,7 @@ class GameScene: SKScene {
         
         let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
         
-        for group in groups {
+        groups.forEach { group in
             for location in group.locations {
                 let column = location.column
                 let row = location.row
@@ -428,7 +428,18 @@ class GameScene: SKScene {
                 
                 analyzerBoard?.addChild(node)
             }
-            
+        }
+        
+        groupsShown.toggle()
+    }
+    
+    func showLiberties(_ groups: Set<Group>) -> Void {
+        print("showLiberties")
+        analyzerBoard?.removeAllChildren()
+        
+        let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
+        
+        groups.forEach { group in
             for liberty in group.liberties {
                 let column = liberty.column
                 let row = liberty.row
@@ -445,7 +456,7 @@ class GameScene: SKScene {
             }
         }
         
-        groupsShown = !groupsShown
+        groupsShown.toggle()
     }
     
     func showAnalysis() -> Void {

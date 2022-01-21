@@ -836,7 +836,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="showLiberties:" target="XfG-lQ-9wD" id="UfK-Pl-aZt"/>
+                                    <action selector="showFeauture:" target="XfG-lQ-9wD" id="N5B-2h-pl6"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="goc-lq-86Y">
