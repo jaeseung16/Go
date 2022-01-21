@@ -10,6 +10,7 @@ import Foundation
 import AppKit
 
 class KataGo {
+    // /usr/local/Cellar/katago/1.9.1/bin/katago
     let model = "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/katrain/models/g170e-b15c192-s1672170752-d466197061.bin.gz"
     let cfg = "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/katrain/KataGo/analysis_config.cfg"
     let config_thread = "8"
