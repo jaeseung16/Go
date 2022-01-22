@@ -299,8 +299,13 @@ class ViewController: NSViewController {
 }
 
 extension ViewController: GameDelegate {
-    func play(stone: Stone, column: Int, row: Int) -> Void {
-        let play = Play(id: playNumber, row: row, column: column, stone: stone)
+    func play(at intersection: Intersection) -> Void {
+        guard let stone = intersection.stone else {
+            print("Can't play at \(intersection). Stone is not specified.")
+            return
+        }
+        
+        let play = Play(id: playNumber, row: intersection.row, column: intersection.column, stone: stone)
         
         plays.append(play)
         playNumber += 1
@@ -312,11 +317,15 @@ extension ViewController: GameDelegate {
         gameAnalyzer?.analyze(plays: plays)
     }
     
-    func isPlayable(stone: Stone, column: Int, row: Int) -> Bool {
-        print("isPlayable: \(stone) @ row = \(row), column = \(column)")
-        let nextPlay = Play(id: playNumber, row: row, column: column, stone: stone)
+    func isPlayable(at intersection: Intersection) -> Bool {
+        guard let stone = intersection.stone else {
+            print("isPlayable returns false. Stone is not specified: \(intersection)")
+            return false
+        }
         
-        var canPlay = goBoard!.status(row: row, column: column) == nil
+        let nextPlay = Play(id: playNumber, row: intersection.row, column: intersection.column, stone: stone)
+        
+        var canPlay = goBoard!.status(row: intersection.row, column: intersection.column) == nil
         
         if canPlay {
             let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard!, groups: groups, lastPlay: plays.last, removedStones: removedStones)
@@ -327,10 +336,10 @@ extension ViewController: GameDelegate {
         return canPlay
     }
     
-    func playablePositions(stone: Stone) -> [(Int, Int)] {
+    func playablePositions(stone: Stone) -> [Intersection] {
         print("playablePositions: \(stone)")
         
-        var positions = [(Int, Int)]()
+        var positions = [Intersection]()
         for row in 0..<goBoard!.size {
             for column in 0..<goBoard!.size {
                 let nextPlay = Play(id: playNumber, row: row, column: column, stone: stone)
@@ -345,7 +354,7 @@ extension ViewController: GameDelegate {
                 }
                 
                 if canPlay {
-                    positions.append((row, column))
+                    positions.append(Intersection(row: row, column: column))
                 }
             }
         }

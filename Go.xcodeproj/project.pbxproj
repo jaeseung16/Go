@@ -172,6 +172,7 @@
 				9083F59024F5BDC700CB26F7 /* GTP */,
 				90C88A3D24DA249200B4E382 /* Model */,
 				90C88A0924DA241000B4E382 /* AppDelegate.swift */,
+				90574A8424EB3E2F005230AF /* GameDelegate.swift */,
 				90C88A0F24DA241000B4E382 /* GameScene.swift */,
 				90C88A1124DA241000B4E382 /* ViewController.swift */,
 				90C88A1324DA241200B4E382 /* Assets.xcassets */,
@@ -179,7 +180,6 @@
 				90C88A1824DA241200B4E382 /* Info.plist */,
 				90C88A1924DA241200B4E382 /* Go.entitlements */,
 				90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */,
-				90574A8424EB3E2F005230AF /* GameDelegate.swift */,
 			);
 			path = Go;
 			sourceTree = "<group>";

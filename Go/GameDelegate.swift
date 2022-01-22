@@ -9,11 +9,11 @@
 import Foundation
 
 protocol GameDelegate {
-    func play(stone: Stone, column: Int, row: Int) -> Void
+    func play(at intersection: Intersection) -> Void
     
-    func isPlayable(stone: Stone, column: Int, row: Int) -> Bool
+    func isPlayable(at intersection: Intersection) -> Bool
     
-    func playablePositions(stone: Stone) -> [(Int, Int)]
+    func playablePositions(stone: Stone) -> [Intersection]
     
     func updateClock(_ currentTime: TimeInterval) -> Void
     

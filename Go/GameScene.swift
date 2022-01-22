@@ -260,7 +260,7 @@ class GameScene: SKScene {
         var row: Int
         (success, column, row) = convertPoint(pos)
         
-        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .Black : .White, column: column, row: row), isPlayable else {
+        guard let isPlayable = gameDelegate?.isPlayable(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White)), isPlayable else {
             print("touchDown: Illegal play! count = \(count)")
             return
         }
@@ -282,7 +282,7 @@ class GameScene: SKScene {
             if positionNode == nil {
                 createPositionNode(column: column, row: row)
             } else {
-                guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .Black : .White, column: column, row: row), isPlayable else {
+                guard let isPlayable = gameDelegate?.isPlayable(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White)), isPlayable else {
                     print("touchMoved: Illegal play!")
                     return
                 }
@@ -317,12 +317,12 @@ class GameScene: SKScene {
             return
         }
         
-        guard let isPlayable = gameDelegate?.isPlayable(stone: count % 2 == 0 ? .Black : .White, column: column, row: row), isPlayable else {
+        guard let isPlayable = gameDelegate?.isPlayable(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White)), isPlayable else {
             print("touchUp: Illegal play! count = \(count)")
             return
         }
         
-        gameDelegate?.play(stone: count % 2 == 0 ? .Black : .White, column: column, row: row)
+        gameDelegate?.play(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White))
        
         if count % 2 == 0 {
             addStone(.Black, count: count, column: column, row: row)
@@ -468,14 +468,14 @@ class GameScene: SKScene {
         
         let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
         
-        playablePositions?.forEach { (row, column) in
+        playablePositions?.forEach { intersection in
             let node = SKLabelNode(fontNamed: font.fontName)
             node.name = "allowed"
             node.text = stone == .White ? "▫️" : "▪️"
             node.fontSize = font.pointSize
             node.fontColor = stone == .White ? .white : .black
             node.verticalAlignmentMode = .center
-            node.position = pointFor(column: column, row: row)
+            node.position = pointFor(column: intersection.column, row: intersection.row)
             
             analyzerBoard?.addChild(node)
         }
@@ -607,7 +607,7 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
-        gameDelegate?.updateClock(currentTime)
+        // gameDelegate?.updateClock(currentTime)
         
         if let delegate = gameDelegate, delegate.needToShowAnalysis() {
             showAnalysis()
