@@ -137,6 +137,7 @@ class ViewController: NSViewController {
                 scene?.showSequence()
             case .allowed:
                 print("allowed")
+                scene?.showAllowed()
                 break
             case .chain:
                 print("chain")
@@ -324,6 +325,32 @@ extension ViewController: GameDelegate {
             }
         }
         return canPlay
+    }
+    
+    func playablePositions(stone: Stone) -> [(Int, Int)] {
+        print("playablePositions: \(stone)")
+        
+        var positions = [(Int, Int)]()
+        for row in 0..<goBoard!.size {
+            for column in 0..<goBoard!.size {
+                let nextPlay = Play(id: playNumber, row: row, column: column, stone: stone)
+                
+                var canPlay = goBoard!.status(row: row, column: column) == nil
+                
+                if canPlay {
+                    let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard!, groups: groups, lastPlay: plays.last, removedStones: removedStones)
+                    if !groupAnalyzer.allNeighborsAreLiberties {
+                        canPlay = groupAnalyzer.isPlayable
+                    }
+                }
+                
+                if canPlay {
+                    positions.append((row, column))
+                }
+            }
+        }
+        
+        return positions
     }
     
     func updateClock(_ currentTime: TimeInterval) -> Void {

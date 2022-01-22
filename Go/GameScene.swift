@@ -445,7 +445,7 @@ class GameScene: SKScene {
                 let row = liberty.row
                 
                 let node = SKLabelNode(fontNamed: font.fontName)
-                node.name = "group"
+                node.name = "liberty"
                 node.text = group.stone == .Black ? "▫️" : "▪️"
                 node.fontSize = font.pointSize
                 node.fontColor = group.stone == .Black ? .white : .black
@@ -454,6 +454,30 @@ class GameScene: SKScene {
                 
                 analyzerBoard?.addChild(node)
             }
+        }
+        
+        groupsShown.toggle()
+    }
+    
+    func showAllowed() -> Void {
+        print("showAllowed")
+        analyzerBoard?.removeAllChildren()
+        
+        let stone: Stone = count % 2 == 0 ? .Black : .White
+        let playablePositions = gameDelegate?.playablePositions(stone: stone)
+        
+        let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
+        
+        playablePositions?.forEach { (row, column) in
+            let node = SKLabelNode(fontNamed: font.fontName)
+            node.name = "allowed"
+            node.text = stone == .White ? "▫️" : "▪️"
+            node.fontSize = font.pointSize
+            node.fontColor = stone == .White ? .white : .black
+            node.verticalAlignmentMode = .center
+            node.position = pointFor(column: column, row: row)
+            
+            analyzerBoard?.addChild(node)
         }
         
         groupsShown.toggle()
