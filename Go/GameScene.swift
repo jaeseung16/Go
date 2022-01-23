@@ -48,6 +48,10 @@ class GameScene: SKScene {
     
     var boardSize = 19
     
+    private var playingStone: Stone {
+        count % 2 == 0 ? .Black : .White
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder) is not used in this app")
     }
@@ -180,6 +184,10 @@ class GameScene: SKScene {
         self.territorySpot = SKShapeNode.init(circleOfRadius: scale * 0.25 * 22.119)
     }
     
+    private func pointFor(intersection: Intersection) -> CGPoint {
+        return pointFor(column: intersection.column, row: intersection.row)
+    }
+    
     private func pointFor(column: Int, row: Int) -> CGPoint {
         let intersectionWitdh: Float = Float(scale) * 420 / 19
         let intersectionHeight: Float = Float(scale) * 450 / 19
@@ -215,14 +223,14 @@ class GameScene: SKScene {
     func createPositionNode(column: Int, row: Int) {
         let node = SKShapeNode(rectOf: CGSize(width: 10, height: 10))
         node.position = pointFor(column: column, row: row)
-        node.fillColor = count % 2 == 0 ? .black : .white
+        node.fillColor = playingStone == .Black ? .black : .white
         node.name = "positionNode"
         
         self.gameBoard!.addChild(node)
         positionNode = node
     }
     
-    func addStone(_ stone: Stone, count: Int, column: Int, row: Int) -> Void {
+    func add(stone: Stone, at intersection: Intersection, count: Int) -> Void {
         var node: SKShapeNode
         switch stone {
         case .Black:
@@ -236,7 +244,7 @@ class GameScene: SKScene {
         }
         
         node.name = "\(count)"
-        node.position = pointFor(column: column, row: row)
+        node.position = pointFor(intersection: intersection)
         node.lineWidth = 0
         
         let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
@@ -260,7 +268,7 @@ class GameScene: SKScene {
         var row: Int
         (success, column, row) = convertPoint(pos)
         
-        guard let isPlayable = gameDelegate?.isPlayable(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White)), isPlayable else {
+        guard let isPlayable = gameDelegate?.isPlayable(stone: playingStone, at: Intersection(row: row, column: column)), isPlayable else {
             print("touchDown: Illegal play! count = \(count)")
             return
         }
@@ -282,11 +290,12 @@ class GameScene: SKScene {
             if positionNode == nil {
                 createPositionNode(column: column, row: row)
             } else {
-                guard let isPlayable = gameDelegate?.isPlayable(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White)), isPlayable else {
+                let intersection = Intersection(row: row, column: column)
+                guard let isPlayable = gameDelegate?.isPlayable(stone: playingStone, at: intersection), isPlayable else {
                     print("touchMoved: Illegal play!")
                     return
                 }
-                positionNode?.position = pointFor(column: column, row: row)
+                positionNode?.position = pointFor(intersection: intersection)
             }
         } else if let node = positionNode {
             node.removeFromParent()
@@ -317,19 +326,14 @@ class GameScene: SKScene {
             return
         }
         
-        guard let isPlayable = gameDelegate?.isPlayable(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White)), isPlayable else {
+        guard let isPlayable = gameDelegate?.isPlayable(stone: playingStone, at: Intersection(row: row, column: column)), isPlayable else {
             print("touchUp: Illegal play! count = \(count)")
             return
         }
         
-        gameDelegate?.play(at: Intersection(row: row, column: column, stone: count % 2 == 0 ? .Black : .White))
-       
-        if count % 2 == 0 {
-            addStone(.Black, count: count, column: column, row: row)
-        } else {
-            addStone(.White, count: count, column: column, row: row)
-        }
-        
+        let intersection = Intersection(row: row, column: column)
+        gameDelegate?.play(stone: playingStone, at: intersection)
+        add(stone: playingStone, at: intersection, count: count)
         count += 1
         
         analyzerBoard?.removeAllChildren()
@@ -415,16 +419,13 @@ class GameScene: SKScene {
         
         groups.forEach { group in
             for location in group.locations {
-                let column = location.column
-                let row = location.row
-                
                 let node = SKLabelNode(fontNamed: font.fontName)
                 node.name = "group"
                 node.text = "\(group.id)"
                 node.fontSize = font.pointSize
                 node.fontColor = group.stone == .Black ? .white : .black
                 node.verticalAlignmentMode = .center
-                node.position = pointFor(column: column, row: row)
+                node.position = pointFor(intersection: location)
                 
                 analyzerBoard?.addChild(node)
             }
@@ -441,16 +442,13 @@ class GameScene: SKScene {
         
         groups.forEach { group in
             for liberty in group.liberties {
-                let column = liberty.column
-                let row = liberty.row
-                
                 let node = SKLabelNode(fontNamed: font.fontName)
                 node.name = "liberty"
                 node.text = group.stone == .Black ? "▫️" : "▪️"
                 node.fontSize = font.pointSize
                 node.fontColor = group.stone == .Black ? .white : .black
                 node.verticalAlignmentMode = .center
-                node.position = pointFor(column: column, row: row)
+                node.position = pointFor(intersection: liberty)
                 
                 analyzerBoard?.addChild(node)
             }
@@ -463,7 +461,7 @@ class GameScene: SKScene {
         print("showAllowed")
         analyzerBoard?.removeAllChildren()
         
-        let stone: Stone = count % 2 == 0 ? .Black : .White
+        let stone: Stone = playingStone
         let playablePositions = gameDelegate?.playablePositions(stone: stone)
         
         let font = NSFont.systemFont(ofSize: (count > 99 ? 18 : 24))
@@ -475,7 +473,7 @@ class GameScene: SKScene {
             node.fontSize = font.pointSize
             node.fontColor = stone == .White ? .white : .black
             node.verticalAlignmentMode = .center
-            node.position = pointFor(column: intersection.column, row: intersection.row)
+            node.position = pointFor(intersection: intersection)
             
             analyzerBoard?.addChild(node)
         }
@@ -495,7 +493,7 @@ class GameScene: SKScene {
         for k in 0..<gameAnalysis.otherPlays.count {
             if let node = self.yellowSpot?.copy() as! SKShapeNode? {
                 node.name = "\(count)"
-                node.position = pointFor(column: gameAnalysis.otherPlays[k].location.column, row: gameAnalysis.otherPlays[k].location.row)
+                node.position = pointFor(intersection: gameAnalysis.otherPlays[k].location)
                 node.lineWidth = 0
                 node.fillColor = .systemYellow
                 
@@ -527,12 +525,9 @@ class GameScene: SKScene {
         
         let winrate = gameAnalysis.winrate
         let scoreLead = gameAnalysis.scoreLead
-        let columnAnalysis = gameAnalysis.bestNextPlay.location.column
-        let rowAnalysis = gameAnalysis.bestNextPlay.location.row
-        
         if let node = self.blueSpot?.copy() as! SKShapeNode? {
             node.name = "\(count)"
-            node.position = pointFor(column: columnAnalysis, row: rowAnalysis)
+            node.position = pointFor(intersection: gameAnalysis.bestNextPlay.location)
             node.lineWidth = 0
             node.fillColor = .systemBlue
             
@@ -574,7 +569,8 @@ class GameScene: SKScene {
         
         for row in 0..<boardSize {
             for column in 0..<boardSize {
-                let stone = board.status(row: row, column: column)
+                let intersection = Intersection(row: row, column: column)
+                let stone = board.status(intersection: intersection)
                 
                 var node: SKShapeNode
                 switch stone {
@@ -596,7 +592,7 @@ class GameScene: SKScene {
                 }
     
                 node.name = "territory"
-                node.position = pointFor(column: column, row: row)
+                node.position = pointFor(intersection: intersection)
                 node.lineWidth = 2
                 node.alpha = 0.5
                 

@@ -205,7 +205,7 @@ class ViewController: NSViewController {
                     
                     DispatchQueue.main.async {
                         plays?.forEach({ play in
-                            self.scene?.addStone(play.stone, count: play.id, column: play.location.column, row: play.location.row)
+                            self.scene?.add(stone: play.stone, at: play.location, count: play.id)
                         })
                     }
                 }
@@ -299,12 +299,7 @@ class ViewController: NSViewController {
 }
 
 extension ViewController: GameDelegate {
-    func play(at intersection: Intersection) -> Void {
-        guard let stone = intersection.stone else {
-            print("Can't play at \(intersection). Stone is not specified.")
-            return
-        }
-        
+    func play(stone: Stone, at intersection: Intersection) -> Void {
         let play = Play(id: playNumber, row: intersection.row, column: intersection.column, stone: stone)
         
         plays.append(play)
@@ -317,12 +312,7 @@ extension ViewController: GameDelegate {
         gameAnalyzer?.analyze(plays: plays)
     }
     
-    func isPlayable(at intersection: Intersection) -> Bool {
-        guard let stone = intersection.stone else {
-            print("isPlayable returns false. Stone is not specified: \(intersection)")
-            return false
-        }
-        
+    func isPlayable(stone: Stone, at intersection: Intersection) -> Bool {
         let nextPlay = Play(id: playNumber, row: intersection.row, column: intersection.column, stone: stone)
         
         var canPlay = goBoard!.status(row: intersection.row, column: intersection.column) == nil

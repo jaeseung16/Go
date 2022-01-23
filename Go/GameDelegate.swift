@@ -9,9 +9,9 @@
 import Foundation
 
 protocol GameDelegate {
-    func play(at intersection: Intersection) -> Void
+    func play(stone: Stone, at intersection: Intersection) -> Void
     
-    func isPlayable(at intersection: Intersection) -> Bool
+    func isPlayable(stone: Stone, at intersection: Intersection) -> Bool
     
     func playablePositions(stone: Stone) -> [Intersection]
     

@@ -28,6 +28,11 @@ struct GoBoard {
         return intersection.stone
     }
     
+    func status(intersection: Intersection) -> Stone? {
+        let intersection = intersections[intersection.row * size + intersection.column]
+        return intersection.stone
+    }
+    
     mutating func update(row: Int, column: Int, stone: Stone?) -> Void {
         intersections[row * size + column].stone = stone
     }
