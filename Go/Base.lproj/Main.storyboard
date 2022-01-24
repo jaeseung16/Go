@@ -861,6 +861,17 @@
                                     <action selector="playForward:" target="XfG-lQ-9wD" id="kY7-fM-rjM"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="glK-D0-ugc">
+                                <rect key="frame" x="1065" y="89" width="122" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Show Analyzer" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KYP-uR-d64">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <segue destination="1VN-Dp-E0a" kind="show" id="UTh-rq-FZi"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </customView>
                     <connections>
@@ -875,6 +886,19 @@
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="1241"/>
+        </scene>
+        <!--Analyzer-->
+        <scene sceneID="cMk-3X-AGc">
+            <objects>
+                <viewController title="Analyzer" id="1VN-Dp-E0a" customClass="AnalyzerViewController" customModule="Go" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="h0F-AV-2IV" customClass="SKView">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="KTW-rj-QbS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1247" y="871"/>
         </scene>
     </scenes>
     <resources>
