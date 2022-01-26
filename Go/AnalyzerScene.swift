@@ -124,4 +124,45 @@ class AnalyzerScene: SKScene {
         self.yellowSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
         self.territorySpot = SKShapeNode.init(circleOfRadius: scale * 0.25 * 22.119)
     }
+    
+    func show(blackLocations: BlackLocations) -> Void {
+        print("show blacks")
+        analyzerBoard?.removeAllChildren()
+        
+        let locations = blackLocations.locations
+        
+        for index in 0..<locations.count {
+            let node = self.blackStone!.copy() as! SKShapeNode
+            node.fillTexture = blackStoneTexture
+            node.fillColor = SKColor.black
+            node.name = "black \(2 * index)"
+            node.position = pointFor(intersection: locations[index])
+            node.lineWidth = 0
+            
+            let font = NSFont.systemFont(ofSize: (2 * index > 99 ? 12 : 16))
+            let sequence = SKLabelNode(fontNamed: font.fontName)
+            sequence.name = "sequence \(2 * index)"
+            sequence.text = "\(2 * index)"
+            sequence.fontSize = font.pointSize
+            sequence.verticalAlignmentMode = .center
+            sequence.position = CGPoint(x: 0.0, y: 0.0)
+            sequence.fontColor = .white
+            
+            node.addChild(sequence)
+            analyzerBoard?.addChild(node)
+        }
+    }
+    
+    private func pointFor(intersection: Intersection) -> CGPoint {
+        return pointFor(column: intersection.column, row: intersection.row)
+    }
+    
+    private func pointFor(column: Int, row: Int) -> CGPoint {
+        let intersectionWitdh: Float = Float(scale) * 420 / 19
+        let intersectionHeight: Float = Float(scale) * 450 / 19
+        
+        return CGPoint(
+            x: CGFloat(Float(column) * intersectionWitdh - Float(scale) * 210 + 0.5 * intersectionWitdh),
+            y: CGFloat(Float(boardSize - 1 - row) * intersectionHeight - Float(scale) * 225 + 0.5 * intersectionHeight))
+    }
 }

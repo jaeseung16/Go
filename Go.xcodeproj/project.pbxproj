@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		9001352E277D24A1006A5385 /* Feature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9001352D277D24A1006A5385 /* Feature.swift */; };
 		9014F2102506615500317AC4 /* GameAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014F20F2506615500317AC4 /* GameAnalysis.swift */; };
+		901D4EA127A2107600E1932B /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901D4EA027A2107600E1932B /* Analyzer.swift */; };
 		9020A598279F696500BB8939 /* BlackLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9020A597279F696500BB8939 /* BlackLocations.swift */; };
 		9020A59A279F6A2D00BB8939 /* WhiteLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9020A599279F6A2D00BB8939 /* WhiteLocations.swift */; };
 		9020A59C279F6A4A00BB8939 /* AllowedLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9020A59B279F6A4A00BB8939 /* AllowedLocations.swift */; };
@@ -68,6 +69,7 @@
 /* Begin PBXFileReference section */
 		9001352D277D24A1006A5385 /* Feature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		9014F20F2506615500317AC4 /* GameAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAnalysis.swift; sourceTree = "<group>"; };
+		901D4EA027A2107600E1932B /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
 		9020A597279F696500BB8939 /* BlackLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackLocations.swift; sourceTree = "<group>"; };
 		9020A599279F6A2D00BB8939 /* WhiteLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhiteLocations.swift; sourceTree = "<group>"; };
 		9020A59B279F6A4A00BB8939 /* AllowedLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllowedLocations.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				9014F20F2506615500317AC4 /* GameAnalysis.swift */,
 				90A6846B256C7667006E2BC3 /* Group.swift */,
 				90A68476256C8376006E2BC3 /* Neighbor.swift */,
+				901D4EA027A2107600E1932B /* Analyzer.swift */,
 				90AE908D2573125E009366F1 /* GroupAnalyzer.swift */,
 				9064DEEE25A3D33C001E4865 /* Score.swift */,
 				902976B325BA37AB000AFF26 /* SGFHelper.swift */,
@@ -407,6 +410,7 @@
 				90A6846C256C7667006E2BC3 /* Group.swift in Sources */,
 				90C88A1224DA241000B4E382 /* ViewController.swift in Sources */,
 				90A68477256C8376006E2BC3 /* Neighbor.swift in Sources */,
+				901D4EA127A2107600E1932B /* Analyzer.swift in Sources */,
 				90C88A1024DA241000B4E382 /* GameScene.swift in Sources */,
 				9020A598279F696500BB8939 /* BlackLocations.swift in Sources */,
 				9044CABD24EC8D56007D90E8 /* Play.swift in Sources */,

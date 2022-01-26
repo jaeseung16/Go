@@ -13,6 +13,7 @@ class AnalyzerViewController: NSViewController {
 
     var goBoard: GoBoard?
     var scene: AnalyzerScene?
+    var analyzer: Analyzer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,6 +38,7 @@ class AnalyzerViewController: NSViewController {
         skView.showsFPS = true
         skView.showsNodeCount = true
     
+        scene?.show(blackLocations: analyzer!.blackLocations)
     }
     
     

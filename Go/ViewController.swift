@@ -34,6 +34,8 @@ class ViewController: NSViewController {
     
     var sgfGameTree: SGFGameTree?
     
+    var features = [Intersections]()
+    
     @IBOutlet weak var clockLabel: NSTextField!
     
     @IBOutlet weak var blackTimerLabel: NSTextField!
@@ -104,6 +106,12 @@ class ViewController: NSViewController {
         print("*****")
         */
         
+    }
+    
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let analyzerViewController = segue.destinationController as? AnalyzerViewController {
+            analyzerViewController.analyzer = Analyzer(plays: plays)
+        }
     }
     
     @IBAction func playBackward(_ sender: NSButton) {
