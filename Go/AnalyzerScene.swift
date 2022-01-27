@@ -137,24 +137,8 @@ class AnalyzerScene: SKScene {
         
         for index in 0..<locations.count {
             let playNumber = 2 * index + 1
-            
-            let node = self.blackStone!.copy() as! SKShapeNode
-            node.fillTexture = blackStoneTexture
-            node.fillColor = .black
-            node.name = "black \(playNumber)"
-            node.position = pointFor(intersection: locations[index])
-            node.lineWidth = 0
-            
-            let font = NSFont.systemFont(ofSize: (playNumber > 99 ? 12 : 16))
-            let sequence = SKLabelNode(fontNamed: font.fontName)
-            sequence.name = "sequence \(playNumber)"
-            sequence.text = "\(playNumber)"
-            sequence.fontSize = font.pointSize
-            sequence.verticalAlignmentMode = .center
-            sequence.position = CGPoint(x: 0.0, y: 0.0)
-            sequence.fontColor = .white
-            
-            node.addChild(sequence)
+            let node = makeNode(at: locations[index], stone: .Black, name: "black \(playNumber)")
+            node.addChild(makeLabel(stone: .Black, index: playNumber))
             analyzerBoard?.addChild(node)
         }
     }
@@ -167,29 +151,25 @@ class AnalyzerScene: SKScene {
         
         for index in 0..<locations.count {
             let playNumber = 2 * (index + 1)
-            
-            let node = self.whiteStone!.copy() as! SKShapeNode
-            node.fillTexture = whiteStoneTexture
-            node.fillColor = .white
-            node.name = "white \(2 * index + 1)"
-            node.position = pointFor(intersection: locations[index])
-            node.lineWidth = 0
-            
-            let font = NSFont.systemFont(ofSize: (playNumber > 99 ? 12 : 16))
-            let sequence = SKLabelNode(fontNamed: font.fontName)
-            sequence.name = "sequence \(playNumber)"
-            sequence.text = "\(playNumber)"
-            sequence.fontSize = font.pointSize
-            sequence.verticalAlignmentMode = .center
-            sequence.position = CGPoint(x: 0.0, y: 0.0)
-            sequence.fontColor = .black
-            
-            node.addChild(sequence)
+            let node = makeNode(at: locations[index], stone: .White, name: "white \(2 * index + 1)")
+            node.addChild(makeLabel(stone: .White, index: playNumber))
             analyzerBoard?.addChild(node)
         }
     }
     
     func show(sequence: SequenceLocations) -> Void {
+        print("show sequence")
+        analyzerBoard?.removeAllChildren()
+        
+        let locations = sequence.locations
+        
+        for index in 0..<locations.count {
+            let stone: Stone = index % 2 == 0 ? .Black : .White
+            let name = index % 2 == 0 ? "black \(index)" : "white \(index)"
+            let node = makeNode(at: locations[index], stone: stone, name: name)
+            node.addChild(makeLabel(stone: stone, index: index))
+            analyzerBoard?.addChild(node)
+        }
     }
     
     func show(allowed: AllowedLocations) -> Void {
@@ -212,5 +192,44 @@ class AnalyzerScene: SKScene {
         return CGPoint(
             x: CGFloat(Float(column) * intersectionWitdh - Float(scale) * 210 + 0.5 * intersectionWitdh),
             y: CGFloat(Float(boardSize - 1 - row) * intersectionHeight - Float(scale) * 225 + 0.5 * intersectionHeight))
+    }
+    
+    private func makeNode(at intersection: Intersection, stone: Stone, name: String) -> SKShapeNode {
+        var node: SKShapeNode
+        
+        switch stone {
+        case .Black:
+            node = self.blackStone!.copy() as! SKShapeNode
+            node.fillTexture = blackStoneTexture
+            node.fillColor = .black
+        case .White:
+            node = self.whiteStone!.copy() as! SKShapeNode
+            node.fillTexture = whiteStoneTexture
+            node.fillColor = .white
+        }
+        
+        node.name = name
+        node.position = pointFor(intersection: intersection)
+        node.lineWidth = 0
+        return node
+    }
+    
+    private func makeLabel(stone: Stone, index: Int) -> SKLabelNode {
+        let font = NSFont.systemFont(ofSize: (index > 99 ? 12 : 16))
+        let sequence = SKLabelNode(fontNamed: font.fontName)
+        sequence.name = "sequence \(index)"
+        sequence.text = "\(index)"
+        sequence.fontSize = font.pointSize
+        sequence.verticalAlignmentMode = .center
+        sequence.position = CGPoint(x: 0.0, y: 0.0)
+        
+        switch stone {
+        case .Black:
+            sequence.fontColor = .white
+        case .White:
+            sequence.fontColor = .black
+        }
+        
+        return sequence
     }
 }
