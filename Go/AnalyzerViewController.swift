@@ -15,9 +15,14 @@ class AnalyzerViewController: NSViewController {
     var scene: AnalyzerScene?
     var analyzer: Analyzer?
     
+    @IBOutlet weak var featurePopUpButton: NSPopUpButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
+        
+        featurePopUpButton.removeAllItems()
+        featurePopUpButton.addItems(withTitles: Feature.allCases.map { $0.rawValue })
 
         let boardSize = 19
         
@@ -38,7 +43,30 @@ class AnalyzerViewController: NSViewController {
         skView.showsFPS = true
         skView.showsNodeCount = true
     
-        scene?.show(blackLocations: analyzer!.blackLocations)
+    }
+    
+    
+    @IBAction func showFeature(_ sender: NSPopUpButton) {
+        guard let titleOfSelectedItem = featurePopUpButton.titleOfSelectedItem, let feature = Feature(rawValue: titleOfSelectedItem) else {
+            return
+        }
+        
+        switch feature {
+        case .none:
+            scene?.clear()
+        case .black:
+            scene?.show(blackLocations: analyzer!.blackLocations)
+        case .white:
+            scene?.show(whiteLocations: analyzer!.whiteLocations)
+        case .sequence:
+            scene?.show(sequence: analyzer!.sequenceLocations)
+        case .allowed:
+            scene?.show(allowed: analyzer!.allowedLocations)
+        case .chain:
+            scene?.show(chains: analyzer!.chainLocations)
+        case .liberty:
+            scene?.show(liberties: analyzer!.libertyLocations)
+        }
     }
     
     

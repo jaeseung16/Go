@@ -894,7 +894,30 @@
                     <view key="view" id="h0F-AV-2IV" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pOh-xb-2VD">
+                                <rect key="frame" x="17" y="556" width="107" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="cGt-7l-uvF" id="H9v-YQ-qDO">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="dGR-1X-yKl">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="cGt-7l-uvF"/>
+                                            <menuItem title="Item 2" id="yz4-GA-4tv"/>
+                                            <menuItem title="Item 3" id="b02-SH-IvK"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                                <connections>
+                                    <action selector="showFeature:" target="1VN-Dp-E0a" id="7aJ-ul-BJa"/>
+                                </connections>
+                            </popUpButton>
+                        </subviews>
                     </view>
+                    <connections>
+                        <outlet property="featurePopUpButton" destination="pOh-xb-2VD" id="3FM-nN-YOl"/>
+                    </connections>
                 </viewController>
                 <customObject id="KTW-rj-QbS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

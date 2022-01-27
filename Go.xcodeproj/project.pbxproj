@@ -46,6 +46,7 @@
 		90C88A4324DA25F100B4E382 /* Intersection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4224DA25F100B4E382 /* Intersection.swift */; };
 		90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4424DA2F3700B4E382 /* GameClock.swift */; };
 		90CA915424F483AF0057468D /* GTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CA915324F483AF0057468D /* GTP.swift */; };
+		90F4E44A27A35E6E00144DE1 /* SequenceLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F4E44927A35E6E00144DE1 /* SequenceLocations.swift */; };
 		90F6EF8824EA07BA00BBCE17 /* GoBoard.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		90C88A4224DA25F100B4E382 /* Intersection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intersection.swift; sourceTree = "<group>"; };
 		90C88A4424DA2F3700B4E382 /* GameClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameClock.swift; sourceTree = "<group>"; };
 		90CA915324F483AF0057468D /* GTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTP.swift; sourceTree = "<group>"; };
+		90F4E44927A35E6E00144DE1 /* SequenceLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceLocations.swift; sourceTree = "<group>"; };
 		90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GoBoard.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -152,6 +154,7 @@
 				9020A599279F6A2D00BB8939 /* WhiteLocations.swift */,
 				9020A59F279F6DD300BB8939 /* LibertyLocations.swift */,
 				9020A5A1279F6E3800BB8939 /* GroupLocations.swift */,
+				90F4E44927A35E6E00144DE1 /* SequenceLocations.swift */,
 			);
 			path = Feature;
 			sourceTree = "<group>";
@@ -422,6 +425,7 @@
 				90C88A3C24DA248500B4E382 /* GoBoard.swift in Sources */,
 				904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */,
 				90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */,
+				90F4E44A27A35E6E00144DE1 /* SequenceLocations.swift in Sources */,
 				9020A5A0279F6DD300BB8939 /* LibertyLocations.swift in Sources */,
 				9001352E277D24A1006A5385 /* Feature.swift in Sources */,
 				90AE908E2573125E009366F1 /* GroupAnalyzer.swift in Sources */,

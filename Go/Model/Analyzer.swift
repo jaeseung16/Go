@@ -19,4 +19,26 @@ class Analyzer {
         let locations = plays.filter { $0.stone == .Black }.map { $0.location}
         return BlackLocations(playNumber: plays.count, locations: locations, turn: plays.count % 2 == 0)
     }
+    
+    var whiteLocations: WhiteLocations {
+        let locations = plays.filter { $0.stone == .White }.map { $0.location}
+        return WhiteLocations(playNumber: plays.count, locations: locations, turn: plays.count % 2 != 0)
+    }
+    
+    var sequenceLocations: SequenceLocations {
+        let locations = plays.map { $0.location}
+        return SequenceLocations(playNumber: plays.count, locations: locations)
+    }
+    
+    var allowedLocations: AllowedLocations {
+        return AllowedLocations(playNumber: plays.count, locations: [])
+    }
+    
+    var chainLocations: GroupLocations {
+        return GroupLocations(playNumber: plays.count, locations: [])
+    }
+    
+    var libertyLocations: LibertyLocations {
+        return LibertyLocations(playNumber: plays.count, locations: [])
+    }
 }
