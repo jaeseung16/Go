@@ -110,7 +110,7 @@ class ViewController: NSViewController {
     
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         if let analyzerViewController = segue.destinationController as? AnalyzerViewController {
-            analyzerViewController.analyzer = Analyzer(plays: plays)
+            analyzerViewController.analyzer = Analyzer(plays: plays, goBoard: goBoard!, groups: groups, removedStones: removedStones)
         }
     }
     

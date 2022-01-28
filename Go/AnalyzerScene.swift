@@ -173,6 +173,17 @@ class AnalyzerScene: SKScene {
     }
     
     func show(allowed: AllowedLocations) -> Void {
+        print("show allowed locaations")
+        analyzerBoard?.removeAllChildren()
+        
+        let locations = allowed.locations
+        let stone: Stone = allowed.playNumber % 2 == 0 ? .Black : .White
+        
+        for index in 0..<locations.count {
+            let name = index % 2 == 0 ? "black \(index)" : "white \(index)"
+            let node = makeNode(at: locations[index], stone: stone, name: name)
+            analyzerBoard?.addChild(node)
+        }
     }
     
     func show(chains: GroupLocations) -> Void {

@@ -10,9 +10,15 @@ import Foundation
 
 class Analyzer {
     var plays: [Play]
+    var goBoard: GoBoard
+    var groups = Set<Group>()
+    var removedStones = Set<Intersection>()
     
-    init(plays: [Play]) {
+    init(plays: [Play], goBoard: GoBoard, groups: Set<Group>, removedStones: Set<Intersection>) {
         self.plays = plays
+        self.goBoard = goBoard
+        self.groups = groups
+        self.removedStones = removedStones
     }
     
     var blackLocations: BlackLocations {
@@ -31,7 +37,30 @@ class Analyzer {
     }
     
     var allowedLocations: AllowedLocations {
-        return AllowedLocations(playNumber: plays.count, locations: [])
+        guard let lastPlay = plays.last else {
+            return AllowedLocations(playNumber: plays.count, locations: [])
+        }
+        
+        var positions = [Intersection]()
+        for row in 0..<goBoard.size {
+            for column in 0..<goBoard.size {
+                let nextPlay = Play(id: plays.count + 1, row: row, column: column, stone: lastPlay.stone == .Black ? .White : .Black)
+                
+                var canPlay = goBoard.status(row: row, column: column) == nil
+                
+                if canPlay {
+                    let groupAnalyzer = GroupAnalyzer(play: nextPlay, goBoard: goBoard, groups: groups, lastPlay: lastPlay, removedStones: removedStones)
+                    if !groupAnalyzer.allNeighborsAreLiberties {
+                        canPlay = groupAnalyzer.isPlayable
+                    }
+                }
+                
+                if canPlay {
+                    positions.append(Intersection(row: row, column: column))
+                }
+            }
+        }
+        return AllowedLocations(playNumber: plays.count, locations: positions)
     }
     
     var chainLocations: GroupLocations {
