@@ -147,13 +147,18 @@ class ViewController: NSViewController {
                 print("allowed")
                 scene?.showAllowed()
                 break
-            case .chain:
+            case .chainBlack:
                 print("chain")
                 scene?.showGroups(groups)
-            case .liberty:
+            case .chainWhite:
+                print("chain")
+                scene?.showGroups(groups)
+            case .libertyBlack:
                 print("liberty")
                 scene?.showLiberties(groups)
-                break
+            case .libertyWhite:
+                print("liberty")
+                scene?.showLiberties(groups)
             }
         }
     }

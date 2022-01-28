@@ -12,8 +12,10 @@ enum Feature: String, CaseIterable {
     case white
     case sequence
     case allowed
-    case chain
-    case liberty
+    case chainBlack = "chain (B)"
+    case chainWhite = "chain (W)"
+    case libertyBlack = "liberty (B)"
+    case libertyWhite = "liberty (W)"
     
     static var titles: [String] {
         Feature.allCases.map { $0.rawValue }

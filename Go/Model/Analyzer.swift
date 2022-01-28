@@ -67,7 +67,21 @@ class Analyzer {
         return GroupLocations(playNumber: plays.count, locations: [])
     }
     
-    var libertyLocations: LibertyLocations {
-        return LibertyLocations(playNumber: plays.count, locations: [])
+    var libertyLocationsForBlack: LibertyLocations {
+        var positions = [Intersection]()
+        groups.filter { $0.stone == .Black } .forEach { group in
+            positions.append(contentsOf: group.liberties)
+        }
+        
+        return LibertyLocations(playNumber: plays.count, locations: positions)
+    }
+    
+    var libertyLocationsForWhite: LibertyLocations {
+        var positions = [Intersection]()
+        groups.filter { $0.stone == .White } .forEach { group in
+            positions.append(contentsOf: group.liberties)
+        }
+        
+        return LibertyLocations(playNumber: plays.count, locations: positions)
     }
 }

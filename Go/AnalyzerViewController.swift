@@ -62,10 +62,14 @@ class AnalyzerViewController: NSViewController {
             scene?.show(sequence: analyzer!.sequenceLocations)
         case .allowed:
             scene?.show(allowed: analyzer!.allowedLocations)
-        case .chain:
+        case .chainBlack:
             scene?.show(chains: analyzer!.chainLocations)
-        case .liberty:
-            scene?.show(liberties: analyzer!.libertyLocations)
+        case .chainWhite:
+            scene?.show(chains: analyzer!.chainLocations)
+        case .libertyBlack:
+            scene?.show(liberties: analyzer!.libertyLocationsForBlack, for: .Black)
+        case .libertyWhite:
+            scene?.show(liberties: analyzer!.libertyLocationsForWhite, for: .White)
         }
     }
     

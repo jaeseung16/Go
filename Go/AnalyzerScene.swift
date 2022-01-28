@@ -180,7 +180,7 @@ class AnalyzerScene: SKScene {
         let stone: Stone = allowed.playNumber % 2 == 0 ? .Black : .White
         
         for index in 0..<locations.count {
-            let name = index % 2 == 0 ? "black \(index)" : "white \(index)"
+            let name = stone == .Black ? "black \(index)" : "white \(index)"
             let node = makeNode(at: locations[index], stone: stone, name: name)
             analyzerBoard?.addChild(node)
         }
@@ -189,7 +189,16 @@ class AnalyzerScene: SKScene {
     func show(chains: GroupLocations) -> Void {
     }
     
-    func show(liberties: LibertyLocations) -> Void {
+    func show(liberties: LibertyLocations, for stone: Stone) -> Void {
+        print("show liberties")
+        analyzerBoard?.removeAllChildren()
+        
+        let locations = liberties.locations
+        for index in 0..<locations.count {
+            let name = stone == .Black ? "black \(index)" : "white \(index)"
+            let node = makeNode(at: locations[index], stone: stone, name: name)
+            analyzerBoard?.addChild(node)
+        }
     }
     
     private func pointFor(intersection: Intersection) -> CGPoint {
