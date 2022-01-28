@@ -63,8 +63,12 @@ class Analyzer {
         return AllowedLocations(playNumber: plays.count, locations: positions)
     }
     
-    var chainLocations: GroupLocations {
-        return GroupLocations(playNumber: plays.count, locations: [])
+    var chainLocationsForBlack: GroupLocations {
+        return GroupLocations(playNumber: plays.count, groups: Array(groups.filter { $0.stone == .Black}))
+    }
+    
+    var chainLocationsForWhite: GroupLocations {
+        return GroupLocations(playNumber: plays.count, groups: Array(groups.filter { $0.stone == .White}))
     }
     
     var libertyLocationsForBlack: LibertyLocations {

@@ -186,11 +186,25 @@ class AnalyzerScene: SKScene {
         }
     }
     
-    func show(chains: GroupLocations) -> Void {
+    func show(chains: GroupLocations, for stone: Stone) -> Void {
+        print("show chains for \(stone)")
+        analyzerBoard?.removeAllChildren()
+        
+        let groups = chains.groups
+        for index in 0..<groups.count {
+            let stone = groups[index].stone
+            let name = stone == .Black ? "black \(index)" : "white \(index)"
+            
+            groups[index].locations.forEach {
+                let node = makeNode(at: $0, stone: stone, name: name)
+                node.addChild(makeLabel(stone: stone, index: index))
+                analyzerBoard?.addChild(node)
+            }
+        }
     }
     
     func show(liberties: LibertyLocations, for stone: Stone) -> Void {
-        print("show liberties")
+        print("show liberties for \(stone)")
         analyzerBoard?.removeAllChildren()
         
         let locations = liberties.locations
