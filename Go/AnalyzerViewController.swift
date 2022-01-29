@@ -47,7 +47,7 @@ class AnalyzerViewController: NSViewController {
     
     
     @IBAction func showFeature(_ sender: NSPopUpButton) {
-        guard let titleOfSelectedItem = featurePopUpButton.titleOfSelectedItem, let feature = Feature(rawValue: titleOfSelectedItem) else {
+        guard let titleOfSelectedItem = featurePopUpButton.titleOfSelectedItem, let feature = Feature(rawValue: titleOfSelectedItem), let analyzer = analyzer else {
             return
         }
         
@@ -55,21 +55,21 @@ class AnalyzerViewController: NSViewController {
         case .none:
             scene?.clear()
         case .black:
-            scene?.show(blackLocations: analyzer!.blackLocations)
+            scene?.show(blackLocations: analyzer.blackLocations)
         case .white:
-            scene?.show(whiteLocations: analyzer!.whiteLocations)
+            scene?.show(whiteLocations: analyzer.whiteLocations)
         case .sequence:
-            scene?.show(sequence: analyzer!.sequenceLocations)
+            scene?.show(sequence: analyzer.sequenceLocations)
         case .allowed:
-            scene?.show(allowed: analyzer!.allowedLocations)
+            scene?.show(allowed: analyzer.allowedLocations)
         case .chainBlack:
-            scene?.show(chains: analyzer!.chainLocationsForBlack, for: .Black)
+            scene?.show(chains: analyzer.chainLocations(for: .Black), for: .Black)
         case .chainWhite:
-            scene?.show(chains: analyzer!.chainLocationsForWhite, for: .White)
+            scene?.show(chains: analyzer.chainLocations(for: .White), for: .White)
         case .libertyBlack:
-            scene?.show(liberties: analyzer!.libertyLocationsForBlack, for: .Black)
+            scene?.show(liberties: analyzer.libertyLocations(for: .Black), for: .Black)
         case .libertyWhite:
-            scene?.show(liberties: analyzer!.libertyLocationsForWhite, for: .White)
+            scene?.show(liberties: analyzer.libertyLocations(for: .White), for: .White)
         }
     }
     

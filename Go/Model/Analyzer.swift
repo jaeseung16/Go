@@ -71,6 +71,10 @@ class Analyzer {
         return GroupLocations(playNumber: plays.count, groups: Array(groups.filter { $0.stone == .White}))
     }
     
+    func chainLocations(for stone: Stone) -> GroupLocations {
+        return stone == .Black ? chainLocationsForBlack : chainLocationsForWhite
+    }
+    
     var libertyLocationsForBlack: LibertyLocations {
         var positions = [Intersection]()
         groups.filter { $0.stone == .Black } .forEach { group in
@@ -87,5 +91,9 @@ class Analyzer {
         }
         
         return LibertyLocations(playNumber: plays.count, locations: positions)
+    }
+    
+    func libertyLocations(for stone: Stone) -> LibertyLocations {
+        return stone == .Black ? libertyLocationsForBlack : libertyLocationsForWhite
     }
 }
