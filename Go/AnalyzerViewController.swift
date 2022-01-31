@@ -11,6 +11,7 @@ import SpriteKit
 
 class AnalyzerViewController: NSViewController {
 
+    var game: Game?
     var goBoard: GoBoard?
     var scene: AnalyzerScene?
     var analyzer: Analyzer?

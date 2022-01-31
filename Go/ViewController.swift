@@ -17,6 +17,7 @@ class ViewController: NSViewController {
     var scene: GameScene?
     var groups = Set<Group>()
     
+    var game: Game?
     var goBoard: GoBoard?
     
     var gameAnalyzer: GameAnalyzer?
@@ -77,6 +78,8 @@ class ViewController: NSViewController {
         
         goBoard = GoBoard(size: boardSize)
         
+        game = Game(goBoard: goBoard!)
+        
         let skView = view as! SKView
             
         scene = GameScene(size: skView.bounds.size, boardSize: boardSize)
@@ -110,6 +113,7 @@ class ViewController: NSViewController {
     
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         if let analyzerViewController = segue.destinationController as? AnalyzerViewController {
+            analyzerViewController.game = game
             analyzerViewController.analyzer = Analyzer(plays: plays, goBoard: goBoard!, groups: groups, removedStones: removedStones)
         }
     }
@@ -263,8 +267,6 @@ class ViewController: NSViewController {
             return
         }
         
-        removedStones.removeAll()
-        
         print("lastPlay = \(lastPlay)")
         //print("goBoard.status = \(goBoard.status(row: 15, column: 16))")
         let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard!, groups: groups, lastPlay: plays.last, removedStones: removedStones)
@@ -313,13 +315,20 @@ class ViewController: NSViewController {
 
 extension ViewController: GameDelegate {
     func play(stone: Stone, at intersection: Intersection) -> Void {
+        guard let game = game else {
+            return
+        }
+
         let play = Play(id: playNumber, row: intersection.row, column: intersection.column, stone: stone)
-        
         plays.append(play)
         playNumber += 1
 
         ko = nil
+        
+        game.append(play: play)
+        
         updateGroups()
+        game.updateGroups()
         
         togglePlayer()
         gameAnalyzer?.analyze(plays: plays)
