@@ -9,11 +9,11 @@
 import Cocoa
 import SpriteKit
 
-class AnalyzerViewController: NSViewController {
+class FeaturesViewController: NSViewController {
 
     var game: Game?
     var goBoard: GoBoard?
-    var scene: AnalyzerScene?
+    var scene: FeaturesScene?
     var analyzer: Analyzer?
     
     @IBOutlet weak var featurePopUpButton: NSPopUpButton!
@@ -24,14 +24,9 @@ class AnalyzerViewController: NSViewController {
         
         featurePopUpButton.removeAllItems()
         featurePopUpButton.addItems(withTitles: Feature.allCases.map { $0.rawValue })
-
-        let boardSize = 19
-        
-        goBoard = GoBoard(size: boardSize)
         
         let skView = view as! SKView
-            
-        scene = AnalyzerScene(size: skView.bounds.size, boardSize: boardSize)
+        scene = FeaturesScene(size: skView.bounds.size, boardSize: game!.goBoard.size)
             
         // Set the scale mode to scale to fit the window
         scene!.scaleMode = .aspectFill

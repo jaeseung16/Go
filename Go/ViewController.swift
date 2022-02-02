@@ -46,8 +46,6 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var blackWinningProbabilityIndicator: NSLevelIndicator!
     
-    @IBOutlet weak var featurePopUpButton: NSPopUpButton!
-    
     @IBAction func activateAnalyzer(_ sender: NSButton) {
         let openPanel = NSOpenPanel()
         openPanel.canChooseFiles = true
@@ -98,10 +96,7 @@ class ViewController: NSViewController {
     
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
-        
-        featurePopUpButton.removeAllItems()
-        featurePopUpButton.addItems(withTitles: Feature.titles)
-        
+   
         /*
         print("*****")
         gtp_finish_response()
@@ -132,40 +127,6 @@ class ViewController: NSViewController {
         print("\(playNumber)")
     }
     
-    @IBAction func showFeauture(_ sender: Any) {
-        if let titleOfSelectedItem = featurePopUpButton.titleOfSelectedItem, let feature = Feature(rawValue: titleOfSelectedItem) {
-            switch feature {
-            case .none:
-                print("none")
-                break
-            case .black:
-                print("black")
-                break
-            case .white:
-                print("white")
-                break
-            case .sequence:
-                print("sequence")
-                scene?.showSequence()
-            case .allowed:
-                print("allowed")
-                scene?.showAllowed()
-                break
-            case .chainBlack:
-                print("chain")
-                scene?.showGroups(groups)
-            case .chainWhite:
-                print("chain")
-                scene?.showGroups(groups)
-            case .libertyBlack:
-                print("liberty")
-                scene?.showLiberties(groups)
-            case .libertyWhite:
-                print("liberty")
-                scene?.showLiberties(groups)
-            }
-        }
-    }
     
     func togglePlayer() {
         isBlackWillPlay = !isBlackWillPlay

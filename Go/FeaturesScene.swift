@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class AnalyzerScene: SKScene {
+class FeaturesScene: SKScene {
     
     var scale: CGFloat
     var boardSize = 19

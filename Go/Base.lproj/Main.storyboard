@@ -813,32 +813,6 @@
                                     <action selector="loadGame:" target="XfG-lQ-9wD" id="TQr-Xm-rHI"/>
                                 </connections>
                             </button>
-                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jrJ-eK-3tS">
-                                <rect key="frame" x="1069" y="188" width="115" height="25"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="ztX-jC-ynC" id="f27-D8-2zM">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
-                                    <menu key="menu" id="pOr-pa-uDR">
-                                        <items>
-                                            <menuItem title="Item 1" state="on" id="ztX-jC-ynC"/>
-                                            <menuItem title="Item 2" id="g7V-OC-CMC"/>
-                                            <menuItem title="Item 3" id="pZ1-5X-zN6"/>
-                                        </items>
-                                    </menu>
-                                </popUpButtonCell>
-                            </popUpButton>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="flp-Yv-0g7">
-                                <rect key="frame" x="1072" y="223" width="108" height="50"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="smallSquare" title="Show Feature" bezelStyle="smallSquare" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="CfS-Iz-J4S">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="showFeauture:" target="XfG-lQ-9wD" id="N5B-2h-pl6"/>
-                                </connections>
-                            </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="goc-lq-86Y">
                                 <rect key="frame" x="1071" y="129" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
@@ -878,7 +852,6 @@
                         <outlet property="blackTimerLabel" destination="O1e-gF-qhx" id="CrC-TY-v7k"/>
                         <outlet property="blackWinningProbabilityIndicator" destination="Gr0-JZ-cxN" id="5Vg-Nx-Iuj"/>
                         <outlet property="clockLabel" destination="PtX-ry-Z43" id="OxV-iB-6nF"/>
-                        <outlet property="featurePopUpButton" destination="jrJ-eK-3tS" id="ceb-9p-rnt"/>
                         <outlet property="showAnalysis" destination="M0L-av-7up" id="piS-rZ-4EX"/>
                         <outlet property="whiteTimerLabel" destination="05T-z1-Fpe" id="GV1-h2-AUS"/>
                     </connections>
@@ -887,10 +860,10 @@
             </objects>
             <point key="canvasLocation" x="75" y="1241"/>
         </scene>
-        <!--Analyzer-->
+        <!--Features-->
         <scene sceneID="cMk-3X-AGc">
             <objects>
-                <viewController title="Analyzer" id="1VN-Dp-E0a" customClass="AnalyzerViewController" customModule="Go" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Features" id="1VN-Dp-E0a" customClass="FeaturesViewController" customModule="Go" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="h0F-AV-2IV" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
