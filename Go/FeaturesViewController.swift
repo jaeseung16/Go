@@ -58,6 +58,8 @@ class FeaturesViewController: NSViewController {
             scene?.show(sequence: analyzer.sequenceLocations)
         case .allowed:
             scene?.show(allowed: analyzer.allowedLocations)
+        case .removed:
+            scene?.show(removed: analyzer.removedLocations)
         case .chainBlack:
             scene?.show(chains: analyzer.chainLocations(for: .Black), for: .Black)
         case .chainWhite:

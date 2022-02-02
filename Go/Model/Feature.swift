@@ -12,6 +12,7 @@ enum Feature: String, CaseIterable {
     case white
     case sequence
     case allowed
+    case removed
     case chainBlack = "chain (B)"
     case chainWhite = "chain (W)"
     case libertyBlack = "liberty (B)"

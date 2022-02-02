@@ -71,35 +71,4 @@ class Game {
         plays.append(play)
     }
     
-    func updateGroups() -> Void {
-        guard let lastPlay = plays.last else {
-            return
-        }
-        
-        removedStones.removeAll()
-        
-        let groupAnalyzer = GroupAnalyzer(play: lastPlay, goBoard: goBoard, groups: groups, lastPlay: lastPlay, removedStones: removedStones)
-        
-        goBoard.update(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone)
-        
-        let newLocation = Intersection(row: lastPlay.location.row, column: lastPlay.location.column, stone: lastPlay.stone, forbidden: false, isEye: false)
-        
-        if groupAnalyzer.allNeighborsAreLiberties {
-            let newLocations = Set<Intersection>(arrayLiteral: newLocation)
-            let newGroup = Group(id: lastPlay.id,
-                                 stone: lastPlay.stone,
-                                 locations: newLocations,
-                                 liberties: groupAnalyzer.liberties,
-                                 oppenentLocations: groupAnalyzer.neighborsOppositeStone)
-            groups.insert(newGroup)
-        } else {
-            groupAnalyzer.locationsToRemove!.forEach { location in
-                print("Remove location: \(location)")
-                goBoard.update(row: location.row, column: location.column, stone: nil)
-                removedStones.insert(location)
-            }
-            
-            groups = groupAnalyzer.nextGroups
-        }
-    }
 }

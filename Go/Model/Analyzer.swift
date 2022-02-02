@@ -96,4 +96,8 @@ class Analyzer {
     func libertyLocations(for stone: Stone) -> LibertyLocations {
         return stone == .Black ? libertyLocationsForBlack : libertyLocationsForWhite
     }
+    
+    var removedLocations: RemovedLocations {
+        return RemovedLocations(playNumber: plays.count, locations: [Intersection](removedStones))
+    }
 }

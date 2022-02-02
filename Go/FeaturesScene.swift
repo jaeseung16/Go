@@ -186,6 +186,20 @@ class FeaturesScene: SKScene {
         }
     }
     
+    func show(removed: RemovedLocations) -> Void {
+        print("show removed locaations")
+        analyzerBoard?.removeAllChildren()
+        
+        let locations = removed.locations
+        let stone: Stone = removed.playNumber % 2 == 0 ? .White : .Black
+        
+        for index in 0..<locations.count {
+            let name = stone == .Black ? "black \(index)" : "white \(index)"
+            let node = makeNode(at: locations[index], stone: stone, name: name)
+            analyzerBoard?.addChild(node)
+        }
+    }
+    
     func show(chains: GroupLocations, for stone: Stone) -> Void {
         print("show chains for \(stone)")
         analyzerBoard?.removeAllChildren()

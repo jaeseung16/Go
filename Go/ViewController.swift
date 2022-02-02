@@ -107,7 +107,7 @@ class ViewController: NSViewController {
     }
     
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
-        if let analyzerViewController = segue.destinationController as? AnalyzerViewController {
+        if let analyzerViewController = segue.destinationController as? FeaturesViewController {
             analyzerViewController.game = game
             analyzerViewController.analyzer = Analyzer(plays: plays, goBoard: goBoard!, groups: groups, removedStones: removedStones)
         }
@@ -289,7 +289,6 @@ extension ViewController: GameDelegate {
         game.append(play: play)
         
         updateGroups()
-        game.updateGroups()
         
         togglePlayer()
         gameAnalyzer?.analyze(plays: plays)
