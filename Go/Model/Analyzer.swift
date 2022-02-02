@@ -9,12 +9,14 @@
 import Foundation
 
 class Analyzer {
+    var game: Game
     var plays: [Play]
     var goBoard: GoBoard
     var groups = Set<Group>()
     var removedStones = Set<Intersection>()
     
-    init(plays: [Play], goBoard: GoBoard, groups: Set<Group>, removedStones: Set<Intersection>) {
+    init(game: Game, plays: [Play], goBoard: GoBoard, groups: Set<Group>, removedStones: Set<Intersection>) {
+        self.game = game
         self.plays = plays
         self.goBoard = goBoard
         self.groups = groups

@@ -22,8 +22,6 @@ class Game {
     var plays = [Play]()
     var removed = [Play]()
     
-    var groups = Set<Group>()
-    
     var removedStones = Set<Intersection>()
     
     init() {
