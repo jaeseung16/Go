@@ -56,7 +56,7 @@ class GameAnalyzer {
                                     maxVisits: 100,
                                     rootPolicyTemperature: nil,
                                     rootFpuReductionMax: nil,
-                                    includeOwnership: nil,
+                                    includeOwnership: true,
                                     includePolicy: nil,
                                     includePVVisits: nil,
                                     avoidMoves: nil,
@@ -109,6 +109,7 @@ class GameAnalyzer {
             var otherPlays = [Play]()
             var otherWinrates = [Double]()
             var otherScoreLeads = [Double]()
+            var otherVisits = [Int]()
             for moveInfo in response!.moveInfos {
                 let (column, row) = toLocation(move: moveInfo.move)
                 if (moveInfo.order == 0) {
@@ -117,6 +118,7 @@ class GameAnalyzer {
                     otherPlays.append(Play(id: id, row: row, column: column, stone: nextPlayer))
                     otherWinrates.append(moveInfo.winrate)
                     otherScoreLeads.append(moveInfo.scoreLead)
+                    otherVisits.append(moveInfo.visits)
                 }
             }
             
@@ -124,9 +126,11 @@ class GameAnalyzer {
                                         bestNextPlay: nextBestPlay,
                                         winrate: response!.moveInfos[0].winrate,
                                         scoreLead: response!.moveInfos[0].scoreLead,
+                                        visits: response!.moveInfos[0].visits,
                                         otherPlays: otherPlays,
                                         otherWinrates: otherWinrates,
-                                        otherScoreLeads: otherScoreLeads)
+                                        otherScoreLeads: otherScoreLeads,
+                                        otherVisits: otherVisits)
         }
        
         return gameAnalysis
@@ -148,7 +152,7 @@ class GameAnalyzer {
 
 extension GameAnalyzer: EngineDelegate {
     func read(result: String) -> Void {
-        //print("received: \(result)")
+        print("received: \(result)")
         responseQueue.async(flags: .barrier) { [weak self] in
             guard let self = self else {
                 return
