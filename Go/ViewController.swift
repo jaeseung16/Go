@@ -46,27 +46,6 @@ class ViewController: NSViewController {
     
     @IBOutlet weak var blackWinningProbabilityIndicator: NSLevelIndicator!
     
-    @IBAction func activateAnalyzer(_ sender: NSButton) {
-        let openPanel = NSOpenPanel()
-        openPanel.canChooseFiles = true
-        openPanel.allowsMultipleSelection = false
-        openPanel.canChooseDirectories = false
-        openPanel.canCreateDirectories = false
-        openPanel.title = "Select an engine"
-
-        openPanel.beginSheetModal(for:view.window!) { (response) in
-            if response == NSApplication.ModalResponse.OK {
-                print("openPanel.url! = \(openPanel.url!)")
-                _ = openPanel.url!.path
-                // do whatever you what with the file path
-                self.gameAnalyzer = GameAnalyzer(with: openPanel.url!)
-                self.gameAnalyzer?.startEngine()
-            }
-            openPanel.close()
-        }
-        
-    }
-    
     let dateFormatter = DateFormatter()
     
     override func viewDidLoad() {
@@ -110,6 +89,8 @@ class ViewController: NSViewController {
         if let analyzerViewController = segue.destinationController as? FeaturesViewController {
             analyzerViewController.game = game
             analyzerViewController.analyzer = Analyzer(game: game!, plays: plays, goBoard: goBoard!, groups: groups, removedStones: removedStones)
+        } else if let aiViewController = segue.destinationController as? AIViewController {
+            aiViewController.game = game
         }
     }
     
