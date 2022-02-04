@@ -42,7 +42,7 @@ class AIScene: SKScene {
     }
     
     override init(size: CGSize) {
-        scale = size.height / 450.0 * 0.7
+        scale = size.height / 450.0 * 0.8
         
         super.init(size: size)
         
@@ -130,10 +130,17 @@ class AIScene: SKScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
-        if let delegate = sceneDelegate, let analysis = delegate.getAnalysis() {
-            show(analysis: analysis)
-        } else {
-            hideAnalysis()
+        if let delegate = sceneDelegate, let analysis = delegate.getAnalysis(), let feature = delegate.getFeature() {
+            switch feature {
+            case .none:
+                hideAnalysis()
+            case .winrate:
+                showWinRate(analysis: analysis)
+            case .scoreLead:
+                showScoreLead(analysis: analysis)
+            case .visits:
+                showVisits(analysis: analysis)
+            }
         }
     }
     
@@ -141,7 +148,7 @@ class AIScene: SKScene {
         analyzerBoard?.removeAllChildren()
     }
     
-    func show(analysis: GameAnalysis) -> Void {
+    func showWinRate(analysis: GameAnalysis) -> Void {
         //print("gameAnalysis = \(gameAnalysis)")
         analyzerBoard?.removeAllChildren()
         
@@ -152,10 +159,10 @@ class AIScene: SKScene {
                 node.lineWidth = 0
                 node.fillColor = .systemYellow
                 
-                let font = NSFont.systemFont(ofSize: 12)
+                let font = NSFont.systemFont(ofSize: 10)
                 
                 let winrateNode = SKLabelNode(fontNamed: font.fontName)
-                winrateNode.position = CGPoint(x: 0.0, y: 8.0)
+                winrateNode.position = CGPoint(x: 0.0, y: 0.0)
                 winrateNode.name = "winrate"
                 winrateNode.text = String(format: "%0.3f", analysis.otherWinrates[k])
                 winrateNode.fontSize = font.pointSize
@@ -164,8 +171,48 @@ class AIScene: SKScene {
                 
                 node.addChild(winrateNode)
                 
+                analyzerBoard?.addChild(node)
+            }
+        }
+        
+        let winrate = analysis.winrate
+        if let node = self.blueSpot?.copy() as! SKShapeNode? {
+            node.name = "blue spot"
+            node.position = pointFor(intersection: analysis.bestNextPlay.location)
+            node.lineWidth = 0
+            node.fillColor = .systemBlue
+            
+            let font = NSFont.systemFont(ofSize: 10)
+            
+            let winrateNode = SKLabelNode(fontNamed: font.fontName)
+            winrateNode.position = CGPoint(x: 0.0, y: 0.0)
+            winrateNode.name = "winrate"
+            winrateNode.text = String(format: "%0.3f", winrate)
+            winrateNode.fontSize = font.pointSize
+            winrateNode.fontColor = .black
+            winrateNode.verticalAlignmentMode = .center
+            
+            node.addChild(winrateNode)
+            
+            analyzerBoard?.addChild(node)
+        }
+    }
+    
+    func showScoreLead(analysis: GameAnalysis) -> Void {
+        //print("gameAnalysis = \(gameAnalysis)")
+        analyzerBoard?.removeAllChildren()
+        
+        for k in 0..<analysis.otherPlays.count {
+            if let node = self.yellowSpot?.copy() as! SKShapeNode? {
+                node.name = "yellow spot: \(k)"
+                node.position = pointFor(intersection: analysis.otherPlays[k].location)
+                node.lineWidth = 0
+                node.fillColor = .systemYellow
+                
+                let font = NSFont.systemFont(ofSize: 10)
+                
                 let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
-                scoreLeadNode.position = CGPoint(x: 0.0, y: -8.0)
+                scoreLeadNode.position = CGPoint(x: 0.0, y: 0.0)
                 scoreLeadNode.name = "scoreLead"
                 scoreLeadNode.text = String(format: "%0.1f", analysis.otherScoreLeads[k])
                 scoreLeadNode.fontSize = font.pointSize
@@ -178,7 +225,6 @@ class AIScene: SKScene {
             }
         }
         
-        let winrate = analysis.winrate
         let scoreLead = analysis.scoreLead
         if let node = self.blueSpot?.copy() as! SKShapeNode? {
             node.name = "blue spot"
@@ -186,22 +232,62 @@ class AIScene: SKScene {
             node.lineWidth = 0
             node.fillColor = .systemBlue
             
-            let font = NSFont.systemFont(ofSize: 12)
-            
-            let winrateNode = SKLabelNode(fontNamed: font.fontName)
-            winrateNode.position = CGPoint(x: 0.0, y: 8.0)
-            winrateNode.name = "winrate"
-            winrateNode.text = String(format: "%0.3f", winrate)
-            winrateNode.fontSize = font.pointSize
-            winrateNode.fontColor = .black
-            winrateNode.verticalAlignmentMode = .center
-            
-            node.addChild(winrateNode)
+            let font = NSFont.systemFont(ofSize: 10)
             
             let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
-            scoreLeadNode.position = CGPoint(x: 0.0, y: -8.0)
+            scoreLeadNode.position = CGPoint(x: 0.0, y: 0.0)
             scoreLeadNode.name = "scoreLead"
             scoreLeadNode.text = String(format: "%0.1f", scoreLead)
+            scoreLeadNode.fontSize = font.pointSize
+            scoreLeadNode.fontColor = .black
+            scoreLeadNode.verticalAlignmentMode = .center
+            
+            node.addChild(scoreLeadNode)
+            
+            analyzerBoard?.addChild(node)
+        }
+    }
+    
+    func showVisits(analysis: GameAnalysis) -> Void {
+        //print("gameAnalysis = \(gameAnalysis)")
+        analyzerBoard?.removeAllChildren()
+        
+        for k in 0..<analysis.otherPlays.count {
+            if let node = self.yellowSpot?.copy() as! SKShapeNode? {
+                node.name = "yellow spot: \(k)"
+                node.position = pointFor(intersection: analysis.otherPlays[k].location)
+                node.lineWidth = 0
+                node.fillColor = .systemYellow
+                
+                let font = NSFont.systemFont(ofSize: 10)
+                
+                let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
+                scoreLeadNode.position = CGPoint(x: 0.0, y: 0.0)
+                scoreLeadNode.name = "scoreLead"
+                scoreLeadNode.text = String(format: "%d", analysis.otherVisits[k])
+                scoreLeadNode.fontSize = font.pointSize
+                scoreLeadNode.fontColor = .black
+                scoreLeadNode.verticalAlignmentMode = .center
+                
+                node.addChild(scoreLeadNode)
+                
+                analyzerBoard?.addChild(node)
+            }
+        }
+        
+        let visits = analysis.visits
+        if let node = self.blueSpot?.copy() as! SKShapeNode? {
+            node.name = "blue spot"
+            node.position = pointFor(intersection: analysis.bestNextPlay.location)
+            node.lineWidth = 0
+            node.fillColor = .systemBlue
+            
+            let font = NSFont.systemFont(ofSize: 10)
+            
+            let scoreLeadNode = SKLabelNode(fontNamed: font.fontName)
+            scoreLeadNode.position = CGPoint(x: 0.0, y: 0.0)
+            scoreLeadNode.name = "scoreLead"
+            scoreLeadNode.text = String(format: "%d", visits)
             scoreLeadNode.fontSize = font.pointSize
             scoreLeadNode.fontColor = .black
             scoreLeadNode.verticalAlignmentMode = .center
