@@ -9,5 +9,6 @@
 import Foundation
 
 protocol EngineDelegate {
-    func read(result: String)
+    func read(result: String) -> Void
+    func setReady() -> Void
 }

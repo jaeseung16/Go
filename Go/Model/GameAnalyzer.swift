@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Combine
 
 class GameAnalyzer {
     var plays: [Play]?
@@ -14,6 +15,8 @@ class GameAnalyzer {
     var kataGo: KataGo?
     var responses = [KataGoResponse]()
     var count = 0
+    
+    @Published var isReady = false
     
     private let responseQueue = DispatchQueue(label: "com.resonance.Go.GameAnalyzer.responseQueue", attributes: .concurrent)
     
@@ -144,7 +147,7 @@ class GameAnalyzer {
 }
 
 extension GameAnalyzer: EngineDelegate {
-    func read(result: String) {
+    func read(result: String) -> Void {
         //print("received: \(result)")
         responseQueue.async(flags: .barrier) { [weak self] in
             guard let self = self else {
@@ -159,5 +162,9 @@ extension GameAnalyzer: EngineDelegate {
                 print("Result cannot be parsed: \(result)")
             }
         }
+    }
+    
+    func setReady() -> Void {
+        isReady = true
     }
 }

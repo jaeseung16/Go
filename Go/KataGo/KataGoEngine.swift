@@ -92,6 +92,7 @@ class KataGo {
                 print("\(received)")
                 if received.contains("Started, ready to begin handling requests") {
                     self.ready = true
+                    self.delegate?.setReady()
                 }
             }
         }
