@@ -52,6 +52,7 @@
 		90F4E44A27A35E6E00144DE1 /* SequenceLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F4E44927A35E6E00144DE1 /* SequenceLocations.swift */; };
 		90F6EF8824EA07BA00BBCE17 /* GoBoard.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */; };
 		90F9F73227ADE5C300C167B2 /* AISceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F9F73127ADE5C300C167B2 /* AISceneDelegate.swift */; };
+		90F9F73427ADE9B200C167B2 /* AnalyerFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F9F73327ADE9B200C167B2 /* AnalyerFeature.swift */; };
 		90FF7ADC27A5FE3F0088E00A /* RemovedBlackLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90FF7ADB27A5FE3F0088E00A /* RemovedBlackLocations.swift */; };
 /* End PBXBuildFile section */
 
@@ -126,6 +127,7 @@
 		90F4E44927A35E6E00144DE1 /* SequenceLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceLocations.swift; sourceTree = "<group>"; };
 		90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GoBoard.xcassets; sourceTree = "<group>"; };
 		90F9F73127ADE5C300C167B2 /* AISceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISceneDelegate.swift; sourceTree = "<group>"; };
+		90F9F73327ADE9B200C167B2 /* AnalyerFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyerFeature.swift; sourceTree = "<group>"; };
 		90FF7ADB27A5FE3F0088E00A /* RemovedBlackLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemovedBlackLocations.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -275,6 +277,7 @@
 				902976B325BA37AB000AFF26 /* SGFHelper.swift */,
 				9001352D277D24A1006A5385 /* Feature.swift */,
 				901CF3E027A8AD69004E19FF /* FeatureTracker.swift */,
+				90F9F73327ADE9B200C167B2 /* AnalyerFeature.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -441,6 +444,7 @@
 				90C7D5092505685E00E05F47 /* Engine.swift in Sources */,
 				90C88A3C24DA248500B4E382 /* GoBoard.swift in Sources */,
 				904F6F31250052FB00B9345F /* GameAnalyzer.swift in Sources */,
+				90F9F73427ADE9B200C167B2 /* AnalyerFeature.swift in Sources */,
 				90574A8524EB3E2F005230AF /* GameDelegate.swift in Sources */,
 				90F4E44A27A35E6E00144DE1 /* SequenceLocations.swift in Sources */,
 				9020A5A0279F6DD300BB8939 /* LibertyLocations.swift in Sources */,

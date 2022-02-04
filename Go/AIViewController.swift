@@ -22,12 +22,14 @@ class AIViewController: NSViewController {
     @IBOutlet weak var initializingAnalyzerProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var initializingAnalyzerLabel: NSTextField!
     
+    @IBOutlet weak var featurePopUpButton: NSPopUpButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
         
-        //featurePopUpButton.removeAllItems()
-        //featurePopUpButton.addItems(withTitles: Feature.allCases.map { $0.rawValue })
+        featurePopUpButton.removeAllItems()
+        featurePopUpButton.addItems(withTitles: AnalyzerFeature.allCases.map { $0.rawValue })
         
         initializingAnalyzerLabel.isHidden = true
         initializingAnalyzerProgressIndicator.isHidden = true
@@ -109,5 +111,9 @@ class AIViewController: NSViewController {
 extension AIViewController: AISceneDelegate {
     func getAnalysis() -> GameAnalysis? {
         return gameAnalyzer?.getResult()
+    }
+    
+    func getFeature() -> AnalyzerFeature? {
+        return AnalyzerFeature(rawValue: featurePopUpButton.titleOfSelectedItem ?? "none")
     }
 }

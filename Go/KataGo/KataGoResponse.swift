@@ -31,7 +31,7 @@ struct MoveInfo: Codable {
     var utilityLcb: Double
     var pv: [String]
     var pvVisits: Int?
-    
+    var visits: Int
 }
 
 struct RootInfo: Codable {
@@ -41,4 +41,5 @@ struct RootInfo: Codable {
     var scoreSelfplay: Double
     var utility: Double
     var visits: Int
+    var currentPlayer: String
 }
