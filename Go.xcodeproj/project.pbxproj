@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		9001352E277D24A1006A5385 /* Feature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9001352D277D24A1006A5385 /* Feature.swift */; };
 		9014F2102506615500317AC4 /* GameAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9014F20F2506615500317AC4 /* GameAnalysis.swift */; };
+		9019197327AC986D0070A288 /* AIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9019197127AC986D0070A288 /* AIViewController.swift */; };
+		9019197627AC9AFC0070A288 /* AIScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9019197527AC9AFC0070A288 /* AIScene.swift */; };
 		901CF3E127A8AD69004E19FF /* FeatureTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901CF3E027A8AD69004E19FF /* FeatureTracker.swift */; };
 		901D4EA127A2107600E1932B /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 901D4EA027A2107600E1932B /* Analyzer.swift */; };
 		9020A598279F696500BB8939 /* BlackLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9020A597279F696500BB8939 /* BlackLocations.swift */; };
@@ -72,6 +74,8 @@
 /* Begin PBXFileReference section */
 		9001352D277D24A1006A5385 /* Feature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.swift; sourceTree = "<group>"; };
 		9014F20F2506615500317AC4 /* GameAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAnalysis.swift; sourceTree = "<group>"; };
+		9019197127AC986D0070A288 /* AIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIViewController.swift; sourceTree = "<group>"; };
+		9019197527AC9AFC0070A288 /* AIScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIScene.swift; sourceTree = "<group>"; };
 		901CF3E027A8AD69004E19FF /* FeatureTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureTracker.swift; sourceTree = "<group>"; };
 		901D4EA027A2107600E1932B /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
 		9020A597279F696500BB8939 /* BlackLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlackLocations.swift; sourceTree = "<group>"; };
@@ -211,9 +215,11 @@
 				9083F59024F5BDC700CB26F7 /* GTP */,
 				90C88A3D24DA249200B4E382 /* Model */,
 				90C88A0924DA241000B4E382 /* AppDelegate.swift */,
-				9020A5A3279F705C00BB8939 /* FeaturesScene.swift */,
 				90574A8424EB3E2F005230AF /* GameDelegate.swift */,
+				9019197527AC9AFC0070A288 /* AIScene.swift */,
+				9020A5A3279F705C00BB8939 /* FeaturesScene.swift */,
 				90C88A0F24DA241000B4E382 /* GameScene.swift */,
+				9019197127AC986D0070A288 /* AIViewController.swift */,
 				90C88A1124DA241000B4E382 /* ViewController.swift */,
 				9020A5A5279F712F00BB8939 /* FeaturesViewController.swift */,
 				90C88A1324DA241200B4E382 /* Assets.xcassets */,
@@ -410,6 +416,7 @@
 			files = (
 				9014F2102506615500317AC4 /* GameAnalysis.swift in Sources */,
 				90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */,
+				9019197327AC986D0070A288 /* AIViewController.swift in Sources */,
 				9020A5A4279F705C00BB8939 /* FeaturesScene.swift in Sources */,
 				9020A59E279F6A6B00BB8939 /* Intersections.swift in Sources */,
 				902976B425BA37AB000AFF26 /* SGFHelper.swift in Sources */,
@@ -437,6 +444,7 @@
 				901CF3E127A8AD69004E19FF /* FeatureTracker.swift in Sources */,
 				9001352E277D24A1006A5385 /* Feature.swift in Sources */,
 				90AE908E2573125E009366F1 /* GroupAnalyzer.swift in Sources */,
+				9019197627AC9AFC0070A288 /* AIScene.swift in Sources */,
 				9020A59C279F6A4A00BB8939 /* AllowedLocations.swift in Sources */,
 				904074E72504514B006307AB /* KataGoEngine.swift in Sources */,
 				90C88A4124DA259900B4E382 /* Stone.swift in Sources */,

@@ -771,7 +771,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="activateAnalyzer:" target="XfG-lQ-9wD" id="zNA-Kl-MJT"/>
+                                    <segue destination="XiK-Ao-Jih" kind="show" id="ikv-ng-3SD"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RmF-PO-gsF">
@@ -894,7 +894,54 @@
                 </viewController>
                 <customObject id="KTW-rj-QbS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1247" y="871"/>
+            <point key="canvasLocation" x="1150" y="1499"/>
+        </scene>
+        <!--Katago-->
+        <scene sceneID="Sbp-oK-d7F">
+            <objects>
+                <viewController title="Katago" id="XiK-Ao-Jih" customClass="AIViewController" customModule="Go" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="cdD-RF-Dxq" customClass="SKView">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eTx-eW-qys">
+                                <rect key="frame" x="17" y="556" width="78" height="25"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" title="Item 1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="5bl-5z-oFU" id="ntK-WC-OlL">
+                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" id="fzZ-0e-KE2">
+                                        <items>
+                                            <menuItem title="Item 1" state="on" id="5bl-5z-oFU"/>
+                                            <menuItem title="Item 2" id="vZt-95-V5o"/>
+                                            <menuItem title="Item 3" id="Lmy-hE-fjE"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <progressIndicator fixedFrame="YES" maxValue="100" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="IUU-ak-sBA">
+                                <rect key="frame" x="284" y="284" width="32" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </progressIndicator>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1n1-6a-PBm">
+                                <rect key="frame" x="244" y="253" width="113" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Initializing KataGo" id="dmd-ry-OjC">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="initializingAnalyzerLabel" destination="1n1-6a-PBm" id="yQj-J8-TgN"/>
+                        <outlet property="initializingAnalyzerProgressIndicator" destination="IUU-ak-sBA" id="LD8-eE-fKN"/>
+                    </connections>
+                </viewController>
+                <customObject id="YeY-Db-Vbc" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1150" y="836"/>
         </scene>
     </scenes>
     <resources>
