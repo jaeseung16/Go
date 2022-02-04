@@ -37,6 +37,7 @@ class AIViewController: NSViewController {
             
         // Set the scale mode to scale to fit the window
         scene!.scaleMode = .aspectFill
+        scene!.sceneDelegate = self
                 
         // Present the scene
         skView.presentScene(scene)
@@ -86,6 +87,7 @@ class AIViewController: NSViewController {
                     
                     if value {
                         viewController.initializingAnalyzerProgressIndicator.stopAnimation(nil)
+                        viewController.analyze()
                     } else {
                         viewController.initializingAnalyzerProgressIndicator.startAnimation(nil)
                     }
@@ -95,5 +97,17 @@ class AIViewController: NSViewController {
         }
     }
     
+    func analyze() {
+        guard let plays = game?.plays else {
+            return
+        }
+        gameAnalyzer?.analyze(plays: plays)
+    }
     
+}
+
+extension AIViewController: AISceneDelegate {
+    func getAnalysis() -> GameAnalysis? {
+        return gameAnalyzer?.getResult()
+    }
 }
