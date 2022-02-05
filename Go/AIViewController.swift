@@ -15,7 +15,8 @@ class AIViewController: NSViewController {
     var game: Game?
     var goBoard: GoBoard?
     var scene: AIScene?
-    var gameAnalyzer: GameAnalyzer?
+    let gameAnalyzer = GameAnalyzer.shared
+    var numberOfPlays = 0
     
     var cancellable = Set<AnyCancellable>()
     
@@ -48,14 +49,37 @@ class AIViewController: NSViewController {
             
         skView.showsFPS = true
         skView.showsNodeCount = true
+        
+        gameAnalyzer.$isReady.sink { [weak self] value in
+            DispatchQueue.main.async {
+                /*
+                guard let viewController = self else {
+                    return
+                }
+                 */
+                self?.initializingAnalyzerLabel.isHidden = value
+                self?.initializingAnalyzerProgressIndicator.isHidden = value
+                
+                if value {
+                    self?.initializingAnalyzerProgressIndicator.stopAnimation(nil)
+                    self?.analyze()
+                } else {
+                    self?.initializingAnalyzerProgressIndicator.startAnimation(nil)
+                }
+            }
+        }
+        .store(in: &self.cancellable)
 
     }
     
     override func viewDidAppear() {
         super.viewDidAppear()
         
-        activateAnalyzer()
-        
+        if gameAnalyzer.isEngingStarted {
+            analyze()
+        } else {
+            activateAnalyzer()
+        }
     }
     
     func activateAnalyzer() -> Void {
@@ -71,31 +95,10 @@ class AIViewController: NSViewController {
                 print("openPanel.url! = \(openPanel.url!)")
                 _ = openPanel.url!.path
                 // do whatever you what with the file path
-                self.gameAnalyzer = GameAnalyzer(with: openPanel.url!)
-                self.gameAnalyzer?.startEngine()
+                self.gameAnalyzer.setEngine(with: openPanel.url!)
+                self.gameAnalyzer.startEngine()
             }
             openPanel.close()
-            
-            
-            
-            self.gameAnalyzer?.$isReady.sink { [weak self] value in
-                print("value = \(value)")
-                DispatchQueue.main.async {
-                    guard let viewController = self else {
-                        return
-                    }
-                    viewController.initializingAnalyzerLabel.isHidden = value
-                    viewController.initializingAnalyzerProgressIndicator.isHidden = value
-                    
-                    if value {
-                        viewController.initializingAnalyzerProgressIndicator.stopAnimation(nil)
-                        viewController.analyze()
-                    } else {
-                        viewController.initializingAnalyzerProgressIndicator.startAnimation(nil)
-                    }
-                }
-            }
-            .store(in: &self.cancellable)
         }
     }
     
@@ -103,14 +106,18 @@ class AIViewController: NSViewController {
         guard let plays = game?.plays else {
             return
         }
-        gameAnalyzer?.analyze(plays: plays)
+        
+        if numberOfPlays < plays.count {
+            numberOfPlays = plays.count
+            gameAnalyzer.analyze(plays: plays)
+        }
     }
     
 }
 
 extension AIViewController: AISceneDelegate {
     func getAnalysis() -> GameAnalysis? {
-        return gameAnalyzer?.getResult()
+        return gameAnalyzer.getResult()
     }
     
     func getFeature() -> AnalyzerFeature? {
