@@ -131,6 +131,7 @@ class AIScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         if let delegate = sceneDelegate, let analysis = delegate.getAnalysis(), let feature = delegate.getFeature() {
+            delegate.update()
             switch feature {
             case .none:
                 hideAnalysis()

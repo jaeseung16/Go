@@ -123,4 +123,8 @@ extension AIViewController: AISceneDelegate {
     func getFeature() -> AnalyzerFeature? {
         return AnalyzerFeature(rawValue: featurePopUpButton.titleOfSelectedItem ?? "none")
     }
+    
+    func update() -> Void {
+        analyze()
+    }
 }

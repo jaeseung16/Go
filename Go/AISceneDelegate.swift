@@ -11,4 +11,5 @@ import Foundation
 protocol AISceneDelegate {
     func getAnalysis() -> GameAnalysis?
     func getFeature() -> AnalyzerFeature?
+    func update() -> Void
 }
