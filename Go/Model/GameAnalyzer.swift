@@ -10,6 +10,8 @@ import Foundation
 import Combine
 
 class GameAnalyzer {
+    static let shared = GameAnalyzer()
+    
     var plays: [Play]?
     var request: KataGoRequest?
     var kataGo: KataGo?
@@ -20,13 +22,29 @@ class GameAnalyzer {
     
     private let responseQueue = DispatchQueue(label: "com.resonance.Go.GameAnalyzer.responseQueue", attributes: .concurrent)
     
+    init() {
+    }
+    
     init(with url: URL) {
         kataGo = KataGo(with: url)
         kataGo!.delegate = self
     }
     
-    func startEngine() {
+    var isEngingStarted: Bool {
+        return kataGo != nil
+    }
+    
+    func setEngine(with url: URL) -> Void {
+        kataGo = KataGo(with: url)
+        kataGo!.delegate = self
+    }
+    
+    func startEngine() -> Void {
         kataGo?.startEngine()
+    }
+    
+    func stopEngine() -> Void {
+        kataGo?.stopEngine()
     }
     
     func analyze(plays: [Play]) -> Void {
