@@ -849,6 +849,7 @@
                         </subviews>
                     </customView>
                     <connections>
+                        <outlet property="aiAnalysisButton" destination="oMI-o4-eNV" id="Tdx-q0-2qm"/>
                         <outlet property="blackTimerLabel" destination="O1e-gF-qhx" id="CrC-TY-v7k"/>
                         <outlet property="blackWinningProbabilityIndicator" destination="Gr0-JZ-cxN" id="5Vg-Nx-Iuj"/>
                         <outlet property="clockLabel" destination="PtX-ry-Z43" id="OxV-iB-6nF"/>

@@ -37,6 +37,7 @@ class ViewController: NSViewController {
     
     var features = [Intersections]()
     
+    @IBOutlet weak var aiAnalysisButton: NSButton!
     @IBOutlet weak var clockLabel: NSTextField!
     
     @IBOutlet weak var blackTimerLabel: NSTextField!
@@ -76,6 +77,7 @@ class ViewController: NSViewController {
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
    
+        aiAnalysisButton.isEnabled = false
         /*
         print("*****")
         gtp_finish_response()
@@ -259,6 +261,10 @@ extension ViewController: GameDelegate {
     func play(stone: Stone, at intersection: Intersection) -> Void {
         guard let game = game else {
             return
+        }
+        
+        if !aiAnalysisButton.isEnabled {
+            aiAnalysisButton.isEnabled = true
         }
 
         let play = Play(id: playNumber, row: intersection.row, column: intersection.column, stone: stone)
