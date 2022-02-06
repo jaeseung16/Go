@@ -15,6 +15,9 @@ class FeaturesViewController: NSViewController {
     var goBoard: GoBoard?
     var scene: FeaturesScene?
     var analyzer: Analyzer?
+    var numberOfPlays = 0
+    
+    var delegate: FeaturesViewControllerDelegate?
     
     @IBOutlet weak var featurePopUpButton: NSPopUpButton!
     
@@ -27,6 +30,7 @@ class FeaturesViewController: NSViewController {
         
         let skView = view as! SKView
         scene = FeaturesScene(size: skView.bounds.size, boardSize: game!.goBoard.size)
+        scene!.sceneDelegate = self
             
         // Set the scale mode to scale to fit the window
         scene!.scaleMode = .aspectFill
@@ -41,8 +45,11 @@ class FeaturesViewController: NSViewController {
     
     }
     
-    
     @IBAction func showFeature(_ sender: NSPopUpButton) {
+        showFeature()
+    }
+    
+    private func showFeature() -> Void {
         guard let titleOfSelectedItem = featurePopUpButton.titleOfSelectedItem, let feature = Feature(rawValue: titleOfSelectedItem), let analyzer = analyzer else {
             return
         }
@@ -71,5 +78,18 @@ class FeaturesViewController: NSViewController {
         }
     }
     
-    
+}
+
+extension FeaturesViewController: FeaturesSceneDelegate {
+    func update() -> Void {
+        guard let plays = game?.plays, let delegate = delegate else {
+            return
+        }
+        
+        if numberOfPlays < plays.count {
+            numberOfPlays = plays.count
+            analyzer = delegate.getAnalyzer()
+            showFeature()
+        }
+    }
 }

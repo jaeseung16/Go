@@ -10,6 +10,8 @@ import SpriteKit
 
 class FeaturesScene: SKScene {
     
+    var sceneDelegate: FeaturesSceneDelegate?
+    
     var scale: CGFloat
     var boardSize = 19
     
@@ -123,6 +125,12 @@ class FeaturesScene: SKScene {
         self.blueSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
         self.yellowSpot = SKShapeNode.init(circleOfRadius: scale * 0.5 * 22.119)
         self.territorySpot = SKShapeNode.init(circleOfRadius: scale * 0.25 * 22.119)
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        if let delegate = sceneDelegate {
+            delegate.update()
+        }
     }
     
     func clear() -> Void {

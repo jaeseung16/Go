@@ -90,7 +90,8 @@ class ViewController: NSViewController {
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         if let analyzerViewController = segue.destinationController as? FeaturesViewController {
             analyzerViewController.game = game
-            analyzerViewController.analyzer = Analyzer(game: game!, plays: plays, goBoard: goBoard!, groups: groups, removedStones: removedStones)
+            analyzerViewController.delegate = self
+            analyzerViewController.analyzer = Analyzer(game: game!, goBoard: goBoard!, groups: groups, removedStones: removedStones)
         } else if let aiViewController = segue.destinationController as? AIViewController {
             aiViewController.game = game
         }
@@ -346,5 +347,11 @@ extension ViewController: GameDelegate {
         }
         
         return gameAnalyzer?.getResult()
+    }
+}
+
+extension ViewController: FeaturesViewControllerDelegate {
+    func getAnalyzer() -> Analyzer {
+        return Analyzer(game: game!, goBoard: goBoard!, groups: groups, removedStones: removedStones)
     }
 }

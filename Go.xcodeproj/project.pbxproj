@@ -49,7 +49,8 @@
 		90C88A4324DA25F100B4E382 /* Intersection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4224DA25F100B4E382 /* Intersection.swift */; };
 		90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90C88A4424DA2F3700B4E382 /* GameClock.swift */; };
 		90CA915424F483AF0057468D /* GTP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90CA915324F483AF0057468D /* GTP.swift */; };
-		90F4313E27AF3D1F0033FAE2 /* AIViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F4313D27AF3D1F0033FAE2 /* AIViewControllerDelegate.swift */; };
+		90F4314027AF44360033FAE2 /* FeaturesSceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F4313F27AF44360033FAE2 /* FeaturesSceneDelegate.swift */; };
+		90F4314227AF47680033FAE2 /* FeaturesViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F4314127AF47680033FAE2 /* FeaturesViewControllerDelegate.swift */; };
 		90F4E44A27A35E6E00144DE1 /* SequenceLocations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F4E44927A35E6E00144DE1 /* SequenceLocations.swift */; };
 		90F6EF8824EA07BA00BBCE17 /* GoBoard.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */; };
 		90F9F73227ADE5C300C167B2 /* AISceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90F9F73127ADE5C300C167B2 /* AISceneDelegate.swift */; };
@@ -125,7 +126,8 @@
 		90C88A4224DA25F100B4E382 /* Intersection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intersection.swift; sourceTree = "<group>"; };
 		90C88A4424DA2F3700B4E382 /* GameClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameClock.swift; sourceTree = "<group>"; };
 		90CA915324F483AF0057468D /* GTP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTP.swift; sourceTree = "<group>"; };
-		90F4313D27AF3D1F0033FAE2 /* AIViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIViewControllerDelegate.swift; sourceTree = "<group>"; };
+		90F4313F27AF44360033FAE2 /* FeaturesSceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturesSceneDelegate.swift; sourceTree = "<group>"; };
+		90F4314127AF47680033FAE2 /* FeaturesViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturesViewControllerDelegate.swift; sourceTree = "<group>"; };
 		90F4E44927A35E6E00144DE1 /* SequenceLocations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SequenceLocations.swift; sourceTree = "<group>"; };
 		90F6EF8724EA07BA00BBCE17 /* GoBoard.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GoBoard.xcassets; sourceTree = "<group>"; };
 		90F9F73127ADE5C300C167B2 /* AISceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISceneDelegate.swift; sourceTree = "<group>"; };
@@ -225,11 +227,12 @@
 				9019197527AC9AFC0070A288 /* AIScene.swift */,
 				90F9F73127ADE5C300C167B2 /* AISceneDelegate.swift */,
 				9020A5A3279F705C00BB8939 /* FeaturesScene.swift */,
+				90F4313F27AF44360033FAE2 /* FeaturesSceneDelegate.swift */,
 				90C88A0F24DA241000B4E382 /* GameScene.swift */,
 				9019197127AC986D0070A288 /* AIViewController.swift */,
-				90F4313D27AF3D1F0033FAE2 /* AIViewControllerDelegate.swift */,
 				90C88A1124DA241000B4E382 /* ViewController.swift */,
 				9020A5A5279F712F00BB8939 /* FeaturesViewController.swift */,
+				90F4314127AF47680033FAE2 /* FeaturesViewControllerDelegate.swift */,
 				90C88A1324DA241200B4E382 /* Assets.xcassets */,
 				90C88A1524DA241200B4E382 /* Main.storyboard */,
 				90C88A1824DA241200B4E382 /* Info.plist */,
@@ -426,7 +429,6 @@
 				9014F2102506615500317AC4 /* GameAnalysis.swift in Sources */,
 				90C88A4524DA2F3700B4E382 /* GameClock.swift in Sources */,
 				9019197327AC986D0070A288 /* AIViewController.swift in Sources */,
-				90F4313E27AF3D1F0033FAE2 /* AIViewControllerDelegate.swift in Sources */,
 				90F9F73227ADE5C300C167B2 /* AISceneDelegate.swift in Sources */,
 				9020A5A4279F705C00BB8939 /* FeaturesScene.swift in Sources */,
 				9020A59E279F6A6B00BB8939 /* Intersections.swift in Sources */,
@@ -438,11 +440,13 @@
 				90C88A1224DA241000B4E382 /* ViewController.swift in Sources */,
 				90A68477256C8376006E2BC3 /* Neighbor.swift in Sources */,
 				901D4EA127A2107600E1932B /* Analyzer.swift in Sources */,
+				90F4314027AF44360033FAE2 /* FeaturesSceneDelegate.swift in Sources */,
 				90C88A1024DA241000B4E382 /* GameScene.swift in Sources */,
 				9020A598279F696500BB8939 /* BlackLocations.swift in Sources */,
 				9044CABD24EC8D56007D90E8 /* Play.swift in Sources */,
 				909AD60E2501A67900C15E45 /* KataGoRequest.swift in Sources */,
 				9020A59A279F6A2D00BB8939 /* WhiteLocations.swift in Sources */,
+				90F4314227AF47680033FAE2 /* FeaturesViewControllerDelegate.swift in Sources */,
 				9020A5A6279F712F00BB8939 /* FeaturesViewController.swift in Sources */,
 				9064DEEF25A3D33C001E4865 /* Score.swift in Sources */,
 				90C7D5092505685E00E05F47 /* Engine.swift in Sources */,
