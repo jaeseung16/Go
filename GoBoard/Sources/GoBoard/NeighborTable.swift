@@ -12,14 +12,14 @@ struct NeighborTable {
     
     init(dimension: Int) {
         self.dimension = dimension
-        table = [Point: [Point]]()
+        self.table = [:]
         for row in 1...dimension {
             for col in 1...dimension {
                 let point = Point(row: row, col: col)
                 let trueNeighbors = point.neighbors.filter {
                     1...dimension ~= $0.row && 1...dimension ~= $0.col
                 }
-                table[point] = trueNeighbors
+                self.table[point] = trueNeighbors
             }
         }
     }
