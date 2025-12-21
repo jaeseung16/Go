@@ -5,7 +5,7 @@
 //  Created by Jae Seung Lee on 12/14/25.
 //
 
-public struct GoString: Equatable {
+public struct GoString: Equatable, Hashable {
     
     public var color: Stone
     public var stones: Set<Point>
