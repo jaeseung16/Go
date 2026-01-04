@@ -11,7 +11,7 @@ public struct GoString: Equatable, Hashable {
     public var stones: Set<Point>
     public var liberties: Set<Point>
     
-    public var numberOfLibierties: Int {
+    public var numberOfLiberties: Int {
         return liberties.count
     }
     

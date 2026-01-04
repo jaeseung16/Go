@@ -6,5 +6,7 @@ public protocol GoBoard {
     func isOnGrid(_ point: Point) -> Bool
     func neighbors(of point: Point) -> [Point]
     func corners(of point: Point) -> [Point]
-    func getStone(at: Point) -> Stone?
+    func stone(at point: Point) -> Stone?
+    func goString(at point: Point) -> GoString?
+    func isSelfCapture(_ move: Move) -> Bool
 }

@@ -132,7 +132,35 @@ public class ZobristGoBoard: GoBoard {
         }
     }
     
-    public func getStone(at: Point) -> Stone? {
-        return goStringByPoint[at]?.color
+    public func stone(at point: Point) -> Stone? {
+        return goStringByPoint[point]?.color
     }
+    
+    public func goString(at point: Point) -> GoString? {
+        return goStringByPoint[point]
+    }
+    
+    public func isSelfCapture(_ move: Move) -> Bool {
+        var friendlyStrings : [GoString] = []
+        
+        for neighbor in self.neighbors(of: move.point) {
+            guard let neighborGoString = goStringByPoint[neighbor] else {
+                // This point is a liberty of a neighbor's string. Can't be self capture
+                return false
+            }
+            
+            if move.player == Player.from(stone: neighborGoString.color) {
+                // Gather for layer analysis
+                friendlyStrings.append(neighborGoString)
+            } else {
+                if neighborGoString.numberOfLiberties == 1 {
+                    // This move is real capture, not a self capture
+                    return false
+                }
+            }
+        }
+        
+        return friendlyStrings.allSatisfy { $0.numberOfLiberties == 1 }
+    }
+
 }
