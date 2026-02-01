@@ -9,4 +9,5 @@ public protocol GoBoard {
     func stone(at point: Point) -> Stone?
     func goString(at point: Point) -> GoString?
     func isSelfCapture(_ move: Move) -> Bool
+    func copy() -> GoBoard
 }

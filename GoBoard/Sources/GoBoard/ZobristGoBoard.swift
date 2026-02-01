@@ -26,6 +26,16 @@ public class ZobristGoBoard: GoBoard {
         self.moveAges = MoveAges(dimension: dimension)
     }
     
+    public func copy() -> GoBoard {
+        let copy = ZobristGoBoard(dimension: dimension)
+        copy.zobristHash = self.zobristHash
+        copy.neighborsByPoint = self.neighborsByPoint
+        copy.cornersByPoint = self.cornersByPoint
+        copy.goStringByPoint = self.goStringByPoint
+        copy.moveAges = self.moveAges
+        return copy
+    }
+    
     public func isOnGrid(_ point: Point) -> Bool {
         return 1...dimension ~= point.row && 1...dimension ~= point.col
     }
