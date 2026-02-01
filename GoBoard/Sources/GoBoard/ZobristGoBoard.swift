@@ -13,10 +13,10 @@ public class ZobristGoBoard: GoBoard {
     
     public let dimension: Int
     private var zobristHash: UInt
-    private let neighborsByPoint: [Point: [Point]]
-    private let cornersByPoint: [Point: [Point]]
+    private var neighborsByPoint: [Point: [Point]]
+    private var cornersByPoint: [Point: [Point]]
     private var goStringByPoint: [Point: GoString] = [:]
-    private let moveAges: MoveAges
+    private var moveAges: MoveAges
     
     init(dimension: Int = 19) {
         self.dimension = dimension
@@ -93,8 +93,6 @@ public class ZobristGoBoard: GoBoard {
         }
         
         ZobristGoBoard.logger.info("goStringByPoint=\(goStringByPoint)")
-        
-        
     }
     
     public func neighbors(of point: Point) -> [Point] {
