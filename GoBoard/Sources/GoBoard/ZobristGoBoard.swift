@@ -68,8 +68,8 @@ public class ZobristGoBoard: GoBoard {
             goStringByPoint[point] = newGoString
         }
 
-        let moveToRemove = Move(player: .none, point: point)
-        let moveToAdd = Move(player: .from(stone: stone), point: point)
+        let moveToRemove = Move.play(.none, point)
+        let moveToAdd = Move.play(Player.from(stone: stone), point)
         updateZobrist(with: moveToRemove, moveToAdd: moveToAdd)
            
         // Remove empty-point hash code.
@@ -114,8 +114,8 @@ public class ZobristGoBoard: GoBoard {
             goStringByPoint[point] = nil
             
             if let player = Player.from(stone: goString.color) {
-                let moveToRemove = Move(player: player, point: point)
-                let moveToAdd = Move(player: .none, point: point)
+                let moveToRemove = Move.play(player, point)
+                let moveToAdd = Move.play(.none, point)
                 updateZobrist(with: moveToRemove, moveToAdd: moveToAdd)
             }
         }
@@ -141,9 +141,13 @@ public class ZobristGoBoard: GoBoard {
     }
     
     public func isSelfCapture(_ move: Move) -> Bool {
+        guard move.isPlay else {
+            return false
+        }
+        
         var friendlyStrings : [GoString] = []
         
-        for neighbor in self.neighbors(of: move.point) {
+        for neighbor in self.neighbors(of: move.point!) {
             guard let neighborGoString = goStringByPoint[neighbor] else {
                 // This point is a liberty of a neighbor's string. Can't be self capture
                 return false
