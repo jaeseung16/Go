@@ -16,7 +16,7 @@ import Testing
         for row in 1..<20 {
             for col in 1..<20 {
                 for stone in Stone.allCases {
-                    let move = Move(player: Player.from(stone: stone), point: Point(row: row, col: col))
+                    let move = Move.play(Player.from(stone: stone), Point(row: row, col: col))
                     table[move] = UInt.random(in: 0...max)
                     print("\(move): \(String(describing: table[move]))")
                 }
@@ -132,7 +132,7 @@ import Testing
         board.place(stone: .white, at: Point(row: 2, col: 3))
         board.place(stone: .white, at: Point(row: 1, col: 4))
         
-        #expect(board.isSelfCapture(Move(player: .black, point: Point(row: 1, col: 2))))
+        #expect(board.isSelfCapture(Move.play(.black, Point(row: 1, col: 2))))
     }
     
     @Test func testNotSelfCapture() async throws {
@@ -146,7 +146,7 @@ import Testing
         board.place(stone: .white, at: Point(row: 2, col: 3))
         board.place(stone: .white, at: Point(row: 1, col: 4))
         
-        #expect(!board.isSelfCapture(Move(player: .black, point: Point(row: 1, col: 2))))
+        #expect(!board.isSelfCapture(Move.play(.black, Point(row: 1, col: 2))))
     }
     
     @Test func testNotSelfCaptureIsOtherCapture() async throws {
@@ -163,7 +163,7 @@ import Testing
         board.place(stone: .white, at: Point(row: 2, col: 2))
         board.place(stone: .white, at: Point(row: 1, col: 3))
         
-        #expect(!board.isSelfCapture(Move(player: .black, point: Point(row: 1, col: 2))))
+        #expect(!board.isSelfCapture(Move.play(.black, Point(row: 1, col: 2))))
     }
     
 }
