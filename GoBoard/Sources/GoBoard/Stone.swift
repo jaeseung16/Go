@@ -9,4 +9,15 @@ public enum Stone: CaseIterable, Sendable {
     case black
     case white
     case none
+    
+    public static func from(player: Player?) -> Stone {
+        switch player {
+        case .black:
+            return .black
+        case .white:
+            return .white
+        default:
+            return .none
+        }
+    }
 }

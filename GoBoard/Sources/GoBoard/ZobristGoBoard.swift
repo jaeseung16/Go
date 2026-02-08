@@ -175,4 +175,24 @@ public class ZobristGoBoard: GoBoard {
         return friendlyStrings.allSatisfy { $0.numberOfLiberties == 1 }
     }
 
+    public func willCapture(_ move: Move) -> Bool {
+        for neighbor in self.neighbors(of: move.point!) {
+            guard let neighborGoString = goStringByPoint[neighbor] else {
+                continue
+            }
+            
+            guard move.player != Player.from(stone: neighborGoString.color) else {
+                continue
+            }
+            
+            if neighborGoString.numberOfLiberties == 1 {
+                return true
+            }
+        }
+        return false
+    }
+    
+    public func hashableRepresentation() -> any Hashable {
+        return zobristHash
+    }
 }

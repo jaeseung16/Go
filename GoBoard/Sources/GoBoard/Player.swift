@@ -16,4 +16,11 @@ public enum Player: Sendable {
         case .none: return nil
         }
     }
+    
+    public var other: Player {
+        switch self {
+        case .black: return .white
+        case .white: return .black
+        }
+    }
 }
