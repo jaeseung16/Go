@@ -32,6 +32,7 @@ public class ScoringHelper {
     func evaluate(board: GoBoard) -> Territory {
         var status: [Point: String] = [:]
         
+        var visited: Set<Point> = []
         for row in 1...board.dimension {
             for col in 1...board.dimension {
                 let point = Point(row: row, col: col)
@@ -46,13 +47,10 @@ public class ScoringHelper {
                     case .none: continue
                     }
                 } else {
-                    var visited: Set<Point> = []
-                    let (group, neighbors) = collectRegion(start: point, board: board, visited: &visited)
+                    let (group, neighborStones) = collectRegion(start: point, board: board, visited: &visited)
                     let fillWith: String
-                    if neighbors.count == 1,
-                        let neighbor = neighbors.first,
-                        let neighborColor = board.stone(at: neighbor) {
-                            fillWith = "territory_\(neighborColor == Stone.black ? "b" : "w")"
+                    if neighborStones.count == 1, let neighborStone = neighborStones.first {
+                        fillWith = "territory_\(neighborStone == .black ? "b" : "w")"
                     } else {
                         fillWith = "dame"
                     }
@@ -65,7 +63,7 @@ public class ScoringHelper {
         
     }
     
-    private func collectRegion(start: Point, board: GoBoard, visited: inout Set<Point>) -> ([Point], Set<Point>) {
+    private func collectRegion(start: Point, board: GoBoard, visited: inout Set<Point>) -> ([Point], Set<Stone>) {
         guard !visited.contains(start) else {
             return ([], Set())
         }
@@ -73,7 +71,7 @@ public class ScoringHelper {
         visited.insert(start)
         
         var allPoints: [Point] = [start]
-        var allBorders: Set<Point> = []
+        var allBorders: Set<Stone> = []
         
         let color = board.stone(at: start) ?? .none
         
@@ -82,16 +80,15 @@ public class ScoringHelper {
             if !board.isOnGrid(neighbor) {
                 continue
             }
-            let neighborColor = board.stone(at: neighbor)
+            let neighborColor = board.stone(at: neighbor) ?? .none
             if neighborColor == color {
                 let (points, borders) = collectRegion(start: neighbor, board: board, visited: &visited)
                 allPoints.append(contentsOf: points)
                 allBorders.formUnion(borders)
             } else {
-                allBorders.formUnion([neighbor])
+                allBorders.formUnion([neighborColor])
             }
         }
-        
         return (allPoints, allBorders)
     }
     
