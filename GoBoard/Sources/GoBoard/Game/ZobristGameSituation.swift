@@ -5,7 +5,7 @@
 //  Created by Jae Seung Lee on 2/8/26.
 //
 
-public class ZobristGameSituation: GameSituation {
+public class ZobristGameSituation {
     private let nextPlayer: Player
     private let goBoard: GoBoard
     
@@ -14,7 +14,7 @@ public class ZobristGameSituation: GameSituation {
         self.goBoard = goBoard
     }
     
-    public func situation() -> (Player, UInt) {
-        return nextPlayer, goBoard.hashableRepresentation()
+    public func situation() -> (Player, any Hashable) {
+        return (nextPlayer, goBoard.hashableRepresentation())
     }
 }

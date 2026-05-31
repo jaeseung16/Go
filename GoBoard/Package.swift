@@ -28,5 +28,9 @@ let package = Package(
             name: "GoBoardTests",
             dependencies: ["GoBoard"]
         ),
+        .testTarget(
+            name: "ScoringTests",
+            dependencies: ["GoBoard"]
+        ),
     ]
 )

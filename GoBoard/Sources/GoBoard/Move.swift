@@ -8,7 +8,7 @@
 public enum Move: Equatable, Hashable, Sendable {
     case play(Player?, Point)
     case pass
-    case regisn
+    case resign
     
     public var isPlay: Bool {
         guard case .play = self else { return false }

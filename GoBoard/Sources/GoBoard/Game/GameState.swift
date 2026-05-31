@@ -6,28 +6,31 @@
 //
 
 public class GameState {
-    
-    private let board: GoBoard
+
+    public let board: GoBoard
     private var nextPlayer: Player
     private let previousState: GameState?
     private let lastMove: Move?
-    private let previousStates: Set<GameState>
+    private let previousStates: Set<GameSituation>
     
     public init(board: GoBoard, nextPlayer: Player, previousState: GameState? = nil, lastMove: Move? = nil) {
         self.board = board
         self.nextPlayer = nextPlayer
         self.lastMove = lastMove
         self.previousState = previousState
-        self.previousStates = previousState?.previousStates.union(previousState?.situation) ?? []
+        
+        if let previousState = previousState {
+            self.previousStates = previousState.previousStates.union([previousState.situation])
+        } else {
+            self.previousStates = []
+        }
     }
     
-    public apply(move: Move) -> GameState {
+    public func apply(move: Move) -> GameState {
         let nextBoard = board.copy()
         
-        if move.isPlay {
-            let point = move.point {
-                nextBoard.place(stone: self.nextPlayer, at: move.point)
-            }
+        if move.isPlay, let point = move.point {
+            nextBoard.place(stone: Stone.from(player: nextPlayer), at: point)
         }
         
         return GameState(board: nextBoard, nextPlayer: nextPlayer.other, previousState: self, lastMove: move)
@@ -44,8 +47,8 @@ public class GameState {
         
     }
 
-    public var situation: (Player, GoBoard) {
-        return (nextPlayer, board.hashableRepresentation)
+    public var situation: GameSituation {
+        return GameSituation(nextPlayer: nextPlayer, boardHash: board.hashableRepresentation())
     }
     
     public func isViolatingKoRule(move: Move) -> Bool {
@@ -58,7 +61,7 @@ public class GameState {
         }
         
         let nextGameState = apply(move: move)
-        return nextGameState.situation in previousStates
+        return previousStates.contains(nextGameState.situation)
     }
     
     public func isValid(move: Move) -> Bool {
@@ -66,13 +69,14 @@ public class GameState {
             return false
         }
         
-        if move == .pass || move == .regisn {
+        switch move {
+        case .pass, .resign:
             return true
+        case .play(_, let point):
+            return self.board.goString(at: point) == nil
+            && !self.isSelfCapture(move)
+            && !self.isViolatingKoRule(move: move)
         }
-        
-        return self.board.goString(at: move.point) == nil
-        && !self.isSelfCapture(move)
-        && !self.isViolatingKoRule(move: move)
     }
     
     public func isOver() -> Bool {
@@ -80,7 +84,7 @@ public class GameState {
             return false
         }
         
-        if lastMove == .regisn {
+        if lastMove == .resign {
             return true
         }
         
@@ -90,12 +94,12 @@ public class GameState {
         return lastMove == .pass && secondLastMove == .pass
     }
     
-    public func winner: Player? {
+    public var winner: Player? {
         guard isOver() else {
             return nil
         }
         
-        if lastMove == .regisn {
+        if lastMove == .resign {
             return self.nextPlayer
         }
         
@@ -105,18 +109,18 @@ public class GameState {
         return nil
     }
     
-    public var legalMoves -> [Move] {
+    public var legalMoves: [Move] {
         var moves = [Move]()
         if isOver() {
             return moves
         }
         
         moves.append(.pass)
-        moves.append(.regisn)
+        moves.append(.resign)
         for row in 1...self.board.dimension {
             for col in 1...self.board.dimension {
-                let move = Move.play(Point(row, col))
-                if self.isValid(move: move) {
+                let move = Move.play(nil, Point(row: row, col: col))
+                if isValid(move: move) {
                     moves.append(move)
                 }
             }

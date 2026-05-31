@@ -5,7 +5,7 @@
 //  Created by Jae Seung Lee on 11/23/25.
 //
 
-public enum Player: Sendable {
+public enum Player: Sendable, Hashable {
     case black
     case white
     
