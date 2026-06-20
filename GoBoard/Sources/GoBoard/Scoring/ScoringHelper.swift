@@ -7,8 +7,6 @@
 
 public class ScoringHelper {
 
-    private static let deltas = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
     private let gameState: GameState
     private let rule: ScoringRule
     private let komi: Double
@@ -98,6 +96,17 @@ public class ScoringHelper {
             }
         }
 
+        // Post-process: reclassify false eyes as dame.
+        for (point, label) in status {
+            let owningColor: Stone
+            if label == "territory_b" { owningColor = .black }
+            else if label == "territory_w" { owningColor = .white }
+            else { continue }
+            if isFalseEye(point, owningColor: owningColor, board: board) {
+                status[point] = "dame"
+            }
+        }
+
         return Territory(territoryMap: status)
     }
 
@@ -105,6 +114,31 @@ public class ScoringHelper {
     private func effectiveStone(at point: Point, board: GoBoard) -> Stone {
         if deadStones.contains(point) { return .none }
         return board.stone(at: point) ?? .none
+    }
+
+    /// Returns true if `point` is a false eye for `owningColor`.
+    ///
+    /// A false eye looks enclosed but the surrounding group doesn't fully control
+    /// its diagonal corners, meaning the opponent can eventually capture into it.
+    /// Heuristic (tenuki-style):
+    ///   - The point must have enough occupied neighbors to look like an eye.
+    ///   - The opponent occupies at least 1 diagonal (edge/corner positions) or
+    ///     at least 2 diagonals (interior positions).
+    private func isFalseEye(_ point: Point, owningColor: Stone, board: GoBoard) -> Bool {
+        let onEdge = point.row == 1 || point.row == board.dimension
+                  || point.col == 1 || point.col == board.dimension
+        let threshold = onEdge ? 1 : 2
+
+        let occupiedNeighbors = board.neighbors(of: point).filter {
+            effectiveStone(at: $0, board: board) != .none
+        }.count
+        guard occupiedNeighbors >= threshold else { return false }
+
+        let opponent: Stone = owningColor == .black ? .white : .black
+        let hostileDiagonals = board.corners(of: point).filter {
+            effectiveStone(at: $0, board: board) == opponent
+        }.count
+        return hostileDiagonals >= threshold
     }
 
     /// DFS flood-fill starting at `start`. Expands through points whose effective

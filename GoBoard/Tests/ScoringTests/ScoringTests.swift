@@ -162,6 +162,99 @@ private func makeTestBoard() -> ZobristGoBoard {
         #expect(result.white == 11)
     }
 
+    // MARK: - False eye detection
+
+    @Test func testFalseEyeDetection_interior() {
+        // Board (5×5):
+        //   bbbbb   row 5
+        //   bbbbb   row 4
+        //   bb.bb   row 3  ← (3,3) is the false eye candidate
+        //   bwbwb   row 2  ← white at (2,2) and (2,4) — diagonals of (3,3)
+        //   b.b.b   row 1  ← (1,2) and (1,4) are left empty as liberties for the white stones
+        //
+        // Without (1,2)/(1,4) as liberties, placing black at (3,2)/(3,4) would capture
+        // the white stones before scoring, leaving (2,2)/(2,4) empty and breaking the test.
+        //
+        // Flood-fill: (3,3) orthogonal neighbors are all black → labeled "territory_b".
+        // False eye check: interior point; diagonals (2,2)=w and (2,4)=w → 2 hostile → false eye.
+        // (1,2) and (1,4) are dame (mixed border: adjacent to both black and white).
+        // Expected: (3,3) relabeled "dame", numBlackTerritory = 0.
+        let board = ZobristGoBoard(dimension: 5)
+        for row in 1...5 {
+            for col in 1...5 {
+                guard !(row == 3 && col == 3),
+                      !(row == 1 && col == 2),
+                      !(row == 1 && col == 4) else { continue }
+                if (row == 2 && col == 2) || (row == 2 && col == 4) {
+                    board.place(stone: .white, at: Point(row: row, col: col))
+                } else {
+                    board.place(stone: .black, at: Point(row: row, col: col))
+                }
+            }
+        }
+        let gameState = GameState(board: board, nextPlayer: .black)
+        let territory = ScoringHelper(gameState: gameState).computeTerritory()
+
+        #expect(territory.numBlackTerritory == 0)
+        #expect(territory.dames.contains(Point(row: 3, col: 3)))
+    }
+
+    @Test func testFalseEyeDetection_corner() {
+        // Board (5×5):
+        //   bbbbb   row 5
+        //   bbbbb   row 4
+        //   bbbbb   row 3
+        //   bw.bb   row 2  ← white at (2,2); (2,3) left empty as its liberty
+        //   .bbbb   row 1  ← (1,1) is the false eye candidate
+        //
+        // Without (2,3) as a liberty, placing black at (3,2) captures white at (2,2)
+        // before scoring, leaving no white diagonal for (1,1).
+        //
+        // Flood-fill: (1,1) neighbors (1,2)=b, (2,1)=b → labeled "territory_b".
+        // False eye check: corner point, threshold=1; diagonal (2,2)=w → 1 hostile → false eye.
+        // (2,3) is dame (mixed border: adjacent to both white and black).
+        // Expected: (1,1) relabeled "dame", numBlackTerritory = 0.
+        let board = ZobristGoBoard(dimension: 5)
+        for row in 1...5 {
+            for col in 1...5 {
+                guard !(row == 1 && col == 1),
+                      !(row == 2 && col == 3) else { continue }
+                if row == 2 && col == 2 {
+                    board.place(stone: .white, at: Point(row: row, col: col))
+                } else {
+                    board.place(stone: .black, at: Point(row: row, col: col))
+                }
+            }
+        }
+        let gameState = GameState(board: board, nextPlayer: .black)
+        let territory = ScoringHelper(gameState: gameState).computeTerritory()
+
+        #expect(territory.numBlackTerritory == 0)
+        #expect(territory.dames.contains(Point(row: 1, col: 1)))
+    }
+
+    @Test func testTrueEyeNotReclassified() {
+        // Verify a genuine interior eye is NOT reclassified as a false eye.
+        // Board (5×5): black fully encloses (3,3) with all-black diagonals (no white diagonals).
+        //   bbbbb   row 5
+        //   bbbbb   row 4
+        //   bb.bb   row 3  ← (3,3) is the only empty point
+        //   bbbbb   row 2  ← all black (no white diagonals)
+        //   bbbbb   row 1
+        let board = ZobristGoBoard(dimension: 5)
+        for row in 1...5 {
+            for col in 1...5 {
+                guard !(row == 3 && col == 3) else { continue }
+                board.place(stone: .black, at: Point(row: row, col: col))
+            }
+        }
+        let gameState = GameState(board: board, nextPlayer: .black)
+        let territory = ScoringHelper(gameState: gameState).computeTerritory()
+
+        #expect(territory.numBlackTerritory == 1)
+        #expect(territory.numDames == 0)
+    }
+
     // MARK: - GameState.winner wiring
 
     @Test func testWinnerAfterDoublePass() {
