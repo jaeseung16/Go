@@ -8,7 +8,12 @@
 public struct Point: Equatable, Hashable, Sendable {
     public var row: Int
     public var col: Int
-    
+
+    public init(row: Int, col: Int) {
+        self.row = row
+        self.col = col
+    }
+
     public var neighbors: [Point] {
         [
             Point(row: row - 1, col: col),

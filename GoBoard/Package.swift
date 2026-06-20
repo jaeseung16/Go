@@ -11,6 +11,10 @@ let package = Package(
             name: "GoBoard",
             targets: ["GoBoard"]
         ),
+        .library(
+            name: "GoAgent",
+            targets: ["GoAgent"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log", from: "1.8.0")
@@ -22,6 +26,13 @@ let package = Package(
             name: "GoBoard",
             dependencies: [
                 .product(name: "Logging", package: "swift-log")
+            ]
+        ),
+        .target(
+            name: "GoAgent",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                "GoBoard"
             ]
         ),
         .testTarget(

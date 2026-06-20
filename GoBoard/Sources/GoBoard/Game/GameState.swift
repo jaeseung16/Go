@@ -8,7 +8,7 @@
 public class GameState {
 
     public let board: GoBoard
-    private var nextPlayer: Player
+    public var nextPlayer: Player
     private let previousState: GameState?
     private let lastMove: Move?
     private let previousStates: Set<GameSituation>
