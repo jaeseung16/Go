@@ -234,13 +234,45 @@ private func makeTestBoard() -> ZobristGoBoard {
     }
 
     @Test func testTrueEyeNotReclassified() {
-        // Verify a genuine interior eye is NOT reclassified as a false eye.
-        // Board (5×5): black fully encloses (3,3) with all-black diagonals (no white diagonals).
+        // A black group with 2 genuine eyes must NOT have its territory relabeled.
+        // Board (5×5): two separate empty interior points, both fully surrounded by black.
         //   bbbbb   row 5
         //   bbbbb   row 4
-        //   bb.bb   row 3  ← (3,3) is the only empty point
+        //   b.b.b   row 3  ← (3,2) and (3,4) are the two eyes
         //   bbbbb   row 2  ← all black (no white diagonals)
         //   bbbbb   row 1
+        //
+        // Neither point is a false eye (no hostile diagonals).
+        // The stone group has 2 distinct territory regions → eyeCount = 2 → NOT seki.
+        let board = ZobristGoBoard(dimension: 5)
+        for row in 1...5 {
+            for col in 1...5 {
+                guard !(row == 3 && col == 2),
+                      !(row == 3 && col == 4) else { continue }
+                board.place(stone: .black, at: Point(row: row, col: col))
+            }
+        }
+        let gameState = GameState(board: board, nextPlayer: .black)
+        let territory = ScoringHelper(gameState: gameState).computeTerritory()
+
+        #expect(territory.numBlackTerritory == 2)
+        #expect(territory.numDames == 0)
+    }
+
+    // MARK: - Seki detection
+
+    @Test func testSekiDetection_oneEye() {
+        // A stone group with only 1 eye has its territory relabeled as dame.
+        // Board (5×5): all black except (3,3) empty.
+        //   bbbbb   row 5
+        //   bbbbb   row 4
+        //   bb.bb   row 3  ← (3,3) is the sole eye
+        //   bbbbb   row 2
+        //   bbbbb   row 1
+        //
+        // Flood-fill: (3,3) → "territory_b".
+        // False eye: no hostile diagonals → NOT a false eye.
+        // Seki: black stone group has exactly 1 territory region → relabel (3,3) as dame.
         let board = ZobristGoBoard(dimension: 5)
         for row in 1...5 {
             for col in 1...5 {
@@ -251,7 +283,32 @@ private func makeTestBoard() -> ZobristGoBoard {
         let gameState = GameState(board: board, nextPlayer: .black)
         let territory = ScoringHelper(gameState: gameState).computeTerritory()
 
-        #expect(territory.numBlackTerritory == 1)
+        #expect(territory.numBlackTerritory == 0)
+        #expect(territory.dames.contains(Point(row: 3, col: 3)))
+    }
+
+    @Test func testSekiDetection_twoEyeGroupUntouched() {
+        // A stone group with 2 eyes is alive; its territory must not be relabeled.
+        // Board (5×5): all black except (3,2) and (3,4) empty.
+        //   bbbbb   row 5
+        //   bbbbb   row 4
+        //   b.b.b   row 3  ← two separate eyes
+        //   bbbbb   row 2
+        //   bbbbb   row 1
+        //
+        // Seki: eyeCount = 2 → NOT seki → territory preserved.
+        let board = ZobristGoBoard(dimension: 5)
+        for row in 1...5 {
+            for col in 1...5 {
+                guard !(row == 3 && col == 2),
+                      !(row == 3 && col == 4) else { continue }
+                board.place(stone: .black, at: Point(row: row, col: col))
+            }
+        }
+        let gameState = GameState(board: board, nextPlayer: .black)
+        let territory = ScoringHelper(gameState: gameState).computeTerritory()
+
+        #expect(territory.numBlackTerritory == 2)
         #expect(territory.numDames == 0)
     }
 

@@ -96,16 +96,22 @@ public class ScoringHelper {
             }
         }
 
-        // Post-process: reclassify false eyes as dame.
+        // Post-process 1: reclassify false eyes as dame.
+        var falseEyePoints: Set<Point> = []
         for (point, label) in status {
             let owningColor: Stone
             if label == "territory_b" { owningColor = .black }
             else if label == "territory_w" { owningColor = .white }
             else { continue }
             if isFalseEye(point, owningColor: owningColor, board: board) {
-                status[point] = "dame"
+                falseEyePoints.insert(point)
             }
         }
+        for point in falseEyePoints { status[point] = "dame" }
+
+        // Post-process 2: seki detection — stone groups with fewer than 2 eyes
+        // have their territory relabeled as dame.
+        detectSeki(in: &status, board: board)
 
         return Territory(territoryMap: status)
     }
@@ -139,6 +145,74 @@ public class ScoringHelper {
             effectiveStone(at: $0, board: board) == opponent
         }.count
         return hostileDiagonals >= threshold
+    }
+
+    /// Identifies stone groups with fewer than 2 eyes and relabels their territory as dame.
+    ///
+    /// A stone group's "eyes" are its distinct connected territory regions (after false eye
+    /// detection). Groups with ≥ 2 eyes are alive; groups with < 2 eyes are either dead
+    /// or in seki, and their enclosed space is not scored as territory.
+    private func detectSeki(in status: inout [Point: String], board: GoBoard) {
+        var processedGroups: Set<Point> = []
+        var sekiPoints: Set<Point> = []
+
+        for (point, label) in status {
+            let territoryColor: Stone
+            let territoryLabel: String
+            if label == "territory_b" {
+                territoryColor = .black; territoryLabel = "territory_b"
+            } else if label == "territory_w" {
+                territoryColor = .white; territoryLabel = "territory_w"
+            } else { continue }
+
+            // BFS to find the stone group enclosing this territory point.
+            var stoneGroup: Set<Point> = []
+            var queue: [Point] = board.neighbors(of: point).filter {
+                effectiveStone(at: $0, board: board) == territoryColor
+            }
+            while !queue.isEmpty {
+                let s = queue.removeLast()
+                guard !stoneGroup.contains(s),
+                      effectiveStone(at: s, board: board) == territoryColor else { continue }
+                stoneGroup.insert(s)
+                queue.append(contentsOf: board.neighbors(of: s))
+            }
+            guard !stoneGroup.isEmpty else { continue }
+
+            // Use the lexicographically smallest stone as a canonical group ID so
+            // we process each stone group exactly once.
+            let rep = stoneGroup.min { $0.row != $1.row ? $0.row < $1.row : $0.col < $1.col }!
+            guard !processedGroups.contains(rep) else { continue }
+            processedGroups.insert(rep)
+
+            // Collect all territory points of this color adjacent to the stone group.
+            var eyePoints: Set<Point> = []
+            for s in stoneGroup {
+                for n in board.neighbors(of: s) where status[n] == territoryLabel {
+                    eyePoints.insert(n)
+                }
+            }
+
+            // Count distinct connected territory regions (eyes).
+            var eyeCount = 0
+            var eyeSeen: Set<Point> = []
+            var groupEyePoints: Set<Point> = []
+            for ep in eyePoints where !eyeSeen.contains(ep) {
+                eyeCount += 1
+                var bfs: [Point] = [ep]
+                while !bfs.isEmpty {
+                    let p = bfs.removeLast()
+                    guard !eyeSeen.contains(p), status[p] == territoryLabel else { continue }
+                    eyeSeen.insert(p)
+                    groupEyePoints.insert(p)
+                    bfs.append(contentsOf: board.neighbors(of: p))
+                }
+            }
+
+            if eyeCount < 2 { sekiPoints.formUnion(groupEyePoints) }
+        }
+
+        for p in sekiPoints { status[p] = "dame" }
     }
 
     /// DFS flood-fill starting at `start`. Expands through points whose effective
