@@ -6,8 +6,11 @@
 //
 
 import GoBoard
+import Logging
 
 public protocol GoAgent {
+    
+    static var logger: Logger { get }
     
     var stone: Stone { get }
     
@@ -16,8 +19,14 @@ public protocol GoAgent {
 }
 
 extension GoAgent {
+    
+    static var logger: Logger {
+        return Logger(label: "com.resonance.GoAgent.GoAgent")
+    }
+    
     func isEye(point: Point, on board: GoBoard) -> Bool {
-        guard let stone = board.stone(at: point), stone == .black || stone == .white else {
+        guard board.goString(at: point) == nil else {
+            Self.logger.info("There already exists a stone at \(point)")
             return false
         }
         

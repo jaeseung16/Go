@@ -18,7 +18,7 @@ public class ZobristGoBoard: GoBoard {
     private var goStringByPoint: [Point: GoString] = [:]
     private var moveAges: MoveAges
     
-    init(dimension: Int = 19) {
+    public init(dimension: Int = 19) {
         self.dimension = dimension
         self.zobristHash = Zobrist.EMPTY_BOARD
         self.neighborsByPoint = NeighborTable(dimension: dimension).table

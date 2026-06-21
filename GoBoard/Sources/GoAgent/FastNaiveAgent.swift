@@ -6,8 +6,12 @@
 //
 
 import GoBoard
+import Logging
 
 public class FastNaiveAgent: GoAgent {
+    
+    public static let logger = Logger(label: "com.resonance.GoAgent.FastNaiveAgent")
+    
     public let stone: Stone
     private let player: Player
     private var pointCache = [Point]()

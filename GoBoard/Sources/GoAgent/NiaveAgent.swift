@@ -6,9 +6,12 @@
 //
 
 import GoBoard
+import Logging
 
 public class NiaveAgent: GoAgent {
     // In fact, when agent is initialized, black or white is given.
+    
+    public static let logger = Logger(label: "com.resonance.GoAgent.NiaveAgent")
     
     public let stone: Stone
     private let player: Player
