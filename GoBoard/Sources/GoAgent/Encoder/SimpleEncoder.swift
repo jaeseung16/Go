@@ -18,7 +18,7 @@ public class SimpleEncoder: Encoder {
     }
     
     public func encode(gameState: GameState) -> MLXArray {
-        var boardTensor = MLXArray.zeros(self.shape)
+        let boardTensor = MLXArray.zeros(self.shape)
         
         switch gameState.nextPlayer {
         case .black:
