@@ -16,8 +16,6 @@ struct PlayGoBots: ParsableCommand {
               abstract: "Play Go against bots")
     }
     
-    @MainActor static let displayHelper = DisplayHelper()
-    
     @Option(help: "The number of games to play")
     var games: Int
 
@@ -26,7 +24,7 @@ struct PlayGoBots: ParsableCommand {
         print("Hello, world!")
         
         let board = ZobristGoBoard(dimension: 9)
-        displayHelper.display(board: board)
+        DisplayHelper.display(board: board)
     }
     
 }
