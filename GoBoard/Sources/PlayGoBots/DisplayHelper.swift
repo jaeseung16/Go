@@ -37,6 +37,18 @@ struct DisplayHelper {
         print("    \(columnHeader)")
     }
     
+    static func display(move: Move, player: Player) {
+        switch move {
+            case .pass:
+            print("\(player) passese")
+        case .resign:
+            print("\(player) resigns")
+        case .play(_, let point):
+            let columnLabel = columns[columns.index(columns.startIndex, offsetBy: point.col - 1)]
+            print("\(player) \(columnLabel)\(point.row)")
+        }
+    }
+    
 }
 
 extension Stone {
