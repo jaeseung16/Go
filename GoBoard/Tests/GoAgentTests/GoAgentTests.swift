@@ -16,8 +16,8 @@ import GoBoard
         board.place(stone: .black, at: Point(row: 2, col: 2))
         board.place(stone: .black, at: Point(row: 2, col: 1))
         
-        let blackAgent = NiaveAgent(stone: .black)
-        let whiteAgent = NiaveAgent(stone: .white)
+        let blackAgent = NaiveAgent(stone: .black)
+        let whiteAgent = NaiveAgent(stone: .white)
         #expect(blackAgent.isEye(point: Point(row: 1, col: 1), on: board) == true)
         #expect(whiteAgent.isEye(point: Point(row: 1, col: 1), on: board) == false)
     }
@@ -27,7 +27,7 @@ import GoBoard
         board.place(stone: .black, at: Point(row: 1, col: 2))
         board.place(stone: .black, at: Point(row: 2, col: 1))
         
-        let blackAgent = NiaveAgent(stone: .black)
+        let blackAgent = NaiveAgent(stone: .black)
         #expect(blackAgent.isEye(point: Point(row: 1, col: 1), on: board) == false)
         
         board.place(stone: .white, at: Point(row: 2, col: 2))
@@ -45,7 +45,7 @@ import GoBoard
         board.place(stone: .black, at: Point(row: 2, col: 4))
         board.place(stone: .black, at: Point(row: 2, col: 3))
         
-        let blackAgent = NiaveAgent(stone: .black)
+        let blackAgent = NaiveAgent(stone: .black)
         #expect(blackAgent.isEye(point: Point(row: 3, col: 3), on: board) == true)
     }
 
