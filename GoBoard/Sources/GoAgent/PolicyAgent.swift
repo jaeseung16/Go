@@ -19,6 +19,7 @@ public class PolicyAgent: GoAgent {
     
     private let encoder: Encoder
     private let model: GoAgentModel
+    public var experienceCollector: ExperienceCollector?
     
     public var temperature: Float = 0.0
     
@@ -61,6 +62,9 @@ public class PolicyAgent: GoAgent {
             if state.isValid(move: .play(self.player, point)) && !isEye(point: point, on: state.board) {
                 // if self._collector is not None:
                 //     self._collector.record_decision(state=board_tensor, action=point_idx)
+                if let collector = experienceCollector {
+                    collector.recordDecision(state: boardTensor, action: pointIdx.asType(.float16), estimatedValue: MLXArray(0.0))
+                }
                 return .play(self.player, point)
             }
         }
