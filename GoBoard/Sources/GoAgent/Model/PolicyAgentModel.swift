@@ -56,7 +56,8 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
     }
     
     public func iterateBatches(batchSize: Int = 32, experiences: GoTrainingExperience, using generator: inout any RandomNumberGenerator) -> some Sequence<(MLXArray, MLXArray)> {
-        let targets = prepareTargets(experience: experiences, boardSize: 19)
+        let boardSize = experiences.states.shape[1] // TODO: - related to how to encode a game
+        let targets = prepareTargets(experience: experiences, boardSize: boardSize)
         return BatchSequence(batchSize: batchSize, x: experiences.states, y: targets, using: &generator)
     }
     
