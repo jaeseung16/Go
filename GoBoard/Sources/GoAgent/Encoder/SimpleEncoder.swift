@@ -14,7 +14,7 @@ public class SimpleEncoder: Encoder {
     public var shape = [Int]()
     
     public init(boardDimension: Int) {
-        self.shape = [boardDimension, boardDimension, 7]
+        self.shape = [boardDimension, boardDimension, 11]
     }
     
     public func encode(gameState: GameState) -> MLXArray {
