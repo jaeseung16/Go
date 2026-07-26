@@ -7,6 +7,8 @@
 # Swift/Xcode
 .build/
 .swiftpm/
+.xcodebuild/
 *.xcodeproj/xcuserdata/
 *.playground
 DerivedData/
+*.profraw

@@ -59,6 +59,7 @@ struct SelfPlay: ParsableCommand {
         let players: [Player: GoAgent] = [.white: whitePlayer, .black: blackPlayer]
         
         for _ in 0..<self.numGames {
+            print("Game #\(self.numGames)")
             var game = GameState(board: board, nextPlayer: .black)
             
             while !game.isOver() {
@@ -66,6 +67,8 @@ struct SelfPlay: ParsableCommand {
                 game = game.apply(move: move)
             }
         }
+        
+        print("FINISHED")
    
     }
     
