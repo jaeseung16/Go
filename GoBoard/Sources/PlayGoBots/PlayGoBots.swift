@@ -9,6 +9,7 @@ import ArgumentParser
 import Foundation
 import GoAgent
 import GoBoard
+import GoBotsSupport
 import Logging
 
 @main
