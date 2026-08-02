@@ -58,7 +58,7 @@ public class PolicyAgent: GoAgent {
         let rankedMoves = MLXRandom.categorical(moveProbs, count: numMoves)
         
         for pointIdx in rankedMoves {
-            let point = self.encoder.decode(index: pointIdx.all().item())
+            let point = self.encoder.decode(index: pointIdx.item())
             if state.isValid(move: .play(self.player, point)) && !isEye(point: point, on: state.board) {
                 // if self._collector is not None:
                 //     self._collector.record_decision(state=board_tensor, action=point_idx)
