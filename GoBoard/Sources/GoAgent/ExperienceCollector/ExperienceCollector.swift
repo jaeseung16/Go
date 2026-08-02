@@ -9,8 +9,6 @@ import MLX
 
 public class ExperienceCollector {
     
-    public var shape: (Int, Int, Int)
-    
     public var states: [MLXArray]
     public var actions: [MLXArray]
     public var rewards: [MLXArray]
@@ -20,9 +18,7 @@ public class ExperienceCollector {
     private var actionsFromCurrentEpisode: [MLXArray]
     private var estimatedValuesFromCurrentEpisode: [MLXArray]
     
-    init(shape: (Int, Int, Int)) {
-        self.shape = shape
-        
+    public init() {
         self.states = []
         self.actions = []
         self.rewards = []
