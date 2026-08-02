@@ -13,6 +13,7 @@ public protocol GoAgent {
     static var logger: Logger { get }
     
     var stone: Stone { get }
+    var experienceCollector: ExperienceCollector? { get set }
     
     func select(from state: GameState) -> Move
     func diagnostics() -> String

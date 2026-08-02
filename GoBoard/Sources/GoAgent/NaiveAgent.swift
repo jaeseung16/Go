@@ -14,8 +14,9 @@ public class NaiveAgent: GoAgent {
     public static let logger = Logger(label: "com.resonance.GoAgent.NiaveAgent")
     
     public let stone: Stone
+    public var experienceCollector: ExperienceCollector?
     private let player: Player
-    
+
     public init(stone: Stone) {
         precondition(stone == .black || stone == .white)
         self.stone = stone

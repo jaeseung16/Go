@@ -13,6 +13,7 @@ public class FastNaiveAgent: GoAgent {
     public static let logger = Logger(label: "com.resonance.GoAgent.FastNaiveAgent")
     
     public let stone: Stone
+    public var experienceCollector: ExperienceCollector?
     private let player: Player
     private var pointCache = [Point]()
     private var dimension: Int?
