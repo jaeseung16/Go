@@ -101,6 +101,15 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
         try MLX.save(arrays: arrays, metadata: metadata, url: url)
     }
     
+    public func load(from url: URL) throws -> Void {
+        let (arrays, _) = try MLX.loadArraysAndMetadata(url: url)
+        
+        let parameters = ModuleParameters.unflattened(arrays)
+        try model.update(parameters: parameters, verify: [.all])
+        
+        eval(model)
+    }
+    
 }
 
 
