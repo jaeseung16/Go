@@ -27,6 +27,10 @@ let package = Package(
             name: "SelfPlay",
             targets: ["SelfPlay"]
         ),
+        .executable(
+            name: "TrainGoBots",
+            targets: ["TrainGoBots"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log", from: "1.8.0"),
@@ -69,6 +73,18 @@ let package = Package(
         ),
         .executableTarget(
             name: "SelfPlay",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                .product(name: "MLX", package: "mlx-swift"),
+                .product(name: "MLXNN", package: "mlx-swift"),
+                .product(name: "MLXOptimizers", package: "mlx-swift"),
+                "GoAgent",
+                "GoBotsSupport",
+            ]
+        ),
+        .executableTarget(
+            name: "TrainGoBots",
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),

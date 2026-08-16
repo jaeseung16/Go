@@ -13,10 +13,10 @@ import MLXOptimizers
 public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
 
     private let model: Model
-    private let optimizer: Optimizer
+    private let optimizer: Optimizer?
     private var messages = [String]()
 
-    public init(model: Model, optimizer: Optimizer) {
+    public init(model: Model, optimizer: Optimizer? = nil) {
         self.model = model
         self.optimizer = optimizer
     }
@@ -32,7 +32,7 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
         crossEntropy(logits: model(x), targets: y, reduction: .mean)
     }
     
-    public func train(with experiences: GoTrainingExperience) {
+    public func train(with experiences: GoTrainingExperience, optimizer: Optimizer, clipNorm: Float) {
         model.train()
         defer {
             model.train(false)
@@ -45,8 +45,8 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
         let start = Date.timeIntervalSinceReferenceDate
         for (x, y) in iterateBatches(batchSize: 32, experiences: experiences, using: &generator) {
             let (_, grads) = lossAndGradient(model, x, y)
-            
-            optimizer.update(model: model, gradients: grads)
+            let (clippedGrads, _) = clipGradNorm(gradients: grads, maxNorm: clipNorm)
+            optimizer.update(model: model, gradients: clippedGrads)
             
             eval(model, optimizer)
         }
@@ -93,6 +93,12 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
             targetVectors[index, action] = experience.rewards[index]
         }
         return targetVectors
+    }
+    
+    public func save(to url: URL) throws -> Void {
+        let arrays: [String: MLXArray] = Dictionary(uniqueKeysWithValues: model.parameters().flattened())
+        let metadata: [String: String] = [:]
+        try MLX.save(arrays: arrays, metadata: metadata, url: url)
     }
     
 }
