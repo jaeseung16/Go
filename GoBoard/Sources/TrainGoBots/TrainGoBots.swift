@@ -86,9 +86,14 @@ struct TraingGoBots: ParsableCommand {
             let policyAgentModel = PolicyAgentModel(model: model)
             let optimizer = SGD(learningRate: learningRate)
             
-            // policyAgentModel.train(with: trainingExperience, optimizer: optimizer, clipNorm: clipNorm)
+            print("Start training")
+            policyAgentModel.train(with: trainingExperience, optimizer: optimizer, clipNorm: clipNorm)
             
             // Save model
+            let trainedModelURL = URL(filePath: trainedModel)
+            print("Saving trained model to \(trainedModelURL)")
+            
+            try policyAgentModel.save(to: trainedModelURL)
             
             
         }
