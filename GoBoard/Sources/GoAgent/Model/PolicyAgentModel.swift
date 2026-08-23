@@ -42,7 +42,8 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
         let lossAndGradient = valueAndGrad(model: model, Self.loss)
         var generator: RandomNumberGenerator = SplitMix64(seed: 0)
         
-        let start = Date.timeIntervalSinceReferenceDate
+        let start = Date()
+        print("Start training at \(start.formatted(date: .abbreviated, time: .standard))")
         for (x, y) in iterateBatches(batchSize: 32, experiences: experiences, using: &generator) {
             let (_, grads) = lossAndGradient(model, x, y)
             let (clippedGrads, _) = clipGradNorm(gradients: grads, maxNorm: clipNorm)
@@ -50,9 +51,10 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
             
             eval(model, optimizer)
         }
-        let end = Date.timeIntervalSinceReferenceDate
+        let end = Date()
+        print("Training ended at \(end.formatted(date: .abbreviated, time: .standard)) \(end.timeIntervalSince(start))")
 
-        messages.append("training time: \(end - start)")
+        messages.append("training time: \(end.timeIntervalSince(start))")
     }
     
     public func iterateBatches(batchSize: Int = 32, experiences: GoTrainingExperience, using generator: inout any RandomNumberGenerator) -> some Sequence<(MLXArray, MLXArray)> {
@@ -90,7 +92,7 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
         let experienceSize = experience.actions.shape[0]
         let targetVectors = MLXArray.zeros([experienceSize, boardSize * boardSize], type: Float.self)
         for (index, action) in experience.actions.enumerated() {
-            targetVectors[index, action] = experience.rewards[index]
+            targetVectors[index, action.asType(.int32)] = experience.rewards[index]
         }
         return targetVectors
     }
