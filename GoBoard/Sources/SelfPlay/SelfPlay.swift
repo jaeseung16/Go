@@ -28,8 +28,17 @@ struct SelfPlay: ParsableCommand {
     @Option(help: "The number of games to play")
     var numGames: Int = 1
     
-    @Option(help: "The name of learning agent")
-    var learningAgent: String = "policy"
+    @Option(help: "The name of a learning agent")
+    var agentName: String = "policy"
+    
+    @Option(help: "The name of the network used in an agent")
+    var networkName: String = "small"
+    
+    @Option(help: "The weights of the network used in an agent")
+    var weights: String?
+    
+    @Option(help: "The name of an encoder")
+    var encoder: String = "simple"
     
     @Option(help: "The path to save the experience")
     var experienceOut: String = "experience.safetensors"
@@ -52,10 +61,24 @@ struct SelfPlay: ParsableCommand {
 
         print("Logging to \(logURL.path)")
         
-        let board = ZobristGoBoard(dimension: self.boardSize)
+        let board = createBoard()
+        let encoder = createEncoder()
+        let network = createNetwork(encoder: encoder)
+        let agentModel = createAgentModel(model: network, optimizer: optimizer)
         
-        var whitePlayer = createPlayer(for: .white)
-        var blackPlayer = createPlayer(for: .black)
+        // TODO: Naming convention?
+        if let weights {
+            // Load
+            let url = URL(fileURLWithPath: weights)
+            try agentModel.load(from: url)
+        } else {
+            // Save
+            let url = URL(fileURLWithPath: "\(self.networkName).safetensors")
+            try agentModel.save(to: url)
+        }
+        
+        var whitePlayer = createPlayer(for: .white, with: agentModel, encoder: encoder)
+        var blackPlayer = createPlayer(for: .black, with: agentModel, encoder: encoder)
         let players: [Player: GoAgent] = [.white: whitePlayer, .black: blackPlayer]
         
         let experienceCollector1 = ExperienceCollector()
@@ -106,27 +129,50 @@ struct SelfPlay: ParsableCommand {
         print("Saving experiences to \(url.path)")
         experienceBuffer.save(to: url)
         
-        
         print("Collected \(experienceBuffer.states.shape[0]) experiences")
         
         print("FINISHED")
    
     }
     
-    private func createPlayer(for color: Stone) -> GoAgent {
-        let encoder = SimpleEncoder(boardDimension: self.boardSize)
-        
-        let agentModel = PolicyAgentModel(model: createModel(encoder: encoder), optimizer: optimizer)
-        switch self.learningAgent {
-        case "policy":
-            return PolicyAgent(stone: color, encoder: encoder, model: agentModel)
+    private func createBoard() -> GoBoard {
+        ZobristGoBoard(dimension: self.boardSize)
+    }
+    
+    private func createEncoder() -> Encoder {
+        switch self.encoder {
+        case "simple":
+            return SimpleEncoder(boardDimension: self.boardSize)
         default:
-            fatalError("Unsupported learning agent: \(self.learningAgent)")
+            fatalError("Unsupported encoder: \(self.encoder)")
         }
     }
     
-    private func createModel(encoder: Encoder) -> Small {
-        Small(encoder: encoder)
+    private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: Encoder) -> GoAgent {
+        switch self.agentName {
+        case "policy":
+            return PolicyAgent(stone: color, encoder: encoder, model: agentModel)
+        default:
+            fatalError("Unsupported learning agent: \(self.agentName)")
+        }
+    }
+    
+    private func createNetwork(encoder: Encoder) -> some Module & UnaryLayer {
+        switch self.networkName {
+        case "small":
+            return Small(encoder: encoder)
+        default:
+            fatalError("Unsupported netowrk: \(self.networkName)")
+        }
+    }
+    
+    private func createAgentModel<Model: Module & UnaryLayer>(model: Model, optimizer: Optimizer) -> GoAgentModel {
+        switch self.agentName {
+        case "policy":
+            return PolicyAgentModel(model: model, optimizer: optimizer)
+        default:
+            fatalError("Unsupported learning agent: \(self.agentName)")
+        }
     }
     
     private var optimizer: Optimizer {
