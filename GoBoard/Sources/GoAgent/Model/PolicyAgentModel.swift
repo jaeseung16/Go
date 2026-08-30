@@ -21,11 +21,8 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
         self.optimizer = optimizer
     }
     
-    public func predict(from boardTensor: MLXArray) -> [Int: Float] {
-        let predictions = model(boardTensor).asArray(Float.self)
-        return Dictionary(
-            uniqueKeysWithValues: predictions.enumerated().map { ($0.offset, $0.element) }
-        )
+    public func predict(from boardTensor: MLXArray) -> MLXArray {
+        return model(boardTensor)
     }
     
     private static func loss(model: Model, x: MLXArray, y: MLXArray) -> MLXArray {

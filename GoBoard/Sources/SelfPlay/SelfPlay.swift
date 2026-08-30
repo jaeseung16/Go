@@ -17,6 +17,8 @@ import MLXOptimizers
 
 @main
 struct SelfPlay: ParsableCommand {
+    // .xcodebuild/Build/Products/Debug/SelfPlay --board-size 9 --num-games 1000 --agent-name policy --network-name small --encoder simple --experience-out experience.safetensors
+
     static var configuration: CommandConfiguration {
         .init(commandName: "self-play",
               abstract: "Make a bot play Go against itself")
@@ -39,9 +41,18 @@ struct SelfPlay: ParsableCommand {
     
     @Option(help: "The name of an encoder")
     var encoder: String = "simple"
-    
+
+    @Option(help: "The probability of playing a uniformly random move instead of following the policy")
+    var temperature: Float = 0.0
+
     @Option(help: "The path to save the experience")
     var experienceOut: String = "experience.safetensors"
+
+    func validate() throws {
+        guard (0...1).contains(self.temperature) else {
+            throw ValidationError("temperature must be between 0 and 1, got \(self.temperature)")
+        }
+    }
 
     mutating func run() throws {
         let logURL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
@@ -151,7 +162,10 @@ struct SelfPlay: ParsableCommand {
     private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: Encoder) -> GoAgent {
         switch self.agentName {
         case "policy":
-            return PolicyAgent(stone: color, encoder: encoder, model: agentModel)
+            // Set the temperature here, while the concrete type is still in hand: it is a
+            // PolicyAgent property, and the GoAgent return type erases it.
+            let agent = PolicyAgent(stone: color, encoder: encoder, model: agentModel, temperature: self.temperature)
+            return agent
         default:
             fatalError("Unsupported learning agent: \(self.agentName)")
         }
