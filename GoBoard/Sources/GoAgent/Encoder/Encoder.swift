@@ -6,7 +6,6 @@
 //
 
 import GoBoard
-import MLX
 
 public protocol Encoder {
     
@@ -14,7 +13,7 @@ public protocol Encoder {
     
     var shape: [Int] { get }
     
-    func encode(gameState: GameState) -> MLXArray
+    func encode(gameState: GameState) -> [[[UInt8]]] 
     
     // Turn a board point into an integer index
     func encode(point: Point) -> Int

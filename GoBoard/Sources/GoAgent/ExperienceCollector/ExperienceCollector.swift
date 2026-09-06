@@ -40,6 +40,16 @@ public class ExperienceCollector {
         self.actionsFromCurrentEpisode.append(action)
         self.estimatedValuesFromCurrentEpisode.append(estimatedValue)
     }
+
+    /// Convenience overload so callers don't need to depend on MLX.
+    /// `state` is a board tensor nested as [row][col][feature].
+    public func recordDecision(state: [[[UInt8]]], action: Int, estimatedValue: Float) {
+        let shape = [state.count, state[0].count, state[0][0].count]
+        let stateTensor = MLXArray(state.flatMap { $0 }.flatMap { $0 }, shape)
+        self.recordDecision(state: stateTensor,
+                            action: MLXArray(Int32(action)).asType(.float16),
+                            estimatedValue: MLXArray(estimatedValue))
+    }
     
     public func completeEpisode(reward: MLXArray) {
         let numberOfStates = self.statesFromCurrentEpisode.count

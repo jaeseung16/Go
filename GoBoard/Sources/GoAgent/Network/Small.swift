@@ -8,7 +8,7 @@
 import MLX
 import MLXNN
 
-public class Small: Module, UnaryLayer {
+public class Small: Module, GoNetwork {
     
     @ModuleInfo var conv1: Conv2d
     @ModuleInfo var conv2: Conv2d
@@ -23,9 +23,11 @@ public class Small: Module, UnaryLayer {
     // W is the input image width
     // C is the number of input channels
     
+    public let shape: [Int]
+    
     public init(encoder: Encoder) {
         // TODO: NHWC
-        let shape = encoder.shape
+        self.shape = encoder.shape
         
         conv1 = Conv2d(inputChannels: shape[2], outputChannels: 48, kernelSize: 7, padding: 3)
         conv2 = Conv2d(inputChannels: 48, outputChannels: 32, kernelSize: 5, padding: 2)

@@ -83,7 +83,7 @@ struct TraingGoBots: ParsableCommand {
             
             // Train
             
-            let policyAgentModel = PolicyAgentModel(model: model)
+            let policyAgentModel = PolicyAgentModel(network: model)
             let optimizer = SGD(learningRate: learningRate)
             
             print("Start training")

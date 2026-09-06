@@ -75,7 +75,7 @@ struct SelfPlay: ParsableCommand {
         let board = createBoard()
         let encoder = createEncoder()
         let network = createNetwork(encoder: encoder)
-        let agentModel = createAgentModel(model: network, optimizer: optimizer)
+        let agentModel = createAgentModel(network: network, optimizer: optimizer)
         
         // TODO: Naming convention?
         if let weights {
@@ -171,7 +171,7 @@ struct SelfPlay: ParsableCommand {
         }
     }
     
-    private func createNetwork(encoder: Encoder) -> some Module & UnaryLayer {
+    private func createNetwork(encoder: Encoder) -> some GoNetwork {
         switch self.networkName {
         case "small":
             return Small(encoder: encoder)
@@ -180,10 +180,10 @@ struct SelfPlay: ParsableCommand {
         }
     }
     
-    private func createAgentModel<Model: Module & UnaryLayer>(model: Model, optimizer: Optimizer) -> GoAgentModel {
+    private func createAgentModel(network: GoNetwork, optimizer: Optimizer) -> GoAgentModel {
         switch self.agentName {
         case "policy":
-            return PolicyAgentModel(model: model, optimizer: optimizer)
+            return PolicyAgentModel<Small>(network: network as! Small, optimizer: optimizer)
         default:
             fatalError("Unsupported learning agent: \(self.agentName)")
         }

@@ -10,43 +10,45 @@ import MLX
 import MLXNN
 import MLXOptimizers
 
-public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
+public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
 
-    private let model: Model
+    private let network: Network
     private let optimizer: Optimizer?
     private var messages = [String]()
 
-    public init(model: Model, optimizer: Optimizer? = nil) {
-        self.model = model
+    public init(network: Network, optimizer: Optimizer? = nil) {
+        self.network = network
         self.optimizer = optimizer
     }
     
-    public func predict(from boardTensor: MLXArray) -> MLXArray {
-        return model(boardTensor)
+    public func predict(from boardTensor: [[[UInt8]]]) -> [Float] {
+        let x = MLXArray(boardTensor.flatMap {$0}.flatMap {$0}, network.shape)
+        let probabilities = network(x)
+        return probabilities.asArray(Float.self)
     }
     
-    private static func loss(model: Model, x: MLXArray, y: MLXArray) -> MLXArray {
-        crossEntropy(logits: model(x), targets: y, reduction: .mean)
+    private static func loss(network: GoNetwork, x: MLXArray, y: MLXArray) -> MLXArray {
+        crossEntropy(logits: network(x), targets: y, reduction: .mean)
     }
     
     public func train(with experiences: GoTrainingExperience, optimizer: Optimizer, clipNorm: Float) {
-        model.train()
+        network.train()
         defer {
-            model.train(false)
+            network.train(false)
         }
         
-        eval(model)
-        let lossAndGradient = valueAndGrad(model: model, Self.loss)
+        eval(network)
+        let lossAndGradient = valueAndGrad(model: network, Self.loss)
         var generator: RandomNumberGenerator = SplitMix64(seed: 0)
         
         let start = Date()
         print("Start training at \(start.formatted(date: .abbreviated, time: .standard))")
         for (x, y) in iterateBatches(batchSize: 32, experiences: experiences, using: &generator) {
-            let (_, grads) = lossAndGradient(model, x, y)
+            let (_, grads) = lossAndGradient(network, x, y)
             let (clippedGrads, _) = clipGradNorm(gradients: grads, maxNorm: clipNorm)
-            optimizer.update(model: model, gradients: clippedGrads)
+            optimizer.update(model: network, gradients: clippedGrads)
             
-            eval(model, optimizer)
+            eval(network, optimizer)
         }
         let end = Date()
         print("Training ended at \(end.formatted(date: .abbreviated, time: .standard)) \(end.timeIntervalSince(start))")
@@ -95,7 +97,7 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
     }
     
     public func save(to url: URL) throws -> Void {
-        let arrays: [String: MLXArray] = Dictionary(uniqueKeysWithValues: model.parameters().flattened())
+        let arrays: [String: MLXArray] = Dictionary(uniqueKeysWithValues: network.parameters().flattened())
         let metadata: [String: String] = [:]
         try MLX.save(arrays: arrays, metadata: metadata, url: url)
     }
@@ -104,9 +106,9 @@ public class PolicyAgentModel<Model: Module & UnaryLayer>: GoAgentModel {
         let (arrays, _) = try MLX.loadArraysAndMetadata(url: url)
         
         let parameters = ModuleParameters.unflattened(arrays)
-        try model.update(parameters: parameters, verify: [.all])
-        
-        eval(model)
+        try network.update(parameters: parameters, verify: [.all])
+
+        eval(network)
     }
     
 }

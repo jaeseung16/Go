@@ -6,39 +6,45 @@
 //
 
 import GoBoard
-import MLX
 
 public class SimpleEncoder: Encoder {
+    private static let featureCount = 11
+    
     public let name = "Simple"
     
-    public var shape = [Int]()
+    public let shape: [Int]
+    
+    private let rowCount: Int
+    private let columnCount: Int
     
     public init(boardDimension: Int) {
-        self.shape = [boardDimension, boardDimension, 11]
+        self.shape = [boardDimension, boardDimension, Self.featureCount]
+        self.rowCount = boardDimension
+        self.columnCount = boardDimension
     }
     
-    public func encode(gameState: GameState) -> MLXArray {
-        let boardTensor = MLXArray.zeros(self.shape)
+    public func encode(gameState: GameState) -> [[[UInt8]]] {
+        var boardTensor = [[[UInt8]]](repeating: [[UInt8]](repeating: [UInt8](repeating: 0, count: Self.featureCount), count: columnCount), count: rowCount)
         
-        switch gameState.nextPlayer {
-        case .black:
-            boardTensor[.ellipsis, 8] = MLXArray.ones([self.shape[0], self.shape[1]])
-        case .white:
-            boardTensor[.ellipsis, 9] = MLXArray.ones([self.shape[0], self.shape[1]])
-        }
-        
-        for row in 0..<self.shape[0] {
-            for col in 0..<self.shape[1] {
+        for row in 0..<rowCount {
+            for col in 0..<columnCount {
+                switch gameState.nextPlayer {
+                case .black:
+                    boardTensor[row][col][8] = 1
+                case .white:
+                    boardTensor[row][col][9] = 1
+                }
+                
                 let point = Point(row: row + 1, col: col + 1)
                 if let goString = gameState.board.goString(at: point) {
                     var libertyPlane = min(4, goString.numberOfLiberties) - 1
                     if goString.color == .white {
                         libertyPlane += 4
                     }
-                    boardTensor[MLXArray([row, col, libertyPlane])] = MLXArray(1.0)
+                    boardTensor[row][col][libertyPlane] = 1
                 } else {
                     if gameState.isViolatingKoRule(move: .play(gameState.nextPlayer, point)) {
-                        boardTensor[MLXArray([row, col, 10])] = MLXArray(1.0)
+                        boardTensor[row][col][10] = 1
                     }
                 }
             }
@@ -48,11 +54,11 @@ public class SimpleEncoder: Encoder {
     }
     
     public func encode(point: Point) -> Int {
-        return self.shape[0] * (point.row - 1) + (point.col - 1)
+        return columnCount * (point.row - 1) + (point.col - 1)
     }
     
     public func decode(index: Int) -> Point {
-        let (row, col) = index.quotientAndRemainder(dividingBy: self.shape[0])
+        let (row, col) = index.quotientAndRemainder(dividingBy: columnCount)
         return Point(row: row + 1, col: col + 1)
     }
     
