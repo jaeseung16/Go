@@ -32,7 +32,7 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
         crossEntropy(logits: network(x), targets: y, reduction: .mean)
     }
     
-    public func train(with experiences: GoTrainingExperience, optimizer: Optimizer, clipNorm: Float) {
+    public func train(with experiences: GoTrainingExperience, optimizer: Optimizer, batchSize: Int, clipNorm: Float) {
         network.train()
         defer {
             network.train(false)
@@ -44,8 +44,9 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
         
         let start = Date()
         print("Start training at \(start.formatted(date: .abbreviated, time: .standard))")
-        for (x, y) in iterateBatches(batchSize: 32, experiences: experiences, using: &generator) {
-            let (_, grads) = lossAndGradient(network, x, y)
+        for (x, y) in iterateBatches(batchSize: batchSize, experiences: experiences, using: &generator) {
+            let (loss, grads) = lossAndGradient(network, x, y)
+            print("loss = \(loss)")
             let (clippedGrads, _) = clipGradNorm(gradients: grads, maxNorm: clipNorm)
             optimizer.update(model: network, gradients: clippedGrads)
             
