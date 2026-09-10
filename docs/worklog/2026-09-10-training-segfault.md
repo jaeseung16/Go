@@ -71,7 +71,7 @@ way. **[measured]**
 
 ## What changed
 
-Nothing is committed.
+Committed as `2d645e9`, with this worklog as `54a7f23`.
 
 | Change | Files |
 |---|---|
@@ -104,6 +104,42 @@ The large-corpus test was checked against the old code by temporarily restoring 
 `trainingOnALargeCorpusCompletes()` and the run failed with exit 65. The batch-contents test
 passes on both — the old targets had the right *values*; the chain was just too deep.
 
+## Step 3 — MLX out of the collector
+
+Done after Step 2 was committed; not yet committed itself. The stash's collector, buffer and
+store were ported by hand onto HEAD's `[[[UInt8]]]` encoder and `GoNetwork` API rather than
+popping the stash.
+
+| Change | Files |
+|---|---|
+| Collector appends into flat `[UInt8]` / `[Int32]` / `[Float]` storage and commits per episode; `init(stateShape:)`, `completeEpisode(reward: Float)`, `count`, `makeBuffer()`; no `import MLX` | `ExperienceCollector/ExperienceCollector.swift` |
+| `ExperienceBuffer` becomes an inert struct with `merging`; loses `import MLX`, `from(experiences:)` and its eight `stacked` calls, `save`, `load` | `ExperienceCollector/ExperienceBuffer.swift` |
+| `ExperienceStore` protocol + `SafetensorsExperienceStore`: four `MLXArray`s per write; read converts types | `ExperienceCollector/ExperienceStore.swift` **(new)** |
+| Collectors sized from the encoder; `Float` rewards; buffers merged; the write throws instead of logging | `SelfPlay/SelfPlay.swift` |
+| Six tests: commit/discard, merging, store round trip, float16-action files, the trainer's load path, agent recording | `Tests/GoAgentTests/ExperiencePathTests.swift` **(new)** |
+
+Deliberately not ported: the `ExperienceCollecting` protocol, which exists for a move-replay
+collector that is still blocked on pass recording, and the `BoardTensor` encoder, which
+conflicts with `f09c484`. The agents, `PolicyAgentModel`, `GoTrainingExperience` and
+`TrainGoBots` are unchanged.
+
+Files written by `SelfPlay` change in one way: actions are `int32` instead of `float16`.
+`BatchSequence` and the store both convert with `asType`, so older files — including the
+19×19 corpus above — still load. A failed save now throws out of `run()` instead of going to
+`self-play.log`.
+
+**Measurements.** **[measured]**
+
+- All 36 tests pass: 9 GoBoard, 14 Scoring, 13 GoAgent (5 existing, 2 from Step 2, 6 new).
+- 9×9, 50 games of self-play: 25.0 s, peak RSS 61.8 MB, 4,500 experiences. The file holds
+  `states` U8 `[4500, 9, 9, 11]`, `actions` I32, `rewards` and `advantages` F32, 4.1 MB.
+- `TrainGoBots` on that file at the default 8 MB stack: 9 batches, exit 0.
+- The same 50 games wrote 284 MB of `self-play.log`.
+
+Self-play no longer holds any `MLXArray` per decision, so the 499,000-buffer ceiling is out of
+reach of the collector. **[inferred]** — not demonstrated with a run long enough to have hit it
+under the old collector, which would have been ~420 games of 19×19.
+
 ## Open
 
 - **Training does not learn.** Every one of the 77 batches prints `loss = 5.88888` (ln 361),
@@ -112,9 +148,13 @@ passes on both — the old targets had the right *values*; the chain was just to
   the investigation that the −1 targets were not landing. `Small` still ends in `softmax`
   while `crossEntropy` expects logits; that remains the lead.
   → [policy-network-double-softmax.md](../policy-network-double-softmax.md). Not traced.
-- **Take MLX out of the collector** (step 3 of the plan). Port the stash's collector, buffer
-  and store onto HEAD's `[[[UInt8]]]` / `GoNetwork` API rather than popping it. Its store reads
-  with `asType`, so the existing 19×19 corpus (F16 actions) should stay loadable.
+- **Peak memory at the end of a run.** The two collectors' arrays, the merged buffer and the
+  `MLXArray` the store builds are all resident at once — roughly 4× the corpus, measured on
+  the same design in [2026-08-30-experience-path-refactor.md](2026-08-30-experience-path-refactor.md).
+  Sharded writes every N games would make peak memory constant in the number of games.
+- **Training still loads through `MLXArray`.** `TrainGoBots` builds a `GoTrainingExperience`
+  and `BatchSequence` reads it back to host. Having `train` take an `ExperienceBuffer` from
+  `SafetensorsExperienceStore.read` would drop that round trip; it changes `GoAgentModel`.
 - **`self-play.log` is 50 GB.** `ZobristGoBoard.swift:95` logs the whole `goStringByPoint`
   dictionary at `.info` on every `place`, including speculative applies in `isValid` and the
   ko checks the encoder runs for every empty point. Demote or remove; it also costs self-play
