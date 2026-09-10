@@ -22,7 +22,8 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
     }
     
     public func predict(from boardTensor: [[[UInt8]]]) -> [Float] {
-        let x = MLXArray(boardTensor.flatMap {$0}.flatMap {$0}, network.shape)
+        // The first dimension is batch size (= 1)
+        let x = MLXArray(boardTensor.flatMap {$0}.flatMap {$0}, [1] + network.shape).asType(.float16)
         let probabilities = network(x)
         return probabilities.asArray(Float.self)
     }
@@ -72,7 +73,7 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
         
         init(batchSize: Int, x: MLXArray, y: MLXArray, using generator: inout any RandomNumberGenerator) {
             self.batchSize = batchSize
-            self.x = x
+            self.x = x.asType(.float16)
             self.y = y
             self.indices = MLXArray(Array(0 ..< y.size).shuffled(using: &generator))
         }
