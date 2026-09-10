@@ -75,7 +75,7 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
             self.batchSize = batchSize
             self.x = x.asType(.float16)
             self.y = y
-            self.indices = MLXArray(Array(0 ..< y.size).shuffled(using: &generator))
+            self.indices = MLXArray(Array(0 ..< y.shape[0]).shuffled(using: &generator))
         }
         
         mutating func next() -> (MLXArray, MLXArray)? {
