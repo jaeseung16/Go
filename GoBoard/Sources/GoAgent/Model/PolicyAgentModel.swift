@@ -24,12 +24,19 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
     public func predict(from boardTensor: [[[UInt8]]]) -> [Float] {
         // The first dimension is batch size (= 1)
         let x = MLXArray(boardTensor.flatMap {$0}.flatMap {$0}, [1] + network.shape).asType(.float16)
-        let probabilities = network(x)
+        let probabilities = softmax(network(x), axis: -1)
         return probabilities.asArray(Float.self)
     }
-    
-    private static func loss(network: GoNetwork, x: MLXArray, y: MLXArray) -> MLXArray {
-        crossEntropy(logits: network(x), targets: y, reduction: .mean)
+
+    /// Keras's `categorical_crossentropy` over a softmax head, as dlgo trains its policy agent:
+    /// `-sum(y * log p)` per row, averaged over the batch. With `y` holding the reward at the
+    /// chosen move, each row is `-reward * log p(move)`.
+    ///
+    /// Not `MLXNN.crossEntropy(logits:targets:)`: with probability targets it computes
+    /// `logSumExp(z) - sum(y * z)`, which leaves the reward out of the `logSumExp` term and is
+    /// wrong whenever the reward is not +1.
+    static func loss(network: GoNetwork, x: MLXArray, y: MLXArray) -> MLXArray {
+        -(y * logSoftmax(network(x), axis: -1)).sum(axis: -1).mean()
     }
     
     public func train(with experiences: GoTrainingExperience, optimizer: Optimizer, batchSize: Int, clipNorm: Float) {
