@@ -24,6 +24,9 @@ struct SelfPlay: ParsableCommand {
               abstract: "Make a bot play Go against itself")
     }
 
+    @Option(help: "Points added to white's score under area scoring. White wins ties.")
+    var komi: Double = 7.5
+    
     @Option(help: "The board size")
     var boardSize: Int = 19
     
@@ -51,6 +54,9 @@ struct SelfPlay: ParsableCommand {
     func validate() throws {
         guard (0...1).contains(self.temperature) else {
             throw ValidationError("temperature must be between 0 and 1, got \(self.temperature)")
+        }
+        guard self.komi.isFinite else {
+            throw ValidationError("komi must be a finite number, got \(self.komi)")
         }
     }
 
@@ -96,6 +102,7 @@ struct SelfPlay: ParsableCommand {
         let experienceCollector2 = ExperienceCollector(stateShape: encoder.shape)
         
         var gameCount = 0
+        var blackWins = 0
         while gameCount < self.numGames {
             if gameCount % 2 == 0 {
                 whitePlayer.experienceCollector = experienceCollector1
@@ -116,12 +123,14 @@ struct SelfPlay: ParsableCommand {
                 game = game.apply(move: move)
             }
             
-            let score = ScoringHelper(gameState: game).compute()
+            let score = ScoringHelper(gameState: game, komi: self.komi).compute()
             print("score=\(score)")
             
-            print("Finished Game #\(gameCount): Winner=\(String(describing: game.winner)), remainingLegalMoves=\(game.legalMoves)")
+            let winner = game.winner(komi: self.komi)
+            print("Finished Game #\(gameCount): Winner=\(String(describing: winner)), remainingLegalMoves=\(game.legalMoves)")
             
-            if game.winner == .black {
+            if winner == .black {
+                blackWins += 1
                 blackPlayer.experienceCollector?.completeEpisode(reward: 1)
                 whitePlayer.experienceCollector?.completeEpisode(reward: -1)
             } else {
@@ -144,6 +153,7 @@ struct SelfPlay: ParsableCommand {
         try SafetensorsExperienceStore().write(experienceBuffer, to: url)
         
         print("Collected \(experienceBuffer.count) experiences")
+        print("Black won \(blackWins) of \(self.numGames) games with komi \(self.komi)")
         
         print("FINISHED")
    

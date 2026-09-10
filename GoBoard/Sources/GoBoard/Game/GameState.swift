@@ -121,7 +121,14 @@ public class GameState {
         return lastMove == .pass && secondLastMove == .pass
     }
     
+    /// The winner under the default scoring: area rules with 7.5 komi.
     public var winner: Player? {
+        winner(komi: 7.5)
+    }
+
+    /// The winner under area scoring with `komi` points added to white's score. White wins
+    /// ties, and a resignation decides the game regardless of komi.
+    public func winner(komi: Double) -> Player? {
         guard isOver() else {
             return nil
         }
@@ -130,7 +137,7 @@ public class GameState {
             return self.nextPlayer
         }
 
-        return ScoringHelper(gameState: self).compute().winner
+        return ScoringHelper(gameState: self, komi: komi).compute().winner
     }
     
     public var legalMoves: [Move] {

@@ -332,4 +332,23 @@ private func makeTestBoard() -> ZobristGoBoard {
         #expect(state.isOver())
         #expect(state.winner == .white)
     }
+
+    @Test func testWinnerDependsOnKomi() {
+        // makeTestBoard scores black 13, white 12 under area rules.
+        var state = GameState(board: makeTestBoard(), nextPlayer: .black)
+        state = state.apply(move: .pass)
+        state = state.apply(move: .pass)
+
+        #expect(state.winner(komi: 0.5) == .black)
+        #expect(state.winner(komi: 1) == .white)  // 13 to 13: ties go to white
+        #expect(state.winner(komi: 1.5) == .white)
+        #expect(state.winner == state.winner(komi: 7.5))
+    }
+
+    @Test func testResignationIgnoresKomi() {
+        var state = GameState.newGame(boardSize: 5)
+        state = state.apply(move: .resign)  // black resigns → white wins
+
+        #expect(state.winner(komi: -100) == .white)
+    }
 }
