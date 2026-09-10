@@ -59,43 +59,66 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
     }
     
     public func iterateBatches(batchSize: Int = 32, experiences: GoTrainingExperience, using generator: inout any RandomNumberGenerator) -> some Sequence<(MLXArray, MLXArray)> {
-        let boardSize = experiences.states.shape[1] // TODO: - related to how to encode a game
-        let targets = prepareTargets(experience: experiences, boardSize: boardSize)
-        return BatchSequence(batchSize: batchSize, x: experiences.states, y: targets, using: &generator)
+        BatchSequence(batchSize: batchSize, experiences: experiences, using: &generator)
     }
-    
+
+    /// Builds each batch's inputs and targets in host memory and hands MLX two fresh arrays.
+    ///
+    /// The corpus is read back from the device once, up front. Targets used to be built by
+    /// scattering one experience at a time into a single `MLXArray`, which chains one lazy
+    /// operation per experience onto the graph. `valueAndGrad` walks that graph recursively,
+    /// so tens of thousands of experiences overflowed the stack on the first batch.
     private struct BatchSequence: Sequence, IteratorProtocol {
         let batchSize: Int
-        let x: MLXArray
-        let y: MLXArray
-        
-        let indices: MLXArray
-        var index = 0
-        
-        init(batchSize: Int, x: MLXArray, y: MLXArray, using generator: inout any RandomNumberGenerator) {
-            self.batchSize = batchSize
-            self.x = x.asType(.float16)
-            self.y = y
-            self.indices = MLXArray(Array(0 ..< y.shape[0]).shuffled(using: &generator))
-        }
-        
-        mutating func next() -> (MLXArray, MLXArray)? {
-            guard index < indices.size else { return nil }
+        let stateShape: [Int]
+        let featureCount: Int
+        let numberOfActions: Int
 
-            let rangeForBatch = index ..< Swift.min(index + batchSize, indices.size)
-            let indiciesForBatch = indices[rangeForBatch]
+        let states: [UInt8]
+        let actions: [Int32]
+        let rewards: [Float]
+
+        let order: [Int]
+        var index = 0
+
+        init(batchSize: Int, experiences: GoTrainingExperience, using generator: inout any RandomNumberGenerator) {
+            self.batchSize = batchSize
+            self.stateShape = Array(experiences.states.shape.dropFirst()) // [rows, cols, planes]
+            self.featureCount = stateShape.reduce(1, *)
+            self.numberOfActions = stateShape[0] * stateShape[1] // TODO: - related to how to encode a game
+
+            self.states = experiences.states.asType(.uint8).asArray(UInt8.self)
+            self.actions = experiences.actions.asType(.int32).asArray(Int32.self)
+            self.rewards = experiences.rewards.asType(.float32).asArray(Float.self)
+
+            precondition(states.count == actions.count * featureCount && rewards.count == actions.count,
+                         "states, actions and rewards disagree on the number of experiences")
+
+            self.order = Array(0 ..< actions.count).shuffled(using: &generator)
+        }
+
+        mutating func next() -> (MLXArray, MLXArray)? {
+            guard index < order.count else { return nil }
+
+            let rows = order[index ..< Swift.min(index + batchSize, order.count)]
             index += batchSize
-            return (x[indiciesForBatch], y[indiciesForBatch])
+
+            var planes = [UInt8]()
+            planes.reserveCapacity(rows.count * featureCount)
+            var targets = [Float](repeating: 0, count: rows.count * numberOfActions)
+
+            for (position, row) in rows.enumerated() {
+                planes += states[row * featureCount ..< (row + 1) * featureCount]
+
+                let action = Int(actions[row])
+                precondition((0 ..< numberOfActions).contains(action), "action \(action) is out of range for \(numberOfActions) moves")
+                targets[position * numberOfActions + action] = rewards[row]
+            }
+
+            let x = MLXArray(planes, [rows.count] + stateShape).asType(.float16)
+            let y = MLXArray(targets, [rows.count, numberOfActions])
+            return (x, y)
         }
-    }
-    
-    private func prepareTargets(experience: GoTrainingExperience, boardSize: Int) -> MLXArray {
-        let experienceSize = experience.actions.shape[0]
-        let targetVectors = MLXArray.zeros([experienceSize, boardSize * boardSize], type: Float.self)
-        for (index, action) in experience.actions.enumerated() {
-            targetVectors[index, action.asType(.int32)] = experience.rewards[index]
-        }
-        return targetVectors
     }
     
     public func save(to url: URL) throws -> Void {
