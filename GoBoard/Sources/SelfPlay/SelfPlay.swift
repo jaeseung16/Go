@@ -92,8 +92,8 @@ struct SelfPlay: ParsableCommand {
         var blackPlayer = createPlayer(for: .black, with: agentModel, encoder: encoder)
         let players: [Player: GoAgent] = [.white: whitePlayer, .black: blackPlayer]
         
-        let experienceCollector1 = ExperienceCollector()
-        let experienceCollector2 = ExperienceCollector()
+        let experienceCollector1 = ExperienceCollector(stateShape: encoder.shape)
+        let experienceCollector2 = ExperienceCollector(stateShape: encoder.shape)
         
         var gameCount = 0
         while gameCount < self.numGames {
@@ -122,25 +122,28 @@ struct SelfPlay: ParsableCommand {
             print("Finished Game #\(gameCount): Winner=\(String(describing: game.winner)), remainingLegalMoves=\(game.legalMoves)")
             
             if game.winner == .black {
-                blackPlayer.experienceCollector?.completeEpisode(reward: MLXArray(1.0))
-                whitePlayer.experienceCollector?.completeEpisode(reward: MLXArray(-1.0))
+                blackPlayer.experienceCollector?.completeEpisode(reward: 1)
+                whitePlayer.experienceCollector?.completeEpisode(reward: -1)
             } else {
-                blackPlayer.experienceCollector?.completeEpisode(reward: MLXArray(-1.0))
-                whitePlayer.experienceCollector?.completeEpisode(reward: MLXArray(1.0))
+                blackPlayer.experienceCollector?.completeEpisode(reward: -1)
+                whitePlayer.experienceCollector?.completeEpisode(reward: 1)
             }
             
-            print("Collected \(experienceCollector1.states.count + experienceCollector2.states.count) experiences")
+            print("Collected \(experienceCollector1.count + experienceCollector2.count) experiences")
             
             gameCount += 1
         }
         
-        let experienceBuffer = ExperienceBuffer.from(experiences: [experienceCollector1, experienceCollector2])
+        guard let experienceBuffer = ExperienceBuffer.merging([experienceCollector1.makeBuffer(),
+                                                               experienceCollector2.makeBuffer()]) else {
+            throw ValidationError("The collectors disagree about the state shape")
+        }
         
         let url = URL(fileURLWithPath: self.experienceOut)
         print("Saving experiences to \(url.path)")
-        experienceBuffer.save(to: url)
+        try SafetensorsExperienceStore().write(experienceBuffer, to: url)
         
-        print("Collected \(experienceBuffer.states.shape[0]) experiences")
+        print("Collected \(experienceBuffer.count) experiences")
         
         print("FINISHED")
    

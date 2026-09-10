@@ -5,63 +5,84 @@
 //  Created by Jae Seung Lee on 7/19/26.
 //
 
-import MLX
-
+/// Accumulates self-play decisions into flat, contiguous Swift arrays.
+///
+/// Nothing here holds an `MLXArray`. Storing a tensor per decision pinned about three Metal
+/// buffers each for the whole run, against a fixed device limit of live buffers.
+///
+/// Decisions are appended straight into the run-level storage and only *committed* by
+/// ``completeEpisode(reward:)``; ``beginEpisode()`` discards anything an abandoned episode
+/// left behind.
 public class ExperienceCollector {
-    
-    public var states: [MLXArray]
-    public var actions: [MLXArray]
-    public var rewards: [MLXArray]
-    public var advantages: [MLXArray]
-    
-    private var statesFromCurrentEpisode: [MLXArray]
-    private var actionsFromCurrentEpisode: [MLXArray]
-    private var estimatedValuesFromCurrentEpisode: [MLXArray]
-    
-    public init() {
-        self.states = []
-        self.actions = []
-        self.rewards = []
-        self.advantages = []
-        
-        self.statesFromCurrentEpisode = []
-        self.actionsFromCurrentEpisode = []
-        self.estimatedValuesFromCurrentEpisode = []
+
+    /// `[rows, cols, planes]` -- the shape of a single state.
+    public let stateShape: [Int]
+    private let featureCount: Int
+
+    private var states: [UInt8] = []
+    private var actions: [Int32] = []
+    private var rewards: [Float] = []
+    private var advantages: [Float] = []
+
+    /// Value estimates for the episode in progress. Its count is also how many
+    /// trailing decisions in `states` and `actions` are still uncommitted.
+    private var estimatedValuesFromCurrentEpisode: [Float] = []
+
+    /// Decisions committed by completed episodes.
+    public private(set) var count = 0
+
+    public init(stateShape: [Int]) {
+        self.stateShape = stateShape
+        self.featureCount = stateShape.reduce(1, *)
     }
-    
+
     public func beginEpisode() {
-        self.statesFromCurrentEpisode = []
-        self.actionsFromCurrentEpisode = []
-        self.estimatedValuesFromCurrentEpisode = []
+        self.discardUncommitted()
     }
-    
-    public func recordDecision(state: MLXArray, action: MLXArray, estimatedValue: MLXArray) {
-        self.statesFromCurrentEpisode.append(state)
-        self.actionsFromCurrentEpisode.append(action)
+
+    /// `state` is a board tensor nested as [row][col][feature].
+    public func recordDecision(state: [[[UInt8]]], action: Int, estimatedValue: Float) {
+        let start = self.states.count
+        for row in state {
+            for features in row {
+                self.states += features
+            }
+        }
+        precondition(state.count == self.stateShape[0] && self.states.count - start == self.featureCount,
+                     "state does not match collector shape \(self.stateShape)")
+
+        self.actions.append(Int32(action))
         self.estimatedValuesFromCurrentEpisode.append(estimatedValue)
     }
 
-    /// Convenience overload so callers don't need to depend on MLX.
-    /// `state` is a board tensor nested as [row][col][feature].
-    public func recordDecision(state: [[[UInt8]]], action: Int, estimatedValue: Float) {
-        let shape = [state.count, state[0].count, state[0][0].count]
-        let stateTensor = MLXArray(state.flatMap { $0 }.flatMap { $0 }, shape)
-        self.recordDecision(state: stateTensor,
-                            action: MLXArray(Int32(action)).asType(.float16),
-                            estimatedValue: MLXArray(estimatedValue))
+    public func completeEpisode(reward: Float) {
+        let numberOfStates = self.estimatedValuesFromCurrentEpisode.count
+
+        self.rewards += repeatElement(reward, count: numberOfStates)
+        self.advantages += self.estimatedValuesFromCurrentEpisode.map { reward - $0 }
+
+        self.count += numberOfStates
+        self.estimatedValuesFromCurrentEpisode.removeAll(keepingCapacity: true)
     }
-    
-    public func completeEpisode(reward: MLXArray) {
-        let numberOfStates = self.statesFromCurrentEpisode.count
-        self.states += self.statesFromCurrentEpisode
-        self.actions += self.actionsFromCurrentEpisode
-        self.rewards += Array(repeating: reward, count: numberOfStates)
-        
-        for i in 0..<numberOfStates {
-            let advantage = reward - self.estimatedValuesFromCurrentEpisode[i]
-            self.advantages.append(advantage)
-        }
+
+    /// The committed decisions, as a buffer. Anything an unfinished episode left
+    /// behind is dropped rather than shipped.
+    public func makeBuffer() -> ExperienceBuffer {
+        self.discardUncommitted()
+        return ExperienceBuffer(stateShape: self.stateShape,
+                                states: self.states,
+                                actions: self.actions,
+                                rewards: self.rewards,
+                                advantages: self.advantages)
+    }
+
+    private func discardUncommitted() {
+        let pending = self.estimatedValuesFromCurrentEpisode.count
+        guard pending > 0 else { return }
+
+        self.states.removeLast(pending * self.featureCount)
+        self.actions.removeLast(pending)
+        self.estimatedValuesFromCurrentEpisode.removeAll(keepingCapacity: true)
     }
 
 }
-

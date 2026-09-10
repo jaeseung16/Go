@@ -5,65 +5,72 @@
 //  Created by Jae Seung Lee on 7/19/26.
 //
 
-import MLX
-import Foundation
-import Logging
+/// A finished corpus of self-play decisions, held as plain bytes.
+///
+/// Inert by design. Turning this into tensors is the job of an ``ExperienceStore``
+/// (once per file) or of the training batch loop (once per batch), and never of the
+/// code that produces it.
+public struct ExperienceBuffer: Sendable, Equatable {
 
-public struct ExperienceBuffer {
-    private static let logger = Logger(label: "ExperienceBuffer")
-    
-    public var states: MLXArray
-    public var actions: MLXArray
-    public var rewards: MLXArray
-    public var advantages: MLXArray
+    /// `[rows, cols, planes]` -- the shape of a *single* state.
+    public let stateShape: [Int]
 
-    public init(states: MLXArray, actions: MLXArray, rewards: MLXArray, advantages: MLXArray) {
+    /// `count * featureCount` elements, one encoded position after another.
+    public var states: [UInt8]
+    public var actions: [Int32]
+    public var rewards: [Float]
+    public var advantages: [Float]
+
+    public init(stateShape: [Int], states: [UInt8], actions: [Int32], rewards: [Float], advantages: [Float]) {
+        precondition(actions.count == rewards.count && actions.count == advantages.count,
+                     "actions, rewards and advantages must line up: \(actions.count)/\(rewards.count)/\(advantages.count)")
+        precondition(states.count == actions.count * stateShape.reduce(1, *),
+                     "states holds \(states.count) elements, \(actions.count) decisions of shape \(stateShape) need \(actions.count * stateShape.reduce(1, *))")
+        self.stateShape = stateShape
         self.states = states
         self.actions = actions
         self.rewards = rewards
         self.advantages = advantages
     }
-    
-    public static func from(experiences: [ExperienceCollector]) -> ExperienceBuffer {
-        print("states: \(MLX.stacked(experiences.flatMap(\.states)).shape)")
-        print("actions: \(MLX.stacked(experiences.flatMap(\.actions)).shape)")
-        print("rewards: \(MLX.stacked(experiences.flatMap(\.rewards)).shape)")
-        print("advantages: \(MLX.stacked(experiences.flatMap(\.advantages)).shape)")
-        return ExperienceBuffer(states: MLX.stacked(experiences.flatMap(\.states)),
-                                actions: MLX.stacked(experiences.flatMap(\.actions)),
-                                rewards: MLX.stacked(experiences.flatMap(\.rewards)),
-                                advantages: MLX.stacked(experiences.flatMap(\.advantages)))
+
+    /// Elements in one encoded position.
+    public var featureCount: Int {
+        self.stateShape.reduce(1, *)
     }
-    
-    private var data: [String: MLXArray] {
-        [
-            "states": states,
-            "actions": actions,
-            "rewards": rewards,
-            "advantages": advantages
-        ]
+
+    /// The number of decisions.
+    public var count: Int {
+        self.actions.count
     }
-    
-    public func save(to url: URL) {
-        do {
-            try MLX.save(arrays: self.data, url: url)
-        } catch {
-            Self.logger.error("Failed to save experience: \(error)")
+
+    /// The shape `states` takes once batched: `[count, rows, cols, planes]`.
+    public var batchedStateShape: [Int] {
+        [self.count] + self.stateShape
+    }
+
+    /// The elements of the state recorded for decision `index`.
+    public func state(at index: Int) -> ArraySlice<UInt8> {
+        let start = index * self.featureCount
+        return self.states[start ..< start + self.featureCount]
+    }
+
+    /// Concatenates buffers that share a state shape -- self-play keeps one
+    /// collector per seat, and training wants them as a single corpus.
+    public static func merging(_ buffers: [ExperienceBuffer]) -> ExperienceBuffer? {
+        guard let first = buffers.first else { return nil }
+        guard buffers.allSatisfy({ $0.stateShape == first.stateShape }) else { return nil }
+
+        var merged = first
+        merged.states.reserveCapacity(buffers.reduce(0) { $0 + $1.states.count })
+        merged.actions.reserveCapacity(buffers.reduce(0) { $0 + $1.count })
+
+        for buffer in buffers.dropFirst() {
+            merged.states += buffer.states
+            merged.actions += buffer.actions
+            merged.rewards += buffer.rewards
+            merged.advantages += buffer.advantages
         }
+        return merged
     }
-    
-    public static func load(from url: URL) -> ExperienceBuffer? {
-        guard let data = try? MLX.loadArrays(url: url) else {
-            Self.logger.error("Failed to load experience from \(url)")
-            return nil
-        }
-        
-        guard let states = data["states"], let actions = data["actions"], let rewards = data["rewards"], let advantages = data["advantages"] else {
-            return nil
-        }
-        
-        return ExperienceBuffer(states: states, actions: actions, rewards: rewards, advantages: advantages)
-   
-    }
-    
+
 }
