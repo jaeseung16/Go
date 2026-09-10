@@ -61,7 +61,7 @@ import GoBoard
     
     @Test func testSaveAndLoadWeights() async throws {
         let model = Small(encoder: SimpleEncoder(boardDimension: 19))
-        let policyAgentModel = PolicyAgentModel(model: model, optimizer: nil)
+        let policyAgentModel = PolicyAgentModel(network: model, optimizer: nil)
         
         let tempURL = URL(fileURLWithPath: "temp_weights.safetensors")
         print("Saving experiences to \(tempURL.path)")
