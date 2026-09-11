@@ -25,11 +25,11 @@ public class Small: Module, GoNetwork {
     
     public let name = GoNetworkName.small.rawValue
     public let shape: [Int]
-    public let encoder: Encoder
+    public let encoder: GoBoardEncoder
     
     // dlgo's small network: `padding: p` here is Keras's `ZeroPadding2D(padding=p)` followed by
     // an unpadded `Conv2D`, and `dense2` is the `Dense(num_points)` head dlgo's agents add on top.
-    public init(encoder: Encoder) {
+    public init(encoder: GoBoardEncoder) {
         // TODO: NHWC
         self.shape = encoder.shape
         self.encoder = encoder

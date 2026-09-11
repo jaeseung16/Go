@@ -7,7 +7,7 @@
 
 import GoBoard
 
-public protocol Encoder {
+public protocol GoBoardEncoder {
     
     var name: String { get }
     

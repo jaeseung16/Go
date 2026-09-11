@@ -17,13 +17,13 @@ public class PolicyAgent: GoAgent {
     public let stone: Stone
     private let player: Player
     
-    private let encoder: Encoder
+    private let encoder: GoBoardEncoder
     private let model: GoAgentModel
     public var experienceCollector: ExperienceCollector?
     
     public var temperature: Float
     
-    public init(stone: Stone, encoder: Encoder, model: GoAgentModel, temperature: Float = 0.0) {
+    public init(stone: Stone, encoder: GoBoardEncoder, model: GoAgentModel, temperature: Float = 0.0) {
         precondition(stone == .black || stone == .white)
         self.stone = stone
         self.player = Player.from(stone: stone)!

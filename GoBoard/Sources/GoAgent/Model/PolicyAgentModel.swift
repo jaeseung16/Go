@@ -18,7 +18,7 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
     
     public let name = GoAgentModelName.policy.rawValue
     
-    public var encoder: Encoder {
+    public var encoder: GoBoardEncoder {
         network.encoder
     }
 

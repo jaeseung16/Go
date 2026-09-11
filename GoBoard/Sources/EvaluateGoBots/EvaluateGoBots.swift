@@ -110,14 +110,14 @@ struct EvaluateGoBots: ParsableCommand {
         return try createAgentModel(agentModelName, network: network)
     }
     
-    private func createEncoder(_ name: String) -> Encoder {
-        if let encoderName = EncoderName(rawValue: name) {
-            return EncoderFactoryImpl().create(encoderName, boardDimension: self.boardSize)
+    private func createEncoder(_ name: String) -> GoBoardEncoder {
+        if let encoderName = GoBoardEncoderName(rawValue: name) {
+            return GoBoardEncoderFactoryImpl().create(encoderName, boardDimension: self.boardSize)
         }
         fatalError("Unsupported encoder: \(name)")
     }
     
-    private func createNetwork(_ name: String, encoder: Encoder) -> GoNetwork {
+    private func createNetwork(_ name: String, encoder: GoBoardEncoder) -> GoNetwork {
         if let networkName = GoNetworkName(rawValue: name) {
             return GoNetworkFactoryImpl().create(networkName, with: encoder)
         }
@@ -148,7 +148,7 @@ struct EvaluateGoBots: ParsableCommand {
         return game.winner(komi: self.komi)
     }
     
-    private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: Encoder) -> GoAgent {
+    private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: GoBoardEncoder) -> GoAgent {
         // TODO: - May need GoAgentFactory
         return PolicyAgent(stone: color, encoder: encoder, model: agentModel)
     }

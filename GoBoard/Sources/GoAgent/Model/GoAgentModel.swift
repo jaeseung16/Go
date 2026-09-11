@@ -12,7 +12,7 @@ import MLXOptimizers
 public protocol GoAgentModel {
     
     var name: String { get }
-    var encoder: Encoder { get }
+    var encoder: GoBoardEncoder { get }
     
     func predict(from boardTensor: [[[UInt8]]]) -> [Float]
     func train(with experiences: GoTrainingExperience, optimizer: Optimizer, batchSize:Int, clipNorm: Float) -> Void // May deserve a separate protocol, for example, Trainable?

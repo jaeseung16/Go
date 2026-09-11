@@ -163,7 +163,7 @@ struct SelfPlay: ParsableCommand {
         ZobristGoBoard(dimension: self.boardSize)
     }
     
-    private func createEncoder() -> Encoder {
+    private func createEncoder() -> GoBoardEncoder {
         switch self.encoder {
         case "simple":
             return SimpleEncoder(boardDimension: self.boardSize)
@@ -172,7 +172,7 @@ struct SelfPlay: ParsableCommand {
         }
     }
     
-    private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: Encoder) -> GoAgent {
+    private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: GoBoardEncoder) -> GoAgent {
         switch self.agentName {
         case "policy":
             // Set the temperature here, while the concrete type is still in hand: it is a
@@ -184,7 +184,7 @@ struct SelfPlay: ParsableCommand {
         }
     }
     
-    private func createNetwork(encoder: Encoder) -> some GoNetwork {
+    private func createNetwork(encoder: GoBoardEncoder) -> some GoNetwork {
         switch self.networkName {
         case "small":
             return Small(encoder: encoder)
