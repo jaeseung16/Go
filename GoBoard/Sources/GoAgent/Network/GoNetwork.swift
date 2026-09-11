@@ -10,6 +10,10 @@ import MLXNN
 
 public protocol GoNetwork: Module, UnaryLayer {
     
+    var name: String { get }
+    
     var shape: [Int] { get }
+    
+    var encoder: String { get }
     
 }

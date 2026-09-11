@@ -23,13 +23,16 @@ public class Small: Module, GoNetwork {
     // W is the input image width
     // C is the number of input channels
     
+    public let name = GoNetworkName.small.rawValue
     public let shape: [Int]
+    public let encoder: String
     
     // dlgo's small network: `padding: p` here is Keras's `ZeroPadding2D(padding=p)` followed by
     // an unpadded `Conv2D`, and `dense2` is the `Dense(num_points)` head dlgo's agents add on top.
     public init(encoder: Encoder) {
         // TODO: NHWC
         self.shape = encoder.shape
+        self.encoder = encoder.name
 
         conv1 = Conv2d(inputChannels: shape[2], outputChannels: 48, kernelSize: 7, padding: 3)
         conv2 = Conv2d(inputChannels: 48, outputChannels: 32, kernelSize: 5, padding: 2)
