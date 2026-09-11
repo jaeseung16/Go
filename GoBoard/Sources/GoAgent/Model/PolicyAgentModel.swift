@@ -17,6 +17,10 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
     private var messages = [String]()
     
     public let name = GoAgentModelName.policy.rawValue
+    
+    public var encoder: Encoder {
+        network.encoder
+    }
 
     public init(network: Network, optimizer: Optimizer? = nil) {
         self.network = network
@@ -132,7 +136,7 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
     
     public func save(to url: URL) throws -> Void {
         let arrays: [String: MLXArray] = Dictionary(uniqueKeysWithValues: network.parameters().flattened())
-        let metadata: [String: String] = [:]
+        let metadata: [String: String] = ["encoder": network.encoder.name, "network": network.name, "agentModel": name]
         try MLX.save(arrays: arrays, metadata: metadata, url: url)
     }
     

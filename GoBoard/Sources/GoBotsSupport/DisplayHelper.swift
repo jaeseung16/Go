@@ -17,7 +17,7 @@ public struct DisplayHelper {
         return String(columns[startIdx..<endIdx]).map { String($0) }.joined(separator: "  ")
     }
     
-    static func display(board: GoBoard) {
+    public static func display(board: GoBoard) {
         let dimension = board.dimension
         let columnHeader = columnHeader(for: dimension)
         
@@ -37,7 +37,7 @@ public struct DisplayHelper {
         print("    \(columnHeader)")
     }
     
-    static func display(move: Move, player: Player) {
+    public static func display(move: Move, player: Player) {
         switch move {
             case .pass:
             print("\(player) passese")

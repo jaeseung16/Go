@@ -14,6 +14,6 @@ public protocol GoNetwork: Module, UnaryLayer {
     
     var shape: [Int] { get }
     
-    var encoder: String { get }
+    var encoder: Encoder { get }
     
 }

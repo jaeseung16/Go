@@ -30,6 +30,9 @@ let package = Package(
         .executable(
             name: "TrainGoBots",
             targets: ["TrainGoBots"]
+        ),.executable(
+            name: "EvaluateGoBots",
+            targets: ["EvaluateGoBots"]
         ),
     ],
     dependencies: [
@@ -59,7 +62,8 @@ let package = Package(
         .target(
             name: "GoBotsSupport",
             dependencies: [
-                .product(name: "Logging", package: "swift-log")
+                .product(name: "Logging", package: "swift-log"),
+                "GoBoard"
             ]
         ),
         .executableTarget(
@@ -91,6 +95,15 @@ let package = Package(
                 .product(name: "MLX", package: "mlx-swift"),
                 .product(name: "MLXNN", package: "mlx-swift"),
                 .product(name: "MLXOptimizers", package: "mlx-swift"),
+                "GoAgent",
+                "GoBotsSupport",
+            ]
+        ),
+        .executableTarget(
+            name: "EvaluateGoBots",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 "GoAgent",
                 "GoBotsSupport",
             ]
