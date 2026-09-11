@@ -15,6 +15,8 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
     private let network: Network
     private let optimizer: Optimizer?
     private var messages = [String]()
+    
+    public let name = GoAgentModelName.policy.rawValue
 
     public init(network: Network, optimizer: Optimizer? = nil) {
         self.network = network
