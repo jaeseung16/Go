@@ -10,7 +10,7 @@ import GoBoard
 public class SimpleEncoder: Encoder {
     private static let featureCount = 11
     
-    public let name = "Simple"
+    public let name = EncoderName.simple.rawValue
     
     public let shape: [Int]
     
