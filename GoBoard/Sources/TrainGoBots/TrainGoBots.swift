@@ -22,6 +22,9 @@ struct TraingGoBots: ParsableCommand {
               abstract: "Train Go bots with a reinforcement learning agent")
     }
     
+    @Option(help: "The board size")
+    var boardSize: Int
+    
     @Option(help: "The name of the model to be trained")
     var modelToTrain: String
     
@@ -70,20 +73,9 @@ struct TraingGoBots: ParsableCommand {
             
             let trainingExperience = GoTrainingExperience(states: states, actions: actions, rewards: rewards)
             
-            // TODO: save and load model
-            // Load model
-            let modelURL = URL(filePath: modelToTrain)
-            let (arrays, metadata) = try MLX.loadArraysAndMetadata(url: modelURL)
-            
-            let parameters = ModuleParameters.unflattened(arrays)
-            
-            let model = Small(encoder: SimpleEncoder(boardDimension: 9))
-            
-            model.update(parameters: parameters)
-            
             // Train
             
-            let policyAgentModel = PolicyAgentModel(network: model)
+            let policyAgentModel = try createAgentModel(from: modelToTrain)
             let optimizer = SGD(learningRate: learningRate)
             
             print("Start training: \(String(describing: type(of: optimizer))) with batchSize \(batchSize) and learning rate \(learningRate)")
@@ -99,5 +91,43 @@ struct TraingGoBots: ParsableCommand {
         }
 
     }
+    
+    private func createAgentModel(from agentFileName: String) throws -> GoAgentModel {
+        let url = URL(fileURLWithPath: agentFileName)
+        let (arrays, metadata) = try MLX.loadArraysAndMetadata(url: url)
+        
+        let encoderName = metadata["encoder"] ?? ""
+        let encoder = createEncoder(encoderName)
+        
+        let networkName = metadata["network"] ?? ""
+        let network = createNetwork(networkName, encoder: encoder)
+        
+        let parameters = ModuleParameters.unflattened(arrays)
+        network.update(parameters: parameters)
+        
+        let agentModelName = metadata["agentModel"] ?? ""
+        return try createAgentModel(agentModelName, network: network)
+    }
 
+    private func createEncoder(_ name: String) -> GoBoardEncoder {
+        if let encoderName = GoBoardEncoderName(rawValue: name) {
+            return GoBoardEncoderFactoryImpl().create(encoderName, boardDimension: self.boardSize)
+        }
+        fatalError("Unsupported encoder: \(name)")
+    }
+    
+    private func createNetwork(_ name: String, encoder: GoBoardEncoder) -> GoNetwork {
+        if let networkName = GoNetworkName(rawValue: name) {
+            return GoNetworkFactoryImpl().create(networkName, with: encoder)
+        }
+        fatalError("Unsupported netowrk: \(name)")
+    }
+    
+    private func createAgentModel(_ name: String, network: GoNetwork) throws -> GoAgentModel {
+        if let agentModelName = GoAgentModelName(rawValue: name) {
+            return try GoAgentModelFactoryImpl().create(agentModelName, with: network)
+        }
+        fatalError("Unsupported learning agent: \(name)")
+    }
+    
 }
