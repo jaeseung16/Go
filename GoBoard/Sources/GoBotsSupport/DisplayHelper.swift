@@ -40,7 +40,7 @@ public struct DisplayHelper {
     public static func display(move: Move, player: Player) {
         switch move {
             case .pass:
-            print("\(player) passese")
+            print("\(player) passes")
         case .resign:
             print("\(player) resigns")
         case .play(_, let point):

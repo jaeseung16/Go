@@ -135,16 +135,24 @@ struct EvaluateGoBots: ParsableCommand {
         var game = GameState(board: board, nextPlayer: .black)
         
         while !game.isOver() {
-            print("\u{001B}[2J")
-            DisplayHelper.display(board: game.board)
+            if verbose {
+                print("\u{001B}[2J")
+                DisplayHelper.display(board: game.board)
+            }
             
             let move = players[game.nextPlayer]!.select(from: game)
-            DisplayHelper.display(move: move, player: game.nextPlayer)
+            
+            if verbose {
+                DisplayHelper.display(move: move, player: game.nextPlayer)
+            }
             
             game = game.apply(move: move)
         }
         
-        DisplayHelper.display(board: game.board)
+        if verbose {
+            DisplayHelper.display(board: game.board)
+        }
+        
         return game.winner(komi: self.komi)
     }
     
