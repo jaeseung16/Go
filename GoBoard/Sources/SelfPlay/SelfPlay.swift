@@ -79,9 +79,9 @@ struct SelfPlay: ParsableCommand {
         print("Logging to \(logURL.path)")
         
         let board = createBoard()
-        let encoder = createEncoder()
-        let network = createNetwork(encoder: encoder)
-        let agentModel = createAgentModel(network: network, optimizer: optimizer)
+        let goBoardEncoder = createGoBoardEncoder(self.encoder)
+        let network = createNetwork(self.networkName, encoder: goBoardEncoder)
+        let agentModel = try createAgentModel(self.agentName, network: network)
         
         // TODO: Naming convention?
         if let weights {
@@ -94,12 +94,12 @@ struct SelfPlay: ParsableCommand {
             try agentModel.save(to: url)
         }
         
-        var whitePlayer = createPlayer(for: .white, with: agentModel, encoder: encoder)
-        var blackPlayer = createPlayer(for: .black, with: agentModel, encoder: encoder)
+        var whitePlayer = createPlayer(for: .white, with: agentModel, encoder: goBoardEncoder)
+        var blackPlayer = createPlayer(for: .black, with: agentModel, encoder: goBoardEncoder)
         let players: [Player: GoAgent] = [.white: whitePlayer, .black: blackPlayer]
         
-        let experienceCollector1 = ExperienceCollector(stateShape: encoder.shape)
-        let experienceCollector2 = ExperienceCollector(stateShape: encoder.shape)
+        let experienceCollector1 = ExperienceCollector(stateShape: goBoardEncoder.shape)
+        let experienceCollector2 = ExperienceCollector(stateShape: goBoardEncoder.shape)
         
         var gameCount = 0
         var blackWins = 0
@@ -163,13 +163,11 @@ struct SelfPlay: ParsableCommand {
         ZobristGoBoard(dimension: self.boardSize)
     }
     
-    private func createEncoder() -> GoBoardEncoder {
-        switch self.encoder {
-        case "simple":
-            return SimpleEncoder(boardDimension: self.boardSize)
-        default:
-            fatalError("Unsupported encoder: \(self.encoder)")
+    private func createGoBoardEncoder(_ name: String) -> GoBoardEncoder {
+        if let encoderName = GoBoardEncoderName(rawValue: name) {
+            return GoBoardEncoderFactoryImpl().create(encoderName, boardDimension: self.boardSize)
         }
+        fatalError("Unsupported encoder: \(name)")
     }
     
     private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: GoBoardEncoder) -> GoAgent {
@@ -184,26 +182,18 @@ struct SelfPlay: ParsableCommand {
         }
     }
     
-    private func createNetwork(encoder: GoBoardEncoder) -> some GoNetwork {
-        switch self.networkName {
-        case "small":
-            return Small(encoder: encoder)
-        default:
-            fatalError("Unsupported netowrk: \(self.networkName)")
+    private func createNetwork(_ name: String, encoder: GoBoardEncoder) -> GoNetwork {
+        if let networkName = GoNetworkName(rawValue: name) {
+            return GoNetworkFactoryImpl().create(networkName, with: encoder)
         }
+        fatalError("Unsupported netowrk: \(name)")
     }
     
-    private func createAgentModel(network: GoNetwork, optimizer: Optimizer) -> GoAgentModel {
-        switch self.agentName {
-        case "policy":
-            return PolicyAgentModel<Small>(network: network as! Small, optimizer: optimizer)
-        default:
-            fatalError("Unsupported learning agent: \(self.agentName)")
+    private func createAgentModel(_ name: String, network: GoNetwork) throws -> GoAgentModel {
+        if let agentModelName = GoAgentModelName(rawValue: name) {
+            return try GoAgentModelFactoryImpl().create(agentModelName, with: network)
         }
-    }
-    
-    private var optimizer: Optimizer {
-        SGD(learningRate: 0.1)
+        fatalError("Unsupported learning agent: \(name)")
     }
     
 }
