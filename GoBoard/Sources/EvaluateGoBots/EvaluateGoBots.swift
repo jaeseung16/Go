@@ -67,7 +67,12 @@ struct EvaluateGoBots: ParsableCommand {
         let agentModel1 = try createAgentModel(from: agent1)
         let agentModel2 = try createAgentModel(from: agent2)
         
-        var results: [Player: Int] = [:]
+        var results: [String: [Stone: Int]] = [
+            "agent1": [.white: 0, .black: 0],
+            "agent2": [.white: 0, .black: 0],
+            "tie": [.none: 0]
+        ]
+        
         var isAgent1Black: Bool = false
         for game in 1...games {
             print("Game \(game)")
@@ -81,16 +86,29 @@ struct EvaluateGoBots: ParsableCommand {
             let players: [Player: GoAgent] = [.white: whitePlayer, .black: blackPlayer]
             
             if let winner = playGame(with: players, on: ZobristGoBoard(dimension: self.boardSize)) {
-                results[winner, default: 0] += 1
+                print("Winner: \(winner)")
+                if isAgent1Black {
+                    if winner == .black {
+                        results["agent1"]![.black]! += 1
+                    } else {
+                        results["agent2"]![.white]! += 1
+                    }
+                } else {
+                    if winner == .black {
+                        results["agent2"]![.black]! += 1
+                    } else {
+                        results["agent1"]![.white]! += 1
+                    }
+                }
             } else {
                 print("Somehow there was no winner")
+                results["tie"]![.none]! += 1
             }
             
             isAgent1Black.toggle()
         }
         
-        print("\nResults: \(results)")
-        
+        printResult(results)
     }
     
     private func createAgentModel(from agentFileName: String) throws -> GoAgentModel {
@@ -159,6 +177,13 @@ struct EvaluateGoBots: ParsableCommand {
     private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: GoBoardEncoder) -> GoAgent {
         // TODO: - May need GoAgentFactory
         return PolicyAgent(stone: color, encoder: encoder, model: agentModel)
+    }
+    
+    private func printResult(_ results: [String: [Stone: Int]]) {
+        print("\nResults:")
+        print("Agent1: \(results["agent1"]!)")
+        print("Agent2: \(results["agent2"]!)")
+        print("Tie: \(results["tie"]![.none]!)")
     }
     
 }
