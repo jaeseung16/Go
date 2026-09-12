@@ -46,7 +46,7 @@ struct SelfPlay: ParsableCommand {
     var encoder: String = "simple"
 
     @Option(help: "The probability of playing a uniformly random move instead of following the policy")
-    var temperature: Float = 0.0
+    var temperature: Float = 0.1
 
     @Option(help: "The path to save the experience")
     var experienceOut: String = "experience.safetensors"
@@ -80,22 +80,9 @@ struct SelfPlay: ParsableCommand {
         
         let board = createBoard()
         let goBoardEncoder = createGoBoardEncoder(self.encoder)
-        let network = createNetwork(self.networkName, encoder: goBoardEncoder)
-        let agentModel = try createAgentModel(self.agentName, network: network)
+        let agentModel = try createAgentModel(encoder: goBoardEncoder)
         
-        // TODO: Naming convention?
-        if let weights {
-            // Load
-            let url = URL(fileURLWithPath: weights)
-            try agentModel.load(from: url)
-        } else {
-            // Save
-            let url = URL(fileURLWithPath: "\(self.networkName).safetensors")
-            try agentModel.save(to: url)
-        }
-        
-        var whitePlayer = createPlayer(for: .white, with: agentModel, encoder: goBoardEncoder)
-        var blackPlayer = createPlayer(for: .black, with: agentModel, encoder: goBoardEncoder)
+        var (whitePlayer, blackPlayer) = try createPlayers(encoder: goBoardEncoder, agentModel: agentModel)
         let players: [Player: GoAgent] = [.white: whitePlayer, .black: blackPlayer]
         
         let experienceCollector1 = ExperienceCollector(stateShape: goBoardEncoder.shape)
@@ -170,7 +157,11 @@ struct SelfPlay: ParsableCommand {
         fatalError("Unsupported encoder: \(name)")
     }
     
-    private func createPlayer(for color: Stone, with agentModel: GoAgentModel, encoder: GoBoardEncoder) -> GoAgent {
+    private func createPlayers(encoder: GoBoardEncoder, agentModel: GoAgentModel) throws -> (GoAgent, GoAgent) {
+        return (try createPlayer(.white, encoder: encoder, agentModel: agentModel), try createPlayer(.black, encoder: encoder, agentModel: agentModel))
+    }
+    
+    private func createPlayer(_ color: Stone, encoder: GoBoardEncoder, agentModel: GoAgentModel) throws -> GoAgent {
         switch self.agentName {
         case "policy":
             // Set the temperature here, while the concrete type is still in hand: it is a
@@ -187,6 +178,23 @@ struct SelfPlay: ParsableCommand {
             return GoNetworkFactoryImpl().create(networkName, with: encoder)
         }
         fatalError("Unsupported netowrk: \(name)")
+    }
+    
+    private func createAgentModel(encoder: GoBoardEncoder) throws -> GoAgentModel {
+        let network = createNetwork(self.networkName, encoder: encoder)
+        let agentModel = try createAgentModel(self.agentName, network: network)
+        
+        if let weights {
+            // Load
+            let url = URL(fileURLWithPath: weights)
+            try agentModel.load(from: url)
+        } else {
+            // Save
+            let url = URL(fileURLWithPath: "\(self.networkName).safetensors")
+            try agentModel.save(to: url)
+        }
+        
+        return agentModel
     }
     
     private func createAgentModel(_ name: String, network: GoNetwork) throws -> GoAgentModel {
