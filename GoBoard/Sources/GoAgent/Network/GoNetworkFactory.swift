@@ -17,6 +17,11 @@ public struct GoNetworkFactoryImpl: GoNetworkFactory {
         switch name {
         case .small:
             return Small(encoder: encoder)
+        case .medium:
+            return Medium(encoder: encoder)
+        case .large:
+            return Large(encoder: encoder)
         }
+    
     }
 }
