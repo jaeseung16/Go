@@ -60,6 +60,8 @@ public class Large: Module, GoNetwork {
         x = relu(conv3(x))
         x = relu(conv4(x))
         x = relu(conv5(x))
+        x = relu(conv6(x))
+        x = relu(conv7(x))
         x = flatten(x, startAxis: 1)
         x = relu(dense1(x))
         return dense2(x)
