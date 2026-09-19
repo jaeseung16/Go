@@ -27,9 +27,9 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
         self.optimizer = optimizer
     }
     
-    public func predict(from boardTensor: [[[UInt8]]]) -> [Float] {
+    public func predict(from boardTensor: GoBoardTensor) -> [Float] {
         // The first dimension is batch size (= 1)
-        let x = MLXArray(boardTensor.flatMap {$0}.flatMap {$0}, [1] + network.shape).asType(.float16)
+        let x = MLXArray(boardTensor.data.flatMap {$0}.flatMap {$0}, [1] + network.shape).asType(.float16)
         let probabilities = softmax(network(x), axis: -1)
         return probabilities.asArray(Float.self)
     }

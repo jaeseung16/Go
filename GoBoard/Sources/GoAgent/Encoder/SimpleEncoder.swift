@@ -23,7 +23,7 @@ public class SimpleEncoder: GoBoardEncoder {
         self.columnCount = boardDimension
     }
     
-    public func encode(gameState: GameState) -> [[[UInt8]]] {
+    public func encode(gameState: GameState) -> GoBoardTensor {
         var boardTensor = [[[UInt8]]](repeating: [[UInt8]](repeating: [UInt8](repeating: 0, count: Self.featureCount), count: columnCount), count: rowCount)
         
         for row in 0..<rowCount {
@@ -50,7 +50,7 @@ public class SimpleEncoder: GoBoardEncoder {
             }
         }
         
-        return boardTensor
+        return GoBoardTensor(data: boardTensor)
     }
     
     public func encode(point: Point) -> Int {

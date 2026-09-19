@@ -14,7 +14,8 @@ public protocol GoAgentModel {
     var name: String { get }
     var encoder: GoBoardEncoder { get }
     
-    func predict(from boardTensor: [[[UInt8]]]) -> [Float]
+    // TODO: - another predict functions accepting [GoBoardTensor] and GoBoardTensor & moves
+    func predict(from boardTensor: GoBoardTensor) -> [Float]
     func train(with experiences: GoTrainingExperience, optimizer: Optimizer, batchSize:Int, clipNorm: Float) -> Void // May deserve a separate protocol, for example, Trainable?
     
     func save(to: URL) throws -> Void

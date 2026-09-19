@@ -13,7 +13,7 @@ public protocol GoBoardEncoder {
     
     var shape: [Int] { get }
     
-    func encode(gameState: GameState) -> [[[UInt8]]] 
+    func encode(gameState: GameState) -> GoBoardTensor
     
     // Turn a board point into an integer index
     func encode(point: Point) -> Int
