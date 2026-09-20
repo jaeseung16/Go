@@ -21,6 +21,8 @@ public struct GoNetworkFactoryImpl: GoNetworkFactory {
             return Medium(encoder: encoder)
         case .large:
             return Large(encoder: encoder)
+        case .q:
+            return QNetwork(encoder: encoder)
         }
     
     }

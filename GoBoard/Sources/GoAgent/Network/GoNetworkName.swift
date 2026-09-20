@@ -9,4 +9,5 @@ public enum GoNetworkName: String {
     case small
     case medium
     case large
+    case q
 }
