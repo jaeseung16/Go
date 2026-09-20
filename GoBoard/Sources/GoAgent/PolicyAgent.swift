@@ -61,7 +61,7 @@ public class PolicyAgent: GoAgent {
                 // if self._collector is not None:
                 //     self._collector.record_decision(state=board_tensor, action=point_idx)
                 if let collector = experienceCollector {
-                    collector.recordDecision(state: boardTensor, action: pointIdx, estimatedValue: 0.0)
+                    collector.recordDecision(state: boardTensor.data, action: pointIdx, estimatedValue: 0.0)
                 }
                 return .play(self.player, point)
             }

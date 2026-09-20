@@ -33,6 +33,21 @@ public class PolicyAgentModel<Network: GoNetwork>: GoAgentModel {
         let probabilities = softmax(network(x), axis: -1)
         return probabilities.asArray(Float.self)
     }
+    
+    public func predict(from boardTensors: [GoBoardTensor]) -> [[Float]] {
+        // The first dimension is batch size (= 1)
+        let x = MLXArray(boardTensors.flatMap { $0.data.flatMap {$0}.flatMap {$0} }, [boardTensors.count] + network.shape).asType(.float16)
+        let probabilities = softmax(network(x), axis: -1)
+        return probabilities.map { $0.asArray(Float.self) }
+    }
+    
+    public func predict(from boardTensor: GoBoardTensor, action: GoActionTensor) -> [Float] {
+        fatalError("You must use predict(from:)")
+    }
+    
+    public func predict(from boardTensors: [GoBoardTensor], actions: [GoActionTensor]) -> [[Float]] {
+        fatalError("You must use predict(from:)")
+    }
 
     /// Keras's `categorical_crossentropy` over a softmax head, as dlgo trains its policy agent:
     /// `-sum(y * log p)` per row, averaged over the batch. With `y` holding the reward at the
