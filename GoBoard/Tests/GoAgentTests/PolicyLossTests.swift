@@ -14,7 +14,7 @@ import GoBoard
 
 @Suite struct PolicyLossTests {
 
-    private static func emptyBoard(_ encoder: SimpleEncoder) -> [[[UInt8]]] {
+    private static func emptyBoard(_ encoder: SimpleEncoder) -> GoBoardTensor {
         encoder.encode(gameState: GameState(board: ZobristGoBoard(dimension: 9), nextPlayer: .black))
     }
 
@@ -64,7 +64,7 @@ import GoBoard
         let action = 40
         let count = 64
 
-        let planes = board.flatMap { $0.flatMap { $0 } }
+        let planes = board.data.flatMap { $0.flatMap { $0 } }
         let experience = GoTrainingExperience(
             states: MLXArray(Array([[UInt8]](repeating: planes, count: count).joined()), [count] + encoder.shape),
             actions: MLXArray([Int32](repeating: Int32(action), count: count)),

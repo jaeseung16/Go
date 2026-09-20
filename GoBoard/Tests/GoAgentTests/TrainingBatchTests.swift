@@ -14,7 +14,10 @@ import MLXOptimizers
 
 /// A one-layer policy, so that training over a large corpus stays fast.
 final class LinearPolicy: Module, GoNetwork {
-
+    let name: String = "Linear"
+    
+    let encoder: GoBoardEncoder = SimpleEncoder(boardDimension: 19)
+    
     @ModuleInfo var dense: Linear
 
     let shape: [Int]

@@ -35,13 +35,13 @@ import GoBoard
         let whiteToPlay = encoder.encode(gameState: Self.game(nextPlayer: .white))
 
         collector.beginEpisode()
-        collector.recordDecision(state: blackToPlay, action: 12, estimatedValue: 0)
-        collector.recordDecision(state: whiteToPlay, action: 34, estimatedValue: 0.25)
+        collector.recordDecision(state: blackToPlay.data, action: 12, estimatedValue: 0)
+        collector.recordDecision(state: whiteToPlay.data, action: 34, estimatedValue: 0.25)
         collector.completeEpisode(reward: 1)
 
         // A second episode is abandoned: beginEpisode drops what it left behind.
         collector.beginEpisode()
-        collector.recordDecision(state: blackToPlay, action: 56, estimatedValue: 0)
+        collector.recordDecision(state: blackToPlay.data, action: 56, estimatedValue: 0)
         collector.beginEpisode()
 
         #expect(collector.count == 2)
@@ -52,8 +52,8 @@ import GoBoard
         #expect(buffer.rewards == [1, 1])
         #expect(buffer.advantages == [1, 0.75])
         #expect(buffer.states.count == 2 * buffer.featureCount)
-        #expect(Array(buffer.state(at: 0)) == Self.flattened(blackToPlay))
-        #expect(Array(buffer.state(at: 1)) == Self.flattened(whiteToPlay))
+        #expect(Array(buffer.state(at: 0)) == Self.flattened(blackToPlay.data))
+        #expect(Array(buffer.state(at: 1)) == Self.flattened(whiteToPlay.data))
     }
 
     @Test func mergingConcatenatesBuffersThatShareAShape() async throws {
@@ -63,7 +63,7 @@ import GoBoard
         func buffer(action: Int, reward: Float) -> ExperienceBuffer {
             let collector = ExperienceCollector(stateShape: encoder.shape)
             collector.beginEpisode()
-            collector.recordDecision(state: state, action: action, estimatedValue: 0)
+            collector.recordDecision(state: state.data, action: action, estimatedValue: 0)
             collector.completeEpisode(reward: reward)
             return collector.makeBuffer()
         }
@@ -88,8 +88,8 @@ import GoBoard
         let state = encoder.encode(gameState: Self.game())
 
         collector.beginEpisode()
-        collector.recordDecision(state: state, action: 7, estimatedValue: 0.5)
-        collector.recordDecision(state: state, action: 8, estimatedValue: -0.5)
+        collector.recordDecision(state: state.data, action: 7, estimatedValue: 0.5)
+        collector.recordDecision(state: state.data, action: 8, estimatedValue: -0.5)
         collector.completeEpisode(reward: -1)
 
         let written = collector.makeBuffer()
@@ -127,7 +127,7 @@ import GoBoard
         let state = encoder.encode(gameState: Self.game())
 
         collector.beginEpisode()
-        collector.recordDecision(state: state, action: 10, estimatedValue: 0)
+        collector.recordDecision(state: state.data, action: 10, estimatedValue: 0)
         collector.completeEpisode(reward: -1)
 
         let url = Self.temporaryURL()
@@ -147,7 +147,7 @@ import GoBoard
         #expect(batches.count == 1)
         let (x, y) = try #require(batches.first)
         #expect(x.shape == [1, 9, 9, 11])
-        #expect(x.asType(.uint8).asArray(UInt8.self) == Self.flattened(state))
+        #expect(x.asType(.uint8).asArray(UInt8.self) == Self.flattened(state.data))
 
         var expected = [Float](repeating: 0, count: 81)
         expected[10] = -1
