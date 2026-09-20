@@ -120,5 +120,9 @@ let package = Package(
             name: "GoAgentTests",
             dependencies: ["GoAgent", "GoBoard"]
         ),
+        .testTarget(
+            name: "GoAgentModelTests",
+            dependencies: ["GoAgent", "GoBoard"]
+        ),
     ]
 )
