@@ -57,6 +57,8 @@ import GoBoard
         
         let predictions = agentModel.predict(from: boardTensors, actions: actionTensors)
         #expect(predictions.count == 2)
+        #expect(predictions[0].count == 1)
+        #expect(predictions[1].count == 1)
     }
 }
 
