@@ -62,7 +62,7 @@ public class QAgent: GoAgent {
             let point = moves[pointIdx].point!
             if !isEye(point: point, on: state.board) {
                 if let collector = experienceCollector {
-                    collector.recordDecision(state: boardTensor.data, action: pointIdx, estimatedValue: 0.0)
+                    collector.recordDecision(state: boardTensor.data, action: self.encoder.encode(point: point), estimatedValue: 0.0)
                 }
                 self.lastStateValue = values[pointIdx]
                 return .play(self.player, point)
