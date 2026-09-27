@@ -49,7 +49,7 @@ public class QAgentModel<Network: GoNetwork>: GoAgentModel {
         let board = MLXArray(boardTensors.flatMap { $0.data.flatMap {$0}.flatMap {$0} }, [boardTensors.count] + network.shape).asType(.float16)
         let action = MLXArray(actions.flatMap { $0.data.flatMap {$0} }, [actions.count] + actions[0].shape).asType(.float16).expandedDimensions(axis: 3)
         let x = concatenated([board, action], axis: 3)
-        let probabilities = softmax(network(x), axis: -1)
+        let probabilities = network(x)
         return probabilities.map { $0.asArray(Float.self) }
     }
 
