@@ -150,7 +150,7 @@ public class GameState {
         moves.append(.resign)
         for row in 1...self.board.dimension {
             for col in 1...self.board.dimension {
-                let move = Move.play(nil, Point(row: row, col: col))
+                let move = Move.play(self.nextPlayer, Point(row: row, col: col))
                 if isValid(move: move) {
                     moves.append(move)
                 }
