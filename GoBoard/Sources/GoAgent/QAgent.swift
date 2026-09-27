@@ -23,9 +23,9 @@ public class QAgent: GoAgent {
     public var temperature: Float
     public var experienceCollector: ExperienceCollector?
 
-    init(stone: Stone, player: Player, encoder: GoBoardEncoder, model: GoAgentModel, experienceCollector: ExperienceCollector? = nil, temperature: Float = 0.0) {
+    public init(stone: Stone, encoder: GoBoardEncoder, model: GoAgentModel, experienceCollector: ExperienceCollector? = nil, temperature: Float = 0.0) {
         self.stone = stone
-        self.player = player
+        self.player = Player.from(stone: stone)!
         self.encoder = encoder
         self.model = model
         self.experienceCollector = experienceCollector

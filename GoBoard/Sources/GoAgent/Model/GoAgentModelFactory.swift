@@ -24,11 +24,18 @@ public struct GoAgentModelFactoryImpl: GoAgentModelFactory {
             switch networkName {
             case .small:
                 return PolicyAgentModel<Small>(network: network as! Small)
-            case .some(.medium):
+            case .medium:
                 return PolicyAgentModel<Medium>(network: network as! Medium)
-            case .some(.large):
+            case .large:
                 return PolicyAgentModel<Large>(network: network as! Large)
             case .q, .none:
+                throw GoAgentModelFactoryError.unknownNetowork
+            }
+        case .q:
+            switch networkName {
+            case .q:
+                return QAgentModel<QNetwork>(network: network as! QNetwork)
+            case .small, .medium, .large, .none:
                 throw GoAgentModelFactoryError.unknownNetowork
             }
         }

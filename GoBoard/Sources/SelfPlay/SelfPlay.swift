@@ -168,6 +168,9 @@ struct SelfPlay: ParsableCommand {
             // PolicyAgent property, and the GoAgent return type erases it.
             let agent = PolicyAgent(stone: color, encoder: encoder, model: agentModel, temperature: self.temperature)
             return agent
+        case "q":
+            let agent = QAgent(stone: color, encoder: encoder, model: agentModel, temperature: self.temperature)
+            return agent
         default:
             fatalError("Unsupported learning agent: \(self.agentName)")
         }
