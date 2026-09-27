@@ -53,15 +53,8 @@ public class QAgentModel<Network: GoNetwork>: GoAgentModel {
         return probabilities.map { $0.asArray(Float.self) }
     }
 
-    /// Keras's `categorical_crossentropy` over a softmax head, as dlgo trains its policy agent:
-    /// `-sum(y * log p)` per row, averaged over the batch. With `y` holding the reward at the
-    /// chosen move, each row is `-reward * log p(move)`.
-    ///
-    /// Not `MLXNN.crossEntropy(logits:targets:)`: with probability targets it computes
-    /// `logSumExp(z) - sum(y * z)`, which leaves the reward out of the `logSumExp` term and is
-    /// wrong whenever the reward is not +1.
     static func loss(network: GoNetwork, x: MLXArray, y: MLXArray) -> MLXArray {
-        -(y * logSoftmax(network(x), axis: -1)).sum(axis: -1).mean()
+        mseLoss(predictions: x, targets: y, reduction: .sum)
     }
     
     public func train(with experiences: GoTrainingExperience, optimizer: Optimizer, batchSize: Int, clipNorm: Float) {
@@ -138,6 +131,7 @@ public class QAgentModel<Network: GoNetwork>: GoAgentModel {
             var planes = [UInt8]()
             planes.reserveCapacity(rows.count * featureCount)
             var targets = [Float](repeating: 0, count: rows.count * numberOfActions)
+            var actionVectors = [Float](repeating: 0, count: rows.count * numberOfActions)
 
             for (position, row) in rows.enumerated() {
                 planes += states[row * featureCount ..< (row + 1) * featureCount]
@@ -145,9 +139,12 @@ public class QAgentModel<Network: GoNetwork>: GoAgentModel {
                 let action = Int(actions[row])
                 precondition((0 ..< numberOfActions).contains(action), "action \(action) is out of range for \(numberOfActions) moves")
                 targets[position * numberOfActions + action] = rewards[row]
+                actionVectors[position * numberOfActions + action] = 1
             }
 
-            let x = MLXArray(planes, [rows.count] + stateShape).asType(.float16)
+            let boardTensor = MLXArray(planes, [rows.count] + stateShape).asType(.float16)
+            let actionTensor = MLXArray(actionVectors, [rows.count] + [stateShape[0], stateShape[1]]).asType(.float16).expandedDimensions(axis: 3)
+            let x = concatenated([boardTensor, actionTensor], axis: 3)
             let y = MLXArray(targets, [rows.count, numberOfActions])
             return (x, y)
         }
