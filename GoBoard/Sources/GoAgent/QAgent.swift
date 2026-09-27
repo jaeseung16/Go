@@ -59,7 +59,7 @@ public class QAgent: GoAgent {
         let values = self.model.predict(from: boardTensors, actions: actionTensors).flatMap { $0 }
         let rankedMoves = rankMovesEpsilonGreedy(values)
         for pointIdx in rankedMoves {
-            let point = self.encoder.decode(index: pointIdx)
+            let point = moves[pointIdx].point!
             if !isEye(point: point, on: state.board) {
                 if let collector = experienceCollector {
                     collector.recordDecision(state: boardTensor.data, action: pointIdx, estimatedValue: 0.0)
