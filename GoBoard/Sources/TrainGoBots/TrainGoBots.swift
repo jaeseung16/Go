@@ -22,6 +22,8 @@ struct TraingGoBots: ParsableCommand {
               abstract: "Train Go bots with a reinforcement learning agent")
     }
     
+    // TODO: - Do we need to specify komi for training?
+    
     @Option(help: "The board size")
     var boardSize: Int
     
@@ -63,15 +65,14 @@ struct TraingGoBots: ParsableCommand {
                 continue
             }
             
-            // TODO: advantages
-            guard let states = data["states"], let actions = data["actions"], let rewards = data["rewards"] else {
+            guard let states = data["states"], let actions = data["actions"], let rewards = data["rewards"], let advantages = data["advantages"] else {
                 print("Cannot load experience: \(experience)")
                 continue
             }
             
             print("states: \(states.count), actions: \(actions.count), rewards: \(rewards.count)")
             
-            let trainingExperience = GoTrainingExperience(states: states, actions: actions, rewards: rewards)
+            let trainingExperience = GoTrainingExperience(states: states, actions: actions, rewards: rewards, advantages: advantages)
             
             // Train
             

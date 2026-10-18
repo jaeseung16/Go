@@ -12,11 +12,13 @@ public struct GoTrainingExperience {
     public let states: MLXArray
     public let actions: MLXArray
     public let rewards: MLXArray
+    public let advanteges: MLXArray?
     
-    public init(states: MLXArray, actions: MLXArray, rewards: MLXArray) {
+    public init(states: MLXArray, actions: MLXArray, rewards: MLXArray, advantages: MLXArray? = nil) {
         self.states = states
         self.actions = actions
         self.rewards = rewards
+        self.advanteges = advantages
     }
     
 }

@@ -8,4 +8,5 @@
 public enum GoAgentModelName: String {
     case policy
     case q
+    case actorCritic
 }

@@ -10,4 +10,5 @@ public enum GoNetworkName: String {
     case medium
     case large
     case q
+    case actorCritic
 }

@@ -28,14 +28,21 @@ public struct GoAgentModelFactoryImpl: GoAgentModelFactory {
                 return PolicyAgentModel<Medium>(network: network as! Medium)
             case .large:
                 return PolicyAgentModel<Large>(network: network as! Large)
-            case .q, .none:
+            case .q, .actorCritic, .none:
                 throw GoAgentModelFactoryError.unknownNetowork
             }
         case .q:
             switch networkName {
             case .q:
                 return QAgentModel<QNetwork>(network: network as! QNetwork)
-            case .small, .medium, .large, .none:
+            case .small, .medium, .large, .actorCritic, .none:
+                throw GoAgentModelFactoryError.unknownNetowork
+            }
+        case .actorCritic:
+            switch networkName {
+            case .actorCritic:
+                return ActorCriticModel<ActorCriticNetwork>(network: network as! ActorCriticNetwork)
+            case .small, .medium, .large, .q, .none:
                 throw GoAgentModelFactoryError.unknownNetowork
             }
         }
