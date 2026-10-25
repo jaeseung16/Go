@@ -49,9 +49,11 @@ public class ActorCriticModel<Network: GoNetwork>: GoAgentModel {
         fatalError("You must use predict(from:)")
     }
     
-    private func loss(network: GoNetwork, x: MLXArray, y1: MLXArray, y2: MLXArray) -> MLXArray {
-        self.lossWeights[0] * (-1.0 * y1 * logSoftmax(network(x), axis: -1)).sum(axis: -1).mean()
-        + self.lossWeights[1] * mseLoss(predictions: x, targets: y2, reduction: .sum)
+    func loss(network: GoNetwork, x: MLXArray, y1: MLXArray, y2: MLXArray) -> MLXArray {
+        let output = split(network(x), indices: [network.shape[0] * network.shape[1]], axis: 1)
+        let loss1 =   (-1.0 * y1 * logSoftmax(output[0], axis: -1)).sum(axis: -1).mean()
+        let loss2 = mseLoss(predictions: output[1], targets: y2, reduction: .sum)
+        return self.lossWeights[0] * loss1 + self.lossWeights[1] * loss2
     }
     
     public func train(with experiences: GoTrainingExperience, optimizer: any MLXOptimizers.Optimizer, batchSize: Int, clipNorm: Float) {
@@ -81,25 +83,6 @@ public class ActorCriticModel<Network: GoNetwork>: GoAgentModel {
         print("Training ended at \(end.formatted(date: .abbreviated, time: .standard)) \(end.timeIntervalSince(start))")
 
         messages.append("training time: \(end.timeIntervalSince(start))")
-        
-        /*
-        opt = SGD(learning_rate=lr)
-                self.model.compile(optimizer=opt, loss=['categorical_crossentropy', keras.src.losses.MeanSquaredError()], loss_weights=[1.0, 0.5])
-
-                n = experience.states.shape[0]
-                num_moves = self.encoder.num_points()
-                policy_target = np.zeros((n, num_moves))
-                value_target = np.zeros((n,))
-                for i in range(n):
-                    action = experience.actions[i]
-                    policy_target[i][action] = experience.advantages[i]
-                    reward = experience.rewards[i]
-                    value_target[i] = reward
-
-                self.model.fit(experience.states, [policy_target, value_target], batch_size=batch_size, epochs=1)
-         */
-        
-    
         
     }
     
@@ -168,7 +151,7 @@ public class ActorCriticModel<Network: GoNetwork>: GoAgentModel {
             var planes = [UInt8]()
             planes.reserveCapacity(rows.count * featureCount)
             var policyTargets = [Float](repeating: 0, count: rows.count * numberOfActions)
-            var valueTargets = [Float](repeating: 0, count: rows.count * numberOfActions)
+            var valueTargets = [Float](repeating: 0, count: rows.count)
             var actionVectors = [Float](repeating: 0, count: rows.count * numberOfActions)
 
             for (position, row) in rows.enumerated() {
@@ -177,7 +160,7 @@ public class ActorCriticModel<Network: GoNetwork>: GoAgentModel {
                 let action = Int(actions[row])
                 precondition((0 ..< numberOfActions).contains(action), "action \(action) is out of range for \(numberOfActions) moves")
                 policyTargets[position * numberOfActions + action] = rewards[row]
-                valueTargets[position * numberOfActions + action] = advantages[row]
+                valueTargets[position] = advantages[row]
                 actionVectors[position * numberOfActions + action] = 1
             }
 
@@ -185,7 +168,7 @@ public class ActorCriticModel<Network: GoNetwork>: GoAgentModel {
             let actionTensor = MLXArray(actionVectors, [rows.count] + [stateShape[0], stateShape[1]]).asType(.float16).expandedDimensions(axis: 3)
             let x = concatenated([boardTensor, actionTensor], axis: 3)
             let y1 = MLXArray(policyTargets, [rows.count, numberOfActions])
-            let y2 = MLXArray(valueTargets, [rows.count, numberOfActions])
+            let y2 = MLXArray(valueTargets, [rows.count])
             return (x, y1, y2)
         }
     }
